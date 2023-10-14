@@ -1,0 +1,4 @@
+# Required packages/modules to run the application
+
+django
+djangorestframework
