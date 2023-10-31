@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'printing_app',
+    'django_cas_ng',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'django_cas_ng.middleware.CASMiddleware',
 ]
 
 ROOT_URLCONF = 'hcmut_printing_service.urls'
@@ -121,3 +124,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django_cas_ng.backends.CASBackend',
+]
+
+# CAS client configuration
+CAS_SERVER_URL = "http://127.0.0.1:9000/cas/"
+CAS_VERSION = '3'
+CAS_APPLY_ATTRIBUTES_TO_USER = True

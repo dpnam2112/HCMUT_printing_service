@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class FileValidatorConfig(AppConfig):
+class CasModelsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'file_validator'
+    name = 'cas_models'

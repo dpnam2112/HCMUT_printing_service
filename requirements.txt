@@ -1,0 +1,6 @@
+# Required packages/modules to run the application
+
+django
+djangorestframework
+django-cas-server
+django-cas-ng
