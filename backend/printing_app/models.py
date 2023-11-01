@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from print_auth.models import CampusUser
 
 # Create your models here.
 
@@ -18,13 +18,6 @@ class Printer(models.Model):
     name = models.CharField(max_length=20, unique=True)
     manufacturer = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
-
-class CampusUser(models.Model):
-    username = models.CharField(max_length=20, unique=True)
-    id = models.CharField(max_length=10, unique=True, primary_key=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    page_balance = models.PositiveIntegerField(default=0)
 
 class FileMetadata(models.Model):
     user_id = models.ForeignKey(CampusUser, on_delete=models.CASCADE)

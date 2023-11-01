@@ -13,14 +13,14 @@ class PrintServerClient:
     def __init__(self):
         pass
 
-    def print(self, config: str, file):
+    def print(self, config: PrintConfig, file):
         """ print the file referenced by the `file` object.
 
         Args:
-            config (str): configuration used for printing process.
+            config (PrintConfig): configuration used for printing process.
             file (fileObject): a file object referencing to the file that will be printed.
 
         Returns:
-            true if the printing process is successful, false otherwise
+            True if the printing process is successful, False otherwise
         """
         pass
