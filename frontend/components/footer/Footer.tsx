@@ -4,7 +4,7 @@ import FooterList from "./FooterList";
 // import TwitterLogo from "../../public/assets/images/twitter.svg";
 
 export default function Footer() {
-  const proxymanData = {
+  const data = {
     title: "Smart Printing Service",
     rows: [
       {
@@ -39,12 +39,12 @@ export default function Footer() {
       },
       {
         title: "Smart Printing bản iOS (App Store)",
-        url: "https://apps.apple.com/us/app/proxyman/id1551292695",
+        url: "",
         icon: "true",
       },
       {
         title: "Smart Printing bản Android (Google Play)",
-        url: "https://go.setapp.com/stp246?refAppID=346",
+        url: "",
         icon: "true",
       },
     ],
@@ -55,7 +55,7 @@ export default function Footer() {
     rows: [
       {
         title: "Tài liệu",
-        url: "https://docs.proxyman.io/",
+        url: "",
         icon: "true",
       },
       {
@@ -111,10 +111,7 @@ export default function Footer() {
     <footer className="w-full px-40 mt-12 bg-[#F6F9FC]">
       <div className="border-t border-accent-2">
         <div className="flex flex-col md:flex-row items-center justify-between md:items-start sm:space-x-6 lg:space-x-10">
-          <FooterList
-            title={proxymanData.title}
-            rows={proxymanData.rows}
-          ></FooterList>
+          <FooterList title={data.title} rows={data.rows}></FooterList>
           <FooterList title={appData.title} rows={appData.rows}></FooterList>
           <FooterList
             title={legalData.title}
@@ -146,7 +143,6 @@ export default function Footer() {
             {/* <a
               target="_blank"
               rel="noopener"
-              href="https://twitter.com/proxyman_app"
               className="text-gray-500 hover:text-gray-700"
             >
               <TwitterLogo className="w-5 h-5"></TwitterLogo>
@@ -154,7 +150,6 @@ export default function Footer() {
             <a
               target="_blank"
               rel="noopener"
-              href="https://github.com/ProxymanApp/Proxyman"
               className="text-gray-500 hover:text-gray-700"
             >
               <GithubLogo className="w-5 h-5"></GithubLogo>
@@ -162,7 +157,6 @@ export default function Footer() {
             <a
               target="_blank"
               rel="noopener"
-              href="https://gitter.im/Proxyman-app/community"
               className="text-gray-500 hover:text-gray-700"
             >
               <GitterLogo className="w-5 h-5"></GitterLogo>

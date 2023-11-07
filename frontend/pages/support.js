@@ -29,22 +29,18 @@ export default function Support() {
             <SupportListItem
               text="Báo cáo lỗi hoặc yêu cầu tính năng mới tại"
               emailTo="Github"
-              hrefLink="https://github.com/ProxymanApp/Proxyman"
             />
             <SupportListItem
               text="Góp ý, thảo luận về Smart Printing Service tại"
               emailTo="Discord"
-              hrefLink="https://gitter.im/Proxyman-app/community"
             />
             <SupportListItem
               text="Hỗ trợ hoàn trả phí mua giấy hoặc các câu hỏi chung tại"
               emailTo="support@sps.hcmut.edu.vn"
-              hrefLink="mailto:support@proxyman.io"
             />
             <SupportListItem
               text="Liên hệ với Trưởng phòng kỹ thuật tại"
               emailTo="spso@hcmut.edu.vn"
-              hrefLink="mailto:nghia@proxyman.io"
             />
           </div>
         </div>

@@ -2,11 +2,7 @@ import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  ArrowTopRightOnSquareIcon,
   XMarkIcon,
-  BookOpenIcon,
-  RssIcon,
-  PencilIcon,
   DevicePhoneMobileIcon,
   ComputerDesktopIcon,
 } from "@heroicons/react/24/outline";
@@ -30,36 +26,9 @@ const solutions = [
     icon: DevicePhoneMobileIcon,
   },
 ];
-const resources = [
-  {
-    name: "Documentation",
-    href: "https://docs.proxyman.io/",
-    icon: BookOpenIcon,
-    isExternalLink: true,
-  },
-  {
-    name: "Github",
-    href: "https://github.com/ProxymanApp/Proxyman",
-    icon: ArrowTopRightOnSquareIcon,
-    isExternalLink: true,
-  },
-  {
-    name: "Changelog",
-    href: "/changelog",
-    icon: RssIcon,
-    isExternalLink: false,
-  },
-  {
-    name: "Blogs",
-    href: "/blogs",
-    icon: PencilIcon,
-    isExternalLink: false,
-  },
-];
 
 export default function NewNavigationBar() {
-  const downloadURL = () => {};
-  const downloadBtnOnClicked = (e) => {};
+  const downloadBtnOnClicked = (e: any) => {};
 
   return (
     <Popover className="relative">

@@ -1,7 +1,7 @@
 module.exports = {
-  siteUrl: 'https://proxyman.io',
-  changefreq: 'weekly',
-  priority: '1.0',
+  siteUrl: "",
+  changefreq: "weekly",
+  priority: "1.0",
   generateRobotsTxt: true,
   transform: async (config, path) => {
     var priority = config.priority;
@@ -14,6 +14,6 @@ module.exports = {
       priority: priority,
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       alternateRefs: config.alternateRefs ?? [],
-    }
+    };
   },
-}
+};

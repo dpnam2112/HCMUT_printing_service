@@ -6,15 +6,15 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.svg$/i,
       issuer: /\.[jt]sx?$/,
-      use: ['@svgr/webpack'],
-    })
+      use: ["@svgr/webpack"],
+    });
 
-    return config
+    return config;
   },
   images: {
     loader: "imgix",
-    path: "https://proxyman.imgix.net"
-  }
-}
+    path: "",
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
