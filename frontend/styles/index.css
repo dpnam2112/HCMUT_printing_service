@@ -1,0 +1,295 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your own custom utilities */
+@layer components {
+  .left-container {
+    @apply w-full flex justify-start mx-auto max-w-7xl px-6 lg:px-8 pt-10 pb-20 md:pt-20 md:pb-32;
+  }
+
+  .center-container {
+    @apply w-full flex justify-center mx-auto max-w-7xl px-6 lg:px-8 pt-10 pb-20 md:pt-20 md:pb-32;
+  }
+
+  .left-header {
+    @apply flex flex-col items-start;
+  }
+
+  .center-header {
+    @apply flex flex-col items-center;
+  }
+
+  .text-title {
+    @apply text-left text-4xl font-bold md:text-6xl;
+  }
+
+  .text-subtitle {
+    @apply text-left text-xl font-light md:text-3xl text-gray-800;
+  }
+
+  .text-highlight {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+
+  .text-body {
+    @apply text-lg font-light;
+  }
+
+  .pricingSectionWrapper {
+    @apply mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10;
+  }
+
+  .pricingSection {
+    @apply flex flex-col rounded-xl px-6 py-10 border border-gray-300 bg-white text-gray-900 shadow-lg shadow-gray-900/5;
+  }
+
+  .pricingFeaturedSection {
+    @apply flex flex-col rounded-xl px-6 py-10 border border-gray-300 bg-white text-gray-900 shadow-lg shadow-indigo-900/5 relative;
+  }
+
+  .pricingListWrapper {
+    @apply mt-10 order-last flex flex-col gap-y-3 text-sm text-gray-700;
+  }
+}
+
+@layer utilities {
+  .heroTitleBg {
+    background-image: url("https://tailwindcss.com/_next/static/media/0.45ad250f635612c1ec4d519c9dca901f.jpg");
+    background-size: 390.375rem 100%;
+  }
+
+  .remoteDeviceBg {
+    background-image: url("https://tailwindui.com/img/beams-home@95.jpg");
+    background-size: 210.375rem 100%;
+    background-opacity: 10%;
+  }
+
+  .heroTitle {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 4.5rem;
+  }
+
+  .heroLead {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 2.25rem;
+  }
+
+  .gradientText {
+    background: -webkit-linear-gradient(#8c4fc7, #4662dc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .firstSlider {
+    width: 100%;
+    position: relative;
+    /* margin-top: 32px; */
+    padding-top: 28px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-top: 1px solid rgb(242, 245, 248);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0,
+      #000 15%,
+      #000 95%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  .firstSlide {
+    height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-animation: firstSlide 40s linear infinite;
+    animation: firstSlide 40s linear infinite;
+  }
+
+  .firstSlide img {
+    height: 48px;
+    padding: 0 30px;
+  }
+
+  @keyframes firstSlide {
+    0% {
+      transform: translateX(25%);
+    }
+
+    50% {
+      transform: translateX(-25%);
+    }
+
+    100% {
+      transform: translateX(25%);
+    }
+  }
+
+  .secondSlider {
+    width: 100%;
+    position: relative;
+    margin-bottom: 24px;
+    padding-bottom: 28px;
+    padding-top: 14px;
+    padding-left: 0px;
+    padding-right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgb(242, 245, 248);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0) 0,
+      #000 15%,
+      #000 95%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  .secondSlide {
+    height: 86px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-animation: secondSlide 30s linear infinite;
+    animation: secondSlide 30s linear infinite;
+  }
+
+  .secondSlide img {
+    height: 36px;
+    padding: 0 30px;
+  }
+
+  @keyframes secondSlide {
+    0% {
+      transform: translateX(25%);
+    }
+
+    50% {
+      transform: translateX(-25%);
+    }
+
+    100% {
+      transform: translateX(25%);
+    }
+  }
+
+  .mobileSlide {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-animation: mobileSlide 30s linear infinite;
+    animation: mobileSlide 30s linear infinite;
+  }
+
+  .mobileSlide img {
+    height: 32px;
+    padding: 0 30px;
+  }
+
+  @keyframes mobileSlide {
+    0% {
+      transform: translateX(90%);
+    }
+
+    50% {
+      transform: translateX(-90%);
+    }
+
+    100% {
+      transform: translateX(90%);
+    }
+  }
+
+  .timeline {
+    border-left: 2px solid #cccccc;
+  }
+
+  .timeline:last-child {
+    border-width: 2px;
+    border-style: dashed;
+    border-image: linear-gradient(to bottom, #cccccc, rgba(0, 0, 0, 0)) 1 100%;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+  }
+
+  .timelineCircle {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: -9px;
+    width: 1rem;
+    height: 1rem;
+    background-color: #fff;
+    border: 4px solid #101827;
+    border-radius: 9999px;
+    box-shadow: 0 0 0 4px #ffffff;
+  }
+
+  .mainFeatureBg {
+    background: rgb(255, 255, 255);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(242, 245, 253, 1) 66%,
+      rgba(249, 251, 252, 1) 100%
+    );
+  }
+
+  .featureListBg {
+    background: rgb(250, 250, 250);
+    background: linear-gradient(
+      180deg,
+      rgba(250, 250, 250, 1) 0%,
+      rgba(254, 254, 254, 1) 40%,
+      rgba(255, 255, 255, 1) 100%
+    );
+  }
+
+  .testimonialBg {
+    background-image: url("https://tailwindcss.com/_next/static/media/hero@75.b2469a49.jpg");
+    background-size: 290.375rem 100%;
+  }
+
+  .moreFeedbackBg {
+    background: rgb(249, 251, 252);
+    background: linear-gradient(
+      180deg,
+      rgba(249, 251, 252, 1) 0%,
+      rgba(254, 254, 254, 1) 40%,
+      rgba(255, 255, 255, 1) 100%
+    );
+  }
+
+  .ctaBg {
+    background: rgb(148, 206, 83);
+    background: linear-gradient(
+      42deg,
+      rgba(148, 206, 83, 1) 0%,
+      rgba(189, 199, 61, 1) 38%,
+      rgba(189, 202, 70, 1) 58%,
+      rgba(187, 217, 118, 1) 100%
+    );
+  }
+
+  .secondaryBg {
+    background-image: url("https://sketch-cdn.imgix.net/assets/pages/whats-new/hero-background@2x.jpg?ixlib=rb-4.0.1&fit=max&w=5120&q=95&auto=format&fm=jpg&s=f92d8432dfaac42d63a23848ca5fad09");
+    background-size: 40.375rem 100%;
+    height: 48.9375rem;
+  }
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
