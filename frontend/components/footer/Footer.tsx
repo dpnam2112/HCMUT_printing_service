@@ -1,7 +1,6 @@
 import FooterList from "./FooterList";
-// import GithubLogo from "../../public/assets/images/github.svg";
-// import GitterLogo from "../../public/assets/images/gitter.svg";
-// import TwitterLogo from "../../public/assets/images/twitter.svg";
+import GithubLogo from "../../public/assets/images/github.svg";
+import TwitterLogo from "../../public/assets/images/twitter.svg";
 
 export default function Footer() {
   const data = {
@@ -140,7 +139,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex flex-wrap justify-end text-center items-center gap-6">
-            {/* <a
+            <a
               target="_blank"
               rel="noopener"
               className="text-gray-500 hover:text-gray-700"
@@ -154,13 +153,6 @@ export default function Footer() {
             >
               <GithubLogo className="w-5 h-5"></GithubLogo>
             </a>
-            <a
-              target="_blank"
-              rel="noopener"
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <GitterLogo className="w-5 h-5"></GitterLogo>
-            </a> */}
           </div>
         </div>
       </div>
