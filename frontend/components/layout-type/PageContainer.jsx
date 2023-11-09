@@ -12,7 +12,7 @@ const PageContainer = ({
     <div
       className={layout === "center" ? "center-container" : "left-container"}
     >
-      <div className={`w-full flex flex-col w-full`}>
+      <div className={`w-full flex flex-col`}>
         <PageHeader
           layout={layout}
           title={title}
@@ -36,7 +36,7 @@ const PageHeader = ({ layout, title, subTitle, secondSubTitle }) => {
         {title}
       </h1>
       <p
-        className={`text-subtitle leading-10 mt-4 w-full ${
+        className={`text-subtitle leading-10 mt-3 w-full ${
           layout === "center" ? "text-center" : "text-left"
         }`}
       >
