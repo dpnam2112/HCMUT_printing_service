@@ -1,16 +1,11 @@
 import Container from "../components/container";
 import Layout from "../components/layout";
 import PricingPaddle from "../components/pricing/pricing-paddle";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
 
 export default function Pricing() {
-  const [showTeamWarning, setShowTeamWarning] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [numberOfTeamLicense, setNumberOfTeamLicense] = useState(5); // min = 5
-  const teamLicensePrice = 69;
 
   function closeModal() {
     setIsOpen(false);
@@ -19,14 +14,6 @@ export default function Pricing() {
   function openModal() {
     setIsOpen(true);
   }
-
-  const onSuccessCallback = (data) => {};
-
-  const numberOfTeamLicenseInputChange = (e) => {
-    setNumberOfTeamLicense(e.target.value);
-  };
-
-  const checkoutTeamLicenseBtnOnClick = (e) => {};
 
   const standardLicenseBtnOnClick = (e) => {};
 
@@ -48,107 +35,8 @@ export default function Pricing() {
           </div>
           <PricingPaddle></PricingPaddle>
           <section className="text-gray-600 body-font overflow-hidden">
-            <div className="container mx-auto">
-              {/* <KeyFeaturesCompare />
-              <DebuggingToolsCompare />
-              <ExploreMoreFeaturesButton />
-              <PricingFAQ data={data} /> */}
-            </div>
+            <div className="container mx-auto"></div>
           </section>
-          {/* <PricingFooter></PricingFooter> */}
-          <Transition appear show={isOpen} as={Fragment}>
-            <Dialog
-              as="div"
-              className="fixed inset-0 z-10 overflow-y-auto"
-              onClose={closeModal}
-            >
-              <div className="min-h-screen px-4 text-center">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                </Transition.Child>
-
-                {/* This element is to trick the browser into centering the modal contents. */}
-                <span
-                  className="inline-block h-screen align-middle"
-                  aria-hidden="true"
-                >
-                  &#8203;
-                </span>
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <div className="inline-block w-full sm:max-w-lg max-w-sm  p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-2xl font-medium leading-6 text-gray-900 text-center"
-                    >
-                      Team License
-                    </Dialog.Title>
-                    <div className="grid grid-cols-3 gap-2 my-6 items-center text-body">
-                      <div className="col-span-2 font-light">
-                        Number of Seats ({">"}=5)
-                      </div>
-                      <div className="">
-                        <div className="rounded-md">
-                          <input
-                            type="number"
-                            name="numberOfSeat"
-                            id="numberOfSeat"
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full px-4 border-gray-300 rounded-md text-body"
-                            placeholder=">= 5"
-                            defaultValue="5"
-                            min="5"
-                            max="100"
-                            onChange={numberOfTeamLicenseInputChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-2 my-1 font-light">
-                        Price per Seat
-                      </div>
-                      <div className="text-right pr-2 font-semibold text-3xl">
-                        1000 VNĐ / 1 tờ
-                      </div>
-                      <div className="col-span-2 font-semibold pt-4 text-3xl">
-                        Total
-                      </div>
-                      <div className="text-right pr-2 font-semibold border-t pt-4 text-3xl">
-                        ${numberOfTeamLicense * teamLicensePrice}
-                      </div>
-                    </div>
-                    <button
-                      className="text-white bg-indigo-600 border-0 py-2 px-4 mt-2 focus:outline-none hover:bg-indigo-700 rounded text-body font-light w-full text-center"
-                      onClick={checkoutTeamLicenseBtnOnClick}
-                    >
-                      Checkout
-                    </button>
-                    <p className="leading-relaxed text-sm text-gray-500 text-center mt-2">
-                      Giá theo đơn vị VNĐ, chưa bao gồm thuế.
-                    </p>
-                    {showTeamWarning && (
-                      <p className="text-body mt-2 text-red-500 text-center">
-                        Number of license must be equal or greater than 3.
-                      </p>
-                    )}
-                  </div>
-                </Transition.Child>
-              </div>
-            </Dialog>
-          </Transition>
         </Container>
       </Layout>
     </>

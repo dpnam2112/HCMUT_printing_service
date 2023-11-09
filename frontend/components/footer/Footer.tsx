@@ -106,8 +106,7 @@ export default function Footer() {
   };
 
   return (
-    // <footer className="w-full mx-auto px-10 md:px-40 lg:px-60">
-    <footer className="w-full px-40 mt-12 bg-[#F6F9FC]">
+    <footer className="w-full px-40 mt-12">
       <div className="border-t border-accent-2">
         <div className="flex flex-col md:flex-row items-center justify-between md:items-start sm:space-x-6 lg:space-x-10">
           <FooterList title={data.title} rows={data.rows}></FooterList>
