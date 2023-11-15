@@ -13,7 +13,7 @@ enum MENU_BUILDING_CS2 {
 enum MENU_BUILDING_CS1 {
   B1 = "Toà B1",
   B2 = "Toà B2",
-  B5 = "Toà H5",
+  B5 = "Toà B5",
   C5 = "Toà C5",
   C6 = "Toà C6",
   A1 = "Toà A1",

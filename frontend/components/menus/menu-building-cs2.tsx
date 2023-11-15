@@ -8,23 +8,23 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_FACILITY } from "../../models/constant";
+import { MENU_BUILDING_CS2 } from "../../models/constant";
 
 type MenuFacilityProps = {
-  selectedFacility: MENU_FACILITY;
-  setSelectedFacility: React.Dispatch<React.SetStateAction<MENU_FACILITY>>;
+  selectedItem: MENU_BUILDING_CS2;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
 };
 
-const MenuFacility: FC<MenuFacilityProps> = ({
-  selectedFacility,
-  setSelectedFacility,
+const MenuBuildingCS2: FC<MenuFacilityProps> = ({
+  selectedItem,
+  setSelectedItem,
 }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
         <Button className="w-2/4 px-0">
           <div className="flex items-center justify-between focus-within:outline-none w-full">
-            <span>{selectedFacility}</span>
+            <span>{selectedItem}</span>
             <CaretSortIcon width="22" height="22" />
           </div>
         </Button>
@@ -32,22 +32,41 @@ const MenuFacility: FC<MenuFacilityProps> = ({
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedFacility(MENU_FACILITY.LY_THUONG_KIET);
+            setSelectedItem(MENU_BUILDING_CS2.H1);
           }}
         >
-          Lý Thường Kiệt
+          {MENU_BUILDING_CS2.H1}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedFacility(MENU_FACILITY.DI_AN);
+            setSelectedItem(MENU_BUILDING_CS2.H2);
           }}
         >
-          Dĩ An
+          {MENU_BUILDING_CS2.H2}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_BUILDING_CS2.H3);
+          }}
+        >
+          {MENU_BUILDING_CS2.H3}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_BUILDING_CS2.H6);
+          }}
+        >
+          {MENU_BUILDING_CS2.H6}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuFacility;
+export default MenuBuildingCS2;
