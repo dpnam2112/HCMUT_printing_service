@@ -8,14 +8,14 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_BUILDING_CS2 } from "../../models/constant";
+import { MENU_PRINT_PAGE, MENU_PRINT_TYPE } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_BUILDING_CS2;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
+  selectedItem: MENU_PRINT_TYPE;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PRINT_TYPE>>;
 };
 
-const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuPrintType: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
@@ -29,41 +29,23 @@ const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H1);
+            setSelectedItem(MENU_PRINT_TYPE.DOUBLE);
           }}
         >
-          {MENU_BUILDING_CS2.H1}
+          {MENU_PRINT_TYPE.DOUBLE}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H2);
+            setSelectedItem(MENU_PRINT_TYPE.ONE);
           }}
         >
-          {MENU_BUILDING_CS2.H2}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H3);
-          }}
-        >
-          {MENU_BUILDING_CS2.H3}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H6);
-          }}
-        >
-          {MENU_BUILDING_CS2.H6}
+          {MENU_PRINT_TYPE.ONE}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuBuildingCS2;
+export default MenuPrintType;

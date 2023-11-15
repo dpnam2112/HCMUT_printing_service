@@ -8,14 +8,14 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_BUILDING_CS2 } from "../../models/constant";
+import { MENU_ROOM } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_BUILDING_CS2;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
+  selectedItem: MENU_ROOM;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_ROOM>>;
 };
 
-const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuRoom: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
@@ -29,41 +29,49 @@ const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H1);
+            setSelectedItem(MENU_ROOM.R_101);
           }}
         >
-          {MENU_BUILDING_CS2.H1}
+          {MENU_ROOM.R_101}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H2);
+            setSelectedItem(MENU_ROOM.R_201);
           }}
         >
-          {MENU_BUILDING_CS2.H2}
+          {MENU_ROOM.R_201}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_ROOM.R_207);
+          }}
+        >
+          {MENU_ROOM.R_207}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H3);
+            setSelectedItem(MENU_ROOM.R_401);
           }}
         >
-          {MENU_BUILDING_CS2.H3}
+          {MENU_ROOM.R_401}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H6);
+            setSelectedItem(MENU_ROOM.R_601);
           }}
         >
-          {MENU_BUILDING_CS2.H6}
+          {MENU_ROOM.R_601}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuBuildingCS2;
+export default MenuRoom;

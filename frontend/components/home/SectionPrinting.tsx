@@ -4,9 +4,19 @@ import {
   MENU_BUILDING_CS1,
   MENU_BUILDING_CS2,
   MENU_FACILITY,
+  MENU_NUMBER_OF_COPY,
+  MENU_PAPER_SIZE,
+  MENU_PRINT_PAGE,
+  MENU_PRINT_TYPE,
+  MENU_ROOM,
 } from "../../models/constant";
 import MenuBuildingCS1 from "../menus/menu-building-cs1";
 import MenuBuildingCS2 from "../menus/menu-building-cs2";
+import MenuRoom from "../menus/menu-room";
+import MenuPaperSize from "../menus/menu-paper-size";
+import MenuPrintType from "../menus/menu-print-type";
+import MenuPrintPage from "../menus/menu-print-page";
+import MenuCopyNumber from "../menus/menu-copy-number";
 
 const SectionPrinting = () => {
   const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
@@ -16,6 +26,18 @@ const SectionPrinting = () => {
     useState<MENU_BUILDING_CS1>(MENU_BUILDING_CS1.A1);
   const [selectedBuildingCS2, setSelectedBuildingCS2] =
     useState<MENU_BUILDING_CS2>(MENU_BUILDING_CS2.H2);
+  const [selectedRoom, setSelectedRoom] = useState<MENU_ROOM>(MENU_ROOM.R_101);
+  const [selectedPaperSize, setSelectedPaperSize] = useState<MENU_PAPER_SIZE>(
+    MENU_PAPER_SIZE.SIZE_A3
+  );
+  const [selectedPrintType, setSelectedPrintType] = useState<MENU_PRINT_TYPE>(
+    MENU_PRINT_TYPE.DOUBLE
+  );
+  const [selectedPrintPage, setSelectedPrintPage] = useState<MENU_PRINT_PAGE>(
+    MENU_PRINT_PAGE.ALL
+  );
+  const [selectedCopyNumber, setSelectedCopyNumber] =
+    useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
 
   return (
     <div className="flex items-center gap-5 mt-12 mb-4 mx-40 h-[650px] p-10 rounded border">
@@ -49,44 +71,76 @@ const SectionPrinting = () => {
         </div>
 
         <div className="flex items-center w-full px-5 ">
-          <span className="w-2/4 text-lg font-semibold">Máy in tại phòng:</span>
-          <MenuFacility
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
+          <span className="w-2/4 text-lg font-semibold select-none">
+            Máy in tại phòng:
+          </span>
+          <MenuRoom
+            selectedItem={selectedRoom}
+            setSelectedItem={setSelectedRoom}
           />
         </div>
 
         <div className="flex items-center w-full px-5 ">
-          <span className="w-2/4 text-lg font-semibold">Kích thước giấy:</span>
-          <MenuFacility
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
+          <span className="w-2/4 text-lg font-semibold select-none">
+            Kích thước giấy:
+          </span>
+          <MenuPaperSize
+            selectedItem={selectedPaperSize}
+            setSelectedItem={setSelectedPaperSize}
           />
         </div>
 
         <div className="flex items-center w-full px-5 ">
-          <span className="w-2/4 text-lg font-semibold">Kiểu in:</span>
-          <MenuFacility
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
+          <span className="w-2/4 text-lg font-semibold select-none">
+            Kiểu in:
+          </span>
+          <MenuPrintType
+            selectedItem={selectedPrintType}
+            setSelectedItem={setSelectedPrintType}
           />
         </div>
 
         <div className="flex items-center w-full px-5 ">
-          <span className="w-2/4 text-lg font-semibold">Số lượng bản sao:</span>
-          <MenuFacility
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
+          <span className="w-2/4 text-lg font-semibold select-none">
+            Số lượng bản sao:
+          </span>
+          <MenuCopyNumber
+            selectedItem={selectedCopyNumber}
+            setSelectedItem={setSelectedCopyNumber}
           />
         </div>
+        {selectedCopyNumber === MENU_NUMBER_OF_COPY.CUSTOM && (
+          <div className="flex items-center w-full px-5 fade-in">
+            <span className="w-2/4 text-lg font-semibold select-none">
+              Nhập số lượng bản sao:
+            </span>
+            <input
+              className="w-2/4 h-full border rounded px-2 "
+              placeholder="Ví dụ: 10"
+            />
+          </div>
+        )}
 
         <div className="flex items-center w-full px-5 ">
-          <span className="w-2/4 text-lg font-semibold">Chọn trang in:</span>
-          <MenuFacility
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
+          <span className="w-2/4 text-lg font-semibold select-none">
+            Chọn trang in:
+          </span>
+          <MenuPrintPage
+            selectedItem={selectedPrintPage}
+            setSelectedItem={setSelectedPrintPage}
           />
         </div>
+        {selectedPrintPage === MENU_PRINT_PAGE.CUSTOM && (
+          <div className="flex items-center w-full px-5 fade-in">
+            <span className="w-2/4 text-lg font-semibold select-none">
+              Nhập trang bạn cần in:
+            </span>
+            <input
+              className="w-2/4 h-full border rounded px-2 "
+              placeholder="Ví dụ: 1, 2, 5, 7, 12"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -8,14 +8,14 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_BUILDING_CS2 } from "../../models/constant";
+import { MENU_NUMBER_OF_COPY } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_BUILDING_CS2;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
+  selectedItem: MENU_NUMBER_OF_COPY;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_NUMBER_OF_COPY>>;
 };
 
-const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuCopyNumber: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
@@ -29,41 +29,48 @@ const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H1);
+            setSelectedItem(MENU_NUMBER_OF_COPY.TWO);
           }}
         >
-          {MENU_BUILDING_CS2.H1}
+          {MENU_NUMBER_OF_COPY.TWO}
         </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_NUMBER_OF_COPY.FOUR);
+          }}
+        >
+          {MENU_NUMBER_OF_COPY.FOUR}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_NUMBER_OF_COPY.FIVE);
+          }}
+        >
+          {MENU_NUMBER_OF_COPY.FIVE}
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H2);
+            setSelectedItem(MENU_NUMBER_OF_COPY.CUSTOM);
           }}
         >
-          {MENU_BUILDING_CS2.H2}
+          {MENU_NUMBER_OF_COPY.CUSTOM}
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H3);
+            setSelectedItem(MENU_NUMBER_OF_COPY.NONE);
           }}
         >
-          {MENU_BUILDING_CS2.H3}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H6);
-          }}
-        >
-          {MENU_BUILDING_CS2.H6}
+          {MENU_NUMBER_OF_COPY.NONE}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuBuildingCS2;
+export default MenuCopyNumber;

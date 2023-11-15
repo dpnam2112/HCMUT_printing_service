@@ -10,15 +10,12 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
 import { MENU_BUILDING_CS1 } from "../../models/constant";
 
-type MenuFacilityProps = {
+type Props = {
   selectedItem: MENU_BUILDING_CS1;
   setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS1>>;
 };
 
-const MenuBuildingCS1: FC<MenuFacilityProps> = ({
-  selectedItem,
-  setSelectedItem,
-}) => {
+const MenuBuildingCS1: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">

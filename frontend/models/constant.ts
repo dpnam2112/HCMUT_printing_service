@@ -38,6 +38,7 @@ enum MENU_PRINT_TYPE {
 }
 
 enum MENU_NUMBER_OF_COPY {
+  NONE = "Không in bản sao",
   TWO = "2 bản",
   FOUR = "4 bản",
   FIVE = "5 bản",

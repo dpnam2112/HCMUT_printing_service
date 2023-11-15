@@ -8,14 +8,14 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_BUILDING_CS2 } from "../../models/constant";
+import { MENU_PAPER_SIZE } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_BUILDING_CS2;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
+  selectedItem: MENU_PAPER_SIZE;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PAPER_SIZE>>;
 };
 
-const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuPaperSize: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
@@ -29,41 +29,23 @@ const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H1);
+            setSelectedItem(MENU_PAPER_SIZE.SIZE_A4);
           }}
         >
-          {MENU_BUILDING_CS2.H1}
+          {MENU_PAPER_SIZE.SIZE_A4}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H2);
+            setSelectedItem(MENU_PAPER_SIZE.SIZE_A3);
           }}
         >
-          {MENU_BUILDING_CS2.H2}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H3);
-          }}
-        >
-          {MENU_BUILDING_CS2.H3}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H6);
-          }}
-        >
-          {MENU_BUILDING_CS2.H6}
+          {MENU_PAPER_SIZE.SIZE_A3}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuBuildingCS2;
+export default MenuPaperSize;

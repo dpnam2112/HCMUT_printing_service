@@ -8,14 +8,14 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_BUILDING_CS2 } from "../../models/constant";
+import { MENU_PRINT_PAGE } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_BUILDING_CS2;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_BUILDING_CS2>>;
+  selectedItem: MENU_PRINT_PAGE;
+  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PRINT_PAGE>>;
 };
 
-const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuPrintPage: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
@@ -29,41 +29,41 @@ const MenuBuildingCS2: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H1);
+            setSelectedItem(MENU_PRINT_PAGE.ALL);
           }}
         >
-          {MENU_BUILDING_CS2.H1}
+          {MENU_PRINT_PAGE.ALL}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H2);
+            setSelectedItem(MENU_PRINT_PAGE.ONLY_OLD);
           }}
         >
-          {MENU_BUILDING_CS2.H2}
+          {MENU_PRINT_PAGE.ONLY_OLD}
         </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_PRINT_PAGE.ONLY_EVEN);
+          }}
+        >
+          {MENU_PRINT_PAGE.ONLY_EVEN}
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H3);
+            setSelectedItem(MENU_PRINT_PAGE.CUSTOM);
           }}
         >
-          {MENU_BUILDING_CS2.H3}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_BUILDING_CS2.H6);
-          }}
-        >
-          {MENU_BUILDING_CS2.H6}
+          {MENU_PRINT_PAGE.CUSTOM}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuBuildingCS2;
+export default MenuPrintPage;
