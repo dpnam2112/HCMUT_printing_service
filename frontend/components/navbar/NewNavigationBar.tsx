@@ -52,7 +52,6 @@ export default function NewNavigationBar() {
 
           <Button
             variant="classic"
-            highContrast
             className="text-lg font-semibold cursor-pointer"
           >
             Đăng nhập
