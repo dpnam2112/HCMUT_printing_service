@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'printing_app',
+    'officer_app',
+    'print_auth',
+    'payment',
     'django_cas_ng',
 ]
 
