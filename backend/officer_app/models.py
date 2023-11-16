@@ -3,5 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Officer(models.Model):
-    base_user = models.ForeignKey(User, unique=True)
+class Officer(User):
+    class Meta:
+        proxy = True
+        permissions = [("officer_app_access", "Officer app access")]

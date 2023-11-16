@@ -16,10 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 import django_cas_ng.views
+from officer_app.views import Printers
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('print/', include('printing_app.urls')),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
+    path("officer/", include('officer_app.urls')),
+    path("printers/", Printers.as_view()),
 ]
