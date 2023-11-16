@@ -8,6 +8,7 @@ const nextConfig = {
       issuer: /\.[jt]sx?$/,
       use: ["@svgr/webpack"],
     });
+    config.resolve.alias.canvas = false;
 
     return config;
   },

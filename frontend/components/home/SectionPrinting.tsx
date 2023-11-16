@@ -1,3 +1,5 @@
+"use client";
+
 import MenuFacility from "../menus/menu-facility";
 import { useState } from "react";
 import {
@@ -18,7 +20,13 @@ import MenuPrintType from "../menus/menu-print-type";
 import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
-import { Worker, Viewer } from "@react-pdf-viewer/pdf-viewer";
+import { Document, Page } from "react-pdf";
+// import { pdfjs } from "react-pdf";
+
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "pdfjs-dist/build/pdf.worker.min.js",
+//   import.meta.url
+// ).toString();
 
 const SectionPrinting = () => {
   const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
@@ -42,21 +50,28 @@ const SectionPrinting = () => {
     useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
   const [selectedFile, setSeleectedFile] = useState<any>(undefined);
 
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
   const handleSelectFile = (e: any) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
+      setSeleectedFile(file);
+      // const reader = new FileReader();
 
-      reader.onload = (event) => {
-        // The result attribute contains the data as a data URL
-        const fileData = event.target.result;
-        console.log("File data:", fileData);
-      };
+      // reader.onload = (event) => {
+      //   // The result attribute contains the data as a data URL
+      //   const fileData = event.target.result;
+      // };
 
-      // Read the file as text or other formats based on your requirements
-      reader.readAsText(file);
+      // // Read the file as text or other formats based on your requirements
+      // reader.readAsText(file);
     }
   };
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages);
+  }
 
   return (
     <div className="flex items-center gap-5 mt-12 mb-4 mx-40 h-[650px] p-10 rounded border">
@@ -71,11 +86,9 @@ const SectionPrinting = () => {
           />
 
           {selectedFile !== undefined && (
-            <Worker
-              workerUrl={`https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`}
-            >
-              <Viewer fileUrl={URL.createObjectURL(selectedFile)} />
-            </Worker>
+            <Document file={selectedFile} onLoadSuccess={onDocumentLoadSuccess}>
+              <Page pageNumber={pageNumber} />
+            </Document>
           )}
         </label>
       </div>
