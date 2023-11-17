@@ -90,9 +90,9 @@ function RenderTableDataRow ({data})
         <Table.Cell>{data.time}</Table.Cell>
         <Table.Cell>{data.file_name}</Table.Cell>
         <Table.Cell>{data.location}</Table.Cell>
-        <Table.Cell>{data.number_of_page}</Table.Cell>
-        <Table.Cell>{data.copys}</Table.Cell>
-        <Table.Cell>{data.size}</Table.Cell>
+        <Table.Cell>{data.number_of_page} Trang</Table.Cell>
+        <Table.Cell>{data.copys} Bản sao</Table.Cell>
+        <Table.Cell>A{data.size}</Table.Cell>
         <Table.Cell>{data.print_type}</Table.Cell>
       </Table.Row>
     )
@@ -117,13 +117,45 @@ function RenderTableDataRow ({data})
 const SectionTable = () => {
   const [query,setQuery] = useState("")
   const [currentPage, setcurrentPage] = useState(0)
+  const [sort,setSort] = useState("")
 
   
   var final_Data = mData.filter((item) => 
     item.file_name.toLowerCase().includes(query)
   )
 
-  
+  if (sort == "activity_status") 
+  final_Data.sort(function(a,b){
+      return (a.activity_status < b.activity_status)?-1:1
+  })
+  else if (sort == "time") 
+  final_Data.sort(function(a,b){
+      return (a.time > b.time)?-1:1
+  })
+  else if (sort == "file_name") 
+  final_Data.sort(function(a,b){
+      return (a.file_name < b.file_name)?-1:1
+  })
+  else if (sort == "location") 
+  final_Data.sort(function(a,b){
+      return (a.location < b.location)?-1:1
+  })
+  else if (sort == "number_of_page") 
+  final_Data.sort(function(a,b){
+      return a.number_of_page-b.number_of_page
+  })
+  else if (sort == "copys") 
+  final_Data.sort(function(a,b){
+      return a.copys-b.copys
+  })
+  else if (sort == "size") 
+  final_Data.sort(function(a,b){
+      return a.size-b.size
+  })
+  else if (sort == "print_type") 
+  final_Data.sort(function(a,b){
+      return (a.print_type < b.print_type)?-1:1
+  })
 
   return (
     <div className="flex flex-col  mt-16 mx-40 max-w-[1700px] min-h-[400px] px-10 py-14 rounded border">
@@ -158,49 +190,49 @@ const SectionTable = () => {
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("activity_status")}>
                   <span>Trạng thái</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("time")}>
                   <span>Thời gian</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("file_name")}>
                   <span>Tên file</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("location")}>
                   <span>In tại toà</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("number_of_page")}>
                   <span>Số trang</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("copys")}>
                   <span>Số bản sao</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("size")}>
                   <span>Kích thước</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer">
+                <div className="flex items-center gap-1 cursor-pointer" onClick={() => setSort("print_type")}>
                   <span>In trang</span>
                   <CaretSortIcon className="w-4 h-4" />
                 </div>
