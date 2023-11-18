@@ -76,20 +76,16 @@ const SectionPrinting = () => {
   return (
     <div className="flex items-center gap-5 mt-12 mb-4 mx-40 h-[650px] p-10 rounded border">
       <div className="flex flex-col justify-center items-center w-3/5 h-full rounded border">
-        <label className="w-1/3 py-1 px-5 bg-[#3E62DD] hover:bg-[#3E62DD]/90 rounded cursor-pointer text-center text-white font-medium">
+        <label
+          className="w-1/3 py-1 px-5 bg-[#3E62DD] hover:bg-[#3E62DD]/90 rounded cursor-pointer text-center text-white font-medium"
+          // onClick={handleSelectFile}
+        >
           <span className="cursor-pointer">Chọn file bạn cần in</span>
-          <input
+          {/* <input
             id="inputSelectLocalFile"
-            onChange={handleSelectFile}
-            type="file"
+            // type="file"
             className="absolute inset-0 z-50 w-full h-full p-0 m-0 outline-none opacity-0 cursor-pointer"
-          />
-
-          {selectedFile !== undefined && (
-            <Document file={selectedFile} onLoadSuccess={onDocumentLoadSuccess}>
-              <Page pageNumber={pageNumber} />
-            </Document>
-          )}
+          /> */}
         </label>
       </div>
       <div className="flex flex-col w-3/6 h-full justify-between rounded border py-5">
