@@ -91,15 +91,6 @@ const mockPrinterData: PrinterViewObject[] = [
     description: "This is a printer",
     isRunning: true,
   },
-  {
-    id: "10",
-    name: "Máy in H1 Lầu 4",
-    facility: "Dĩ An",
-    building: "Toà H1",
-    room: "Phòng 401",
-    description: "This is a printer",
-    isRunning: true,
-  },
 
   {
     id: "11",
@@ -247,6 +238,15 @@ const mockPrinterData: PrinterViewObject[] = [
   },
   {
     id: "27",
+    name: "Máy in H1 Lầu 4",
+    facility: "Dĩ An",
+    building: "Toà H1",
+    room: "Phòng 401",
+    description: "This is a printer",
+    isRunning: true,
+  },
+  {
+    id: "28",
     name: "Máy in H1 Lầu 4",
     facility: "Dĩ An",
     building: "Toà H1",

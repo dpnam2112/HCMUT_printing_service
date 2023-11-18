@@ -5,7 +5,7 @@ import {
   CaretSortIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import { Button, Table, TextField } from "@radix-ui/themes";
+import { Button, Table, TextField, Tooltip } from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
 import {
   PrinterRenderViewProps,
@@ -60,7 +60,11 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
 
   // Update table rows when user type text in filter input
   useEffect(() => {
-    const newPrinterListRendered = getFilteredPrinterList(printerList);
+    const newPrinterListRendered = state.getSortedPrinters(
+      getFilteredPrinterList(printerList),
+      sortConfig
+    );
+
     setPrinterListRendered(newPrinterListRendered);
   }, [textFilter]);
 
@@ -131,6 +135,8 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const getFilteredPrinterList = (list: PrinterRenderViewProps[]) => {
     const text = textFilter.toLowerCase();
 
+    console.log("huy : ", text);
+
     if (!text) {
       return list;
     }
@@ -176,59 +182,79 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                 placeholder="Lọc các hàng"
                 value={textFilter}
                 onChange={(e) => {
-                  setTextFilter(e.target.value.trim());
+                  setTextFilter(e.target.value);
                 }}
               />
             </TextField.Root>
-            <Button
-              className="cursor-pointer"
-              variant={isEditing ? "classic" : "surface"}
-              onClick={() => {
-                if (isEditing) {
-                  handleOnClickCompleteEditing();
-                } else {
-                  setSelectedRowIDs([]);
-                  setIsDeleting(false);
-                  setIsEditing(true);
-                }
-              }}
+            <Tooltip
+              content={`${
+                isEditing
+                  ? "Bấm để cập nhật thông tin các máy in đã được chỉnh sửa lên server"
+                  : "Bấm để chỉnh sửa thông tin các máy in"
+              }`}
             >
-              <div className="flex items-center gap-2">
-                {isEditing && (
-                  <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
-                )}
-                {isEditing ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
-              </div>
-            </Button>
-            <Button
-              className="cursor-pointer"
-              variant={"surface"}
-              onClick={() => {
-                setCurrentView(ADMIN_MANAGEMENT_VIEW.ADD_PRINTER);
-              }}
+              <Button
+                className="cursor-pointer"
+                variant={isEditing ? "classic" : "surface"}
+                onClick={() => {
+                  if (isEditing) {
+                    handleOnClickCompleteEditing();
+                  } else {
+                    setSelectedRowIDs([]);
+                    setIsDeleting(false);
+                    setIsEditing(true);
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  {isEditing && (
+                    <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
+                  )}
+                  {isEditing ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
+                </div>
+              </Button>
+            </Tooltip>
+
+            <Tooltip
+              content={`${
+                isDeleting
+                  ? "Bấm để xoá các máy in đang được chọn"
+                  : "Bấm để chọn các máy in muốn xoá"
+              }`}
             >
-              Thêm mới
-            </Button>
-            <Button
-              className={`cursor-pointer`}
-              onClick={() => {
-                if (isDeleting) {
-                  handleOnClickCompleteDelete();
-                } else {
-                  setSelectedRowIDs([]);
-                  setIsEditing(false);
-                  setIsDeleting(true);
-                }
-              }}
-              variant={isDeleting ? "classic" : "surface"}
-            >
-              <div className="flex items-center gap-2">
-                {isDeleting && (
-                  <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
-                )}
-                {isDeleting ? "Hoàn tất xoá" : "Xoá"}
-              </div>
-            </Button>
+              <Button
+                className={`cursor-pointer`}
+                onClick={() => {
+                  if (isDeleting) {
+                    handleOnClickCompleteDelete();
+                  } else {
+                    setSelectedRowIDs([]);
+                    setIsEditing(false);
+                    setIsDeleting(true);
+                  }
+                }}
+                variant={isDeleting ? "classic" : "surface"}
+              >
+                <div className="flex items-center gap-2">
+                  {isDeleting && (
+                    <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
+                  )}
+                  {isDeleting ? "Hoàn tất xoá" : "Xoá"}
+                </div>
+              </Button>
+            </Tooltip>
+
+            <Tooltip content="Thêm một máy in mới">
+              <Button
+                className="cursor-pointer"
+                variant={"surface"}
+                onClick={() => {
+                  setCurrentView(ADMIN_MANAGEMENT_VIEW.ADD_PRINTER);
+                }}
+              >
+                Thêm
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </div>

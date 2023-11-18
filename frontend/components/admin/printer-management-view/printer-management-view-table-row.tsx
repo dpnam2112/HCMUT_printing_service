@@ -61,6 +61,7 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
             }}
           >
             <Checkbox
+              checked={data.isSelectedDelete}
               color="indigo"
               className="cursor-pointer"
               onChange={() => {}}

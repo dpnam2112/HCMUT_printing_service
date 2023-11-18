@@ -41,13 +41,13 @@ const PrinterManagementViewBottom: FC<PrinterManagementViewBottomProps> = ({
       <div>
         {isDeleting && selectedRowNum > 0 && (
           <span className="font-medium text-sm">
-            Bạn đang chọn {selectedRowNum} hàng.
+            Bạn đang chọn {selectedRowNum} máy in.
           </span>
         )}
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm text">Số hàng mỗi trang</span>
+          <span className="font-medium text-sm text">Số máy in mỗi trang</span>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger className="w-full">
               <Button className="w-fit px-0 h-5">
@@ -66,7 +66,7 @@ const PrinterManagementViewBottom: FC<PrinterManagementViewBottomProps> = ({
                   }
                 }}
               >
-                5 hàng
+                5 máy in
               </DropdownMenuCheckboxItem>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
@@ -77,7 +77,7 @@ const PrinterManagementViewBottom: FC<PrinterManagementViewBottomProps> = ({
                   }
                 }}
               >
-                10 hàng
+                10 máy in
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu.Root>
