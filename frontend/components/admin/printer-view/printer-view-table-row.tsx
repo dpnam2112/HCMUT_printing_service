@@ -1,16 +1,26 @@
 import { FC } from "react";
 import type { PrinterRenderViewProps } from "../../../models/types";
-import { Table } from "@radix-ui/themes";
+import { Checkbox, Table } from "@radix-ui/themes";
 
 type PrinterViewTableRowProps = {
   data: PrinterRenderViewProps;
+  isDeleting: boolean;
+  handleSelectRow: (idRow: string) => void;
 };
 
-const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({ data }) => {
+const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
+  data,
+  isDeleting,
+  handleSelectRow,
+}) => {
   return (
     <Table.Row>
       <Table.Cell>
-        <div className="flex items-center gap-2 w-full h-full">
+        <div
+          className={`flex items-center gap-2 w-full h-full ${
+            data.isSelectedDelete && "line-through"
+          }`}
+        >
           <div
             className={`${
               data.isRunning ? "bg-green-500" : "bg-red-500"
@@ -37,6 +47,22 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({ data }) => {
       <Table.Cell>
         {renderText(data.room, data.isRunning, data.isSelectedDelete)}
       </Table.Cell>
+      {isDeleting && (
+        <Table.Cell>
+          <div
+            className="w-full h-full cursor-pointer"
+            onClick={() => {
+              handleSelectRow(data.id);
+            }}
+          >
+            <Checkbox
+              color="indigo"
+              className="cursor-pointer"
+              onChange={() => {}}
+            />
+          </div>
+        </Table.Cell>
+      )}
     </Table.Row>
   );
 };

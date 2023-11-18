@@ -19,7 +19,7 @@ import {
   Table,
   TextField,
 } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PrinterRenderViewProps,
   PrinterViewObject,
@@ -34,6 +34,45 @@ const PrinterView = () => {
     useState<PrinterRenderViewProps[]>(mockPrinterData);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isModifying, setIsModifying] = useState<boolean>(false);
+  const [selectedRowIDs, setSelectedRowIDs] = useState<string[]>([]);
+
+  const handleSelectRow = (idRow: string) => {
+    if (selectedRowIDs.includes(idRow)) {
+      setSelectedRowIDs(selectedRowIDs.filter((id) => id !== idRow));
+    } else {
+      setSelectedRowIDs([...selectedRowIDs, idRow]);
+    }
+  };
+
+  useEffect(() => {
+    if (isDeleting) {
+      // Update table rows
+      setPrinterListRendered(
+        printerListRendered.map((printer: PrinterRenderViewProps) => {
+          return {
+            ...printer,
+            isSelectedDelete: selectedRowIDs.includes(printer.id),
+          };
+        })
+      );
+      return;
+    }
+  }, [selectedRowIDs.length]);
+
+  const handleOnClickCompleteDelete = () => {
+    const newPrinterListRendered = printerListRendered.flatMap(
+      (printer: PrinterRenderViewProps) => {
+        if (selectedRowIDs.includes(printer.id)) {
+          return [];
+        }
+        return [printer];
+      }
+    );
+
+    setPrinterListRendered(newPrinterListRendered);
+    setSelectedRowIDs([]);
+    setIsDeleting(false);
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-5 p-5">
@@ -72,7 +111,11 @@ const PrinterView = () => {
             <Button
               className={`cursor-pointer`}
               onClick={() => {
-                setIsDeleting(!isDeleting);
+                if (isDeleting) {
+                  handleOnClickCompleteDelete();
+                } else {
+                  setIsDeleting(true);
+                }
               }}
               variant={isDeleting ? "classic" : "surface"}
             >
@@ -96,12 +139,19 @@ const PrinterView = () => {
               <Table.ColumnHeaderCell>Cơ sở</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Toà</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Phòng</Table.ColumnHeaderCell>
+              {isDeleting && <Table.ColumnHeaderCell> </Table.ColumnHeaderCell>}
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {printerListRendered.map((printer: PrinterViewObject) => {
-              return <PrinterViewTableRow data={printer} />;
+              return (
+                <PrinterViewTableRow
+                  data={printer}
+                  isDeleting={isDeleting}
+                  handleSelectRow={handleSelectRow}
+                />
+              );
             })}
           </Table.Body>
         </Table.Root>

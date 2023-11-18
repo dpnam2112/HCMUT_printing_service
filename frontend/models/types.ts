@@ -1,4 +1,5 @@
 export type PrinterViewObject = {
+  id: string;
   name: string;
   facility: string;
   building: string;
