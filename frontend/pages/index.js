@@ -11,17 +11,8 @@ export default function Index() {
         <Container>
           <SectionHero />
         </Container>
-        {/* <div className="w-full px-6 md:px-24">
-          <SectionCompany />
-        </div> */}
         <SectionPrinting />
         <SectionTable />
-        {/* {/* <SectionMainFeatures /> */}
-        {/* <SectionRemoteDevice /> */}
-        {/* <SectionZeroSetup />
-        <SectionFeatureList /> 
-        <SectionTestimonials /> */}
-        <Container>{/* <SectionCTA /> */}</Container>
       </Layout>
     </>
   );
