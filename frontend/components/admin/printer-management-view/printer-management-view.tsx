@@ -42,6 +42,7 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isModifying, setIsModifying] = useState<boolean>(false);
   const [selectedRowIDs, setSelectedRowIDs] = useState<string[]>([]);
+  const [textFilter, setTextFilter] = useState<string>("");
 
   const handleSelectRow = (idRow: string) => {
     if (selectedRowIDs.includes(idRow)) {
@@ -51,9 +52,9 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     }
   };
 
+  // Update table rows when user selects rows
   useEffect(() => {
     if (isDeleting) {
-      // Update table rows
       setPrinterListRendered(
         printerListRendered.map((printer: PrinterRenderViewProps) => {
           return {
@@ -66,15 +67,13 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     }
   }, [selectedRowIDs.length]);
 
+  // Update table rows when user type text in filter input
+  useEffect(() => {
+    const newPrinterListRendered = getFilteredPrinterList(printerList);
+    setPrinterListRendered(newPrinterListRendered);
+  }, [textFilter]);
+
   const handleOnClickCompleteDelete = () => {
-    const newPrinterListRendered = printerListRendered.flatMap(
-      (printer: PrinterRenderViewProps) => {
-        if (selectedRowIDs.includes(printer.id)) {
-          return [];
-        }
-        return [printer];
-      }
-    );
     const newPrinterList = printerList.flatMap((printer: PrinterViewObject) => {
       if (selectedRowIDs.includes(printer.id)) {
         return [];
@@ -83,41 +82,58 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     });
 
     setPrinterList(newPrinterList);
-    setPrinterListRendered(newPrinterListRendered);
+    setPrinterListRendered(getFilteredPrinterList(newPrinterList));
+
     setSelectedRowIDs([]);
     setIsDeleting(false);
+
+    handleFocusInputField();
   };
 
-  const handleOnClickCompleteModify = () => {};
+  const handleOnClickCompleteModify = () => {
+    setSelectedRowIDs([]);
+    setIsDeleting(false);
 
-  const handleOnChangeInput = (text: string) => {
-    const newPrinterListRendered = printerList.flatMap(
-      (printer: PrinterRenderViewProps) => {
-        if (printer.name.toLowerCase().includes(text)) {
-          return [printer];
-        }
-        if (printer.facility.toLowerCase().includes(text)) {
-          return [printer];
-        }
-        if (printer.building.toLowerCase().includes(text)) {
-          return [printer];
-        }
-        if (printer.room.toLowerCase().includes(text)) {
-          return [printer];
-        }
-        const status = printer.isRunning ? "Đang hoạt động" : "Không hoạt động";
-        if (status.toLowerCase().includes(text)) {
-          return [printer];
-        }
-        return [];
+    handleFocusInputField();
+  };
+
+  const handleFocusInputField = () => {
+    const ele = document.getElementById("inputFilterPrinter");
+    if (ele) {
+      ele.focus();
+    }
+  };
+
+  const getFilteredPrinterList = (list: PrinterRenderViewProps[]) => {
+    const text = textFilter.toLowerCase();
+
+    if (!text) {
+      return list;
+    }
+
+    return list.flatMap((printer: PrinterRenderViewProps) => {
+      if (printer.name.toLowerCase().includes(text)) {
+        return [printer];
       }
-    );
-
-    setPrinterListRendered(newPrinterListRendered);
+      if (printer.facility.toLowerCase().includes(text)) {
+        return [printer];
+      }
+      if (printer.building.toLowerCase().includes(text)) {
+        return [printer];
+      }
+      if (printer.room.toLowerCase().includes(text)) {
+        return [printer];
+      }
+      const status = printer.isRunning ? "Đang hoạt động" : "Không hoạt động";
+      if (status.toLowerCase().includes(text)) {
+        return [printer];
+      }
+      return [];
+    });
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-5 p-5">
+    <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">
           <span className="font-bold text-2xl">Xin chào SPSO!</span>
@@ -132,9 +148,11 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                 <MagnifyingGlassIcon height="16" width="16" />
               </TextField.Slot>
               <TextField.Input
+                id="inputFilterPrinter"
                 placeholder="Lọc các hàng..."
+                value={textFilter}
                 onChange={(e) => {
-                  handleOnChangeInput(e.target.value.trim().toLowerCase());
+                  setTextFilter(e.target.value.trim());
                 }}
               />
             </TextField.Root>
@@ -142,7 +160,13 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
               className="cursor-pointer"
               variant={isModifying ? "classic" : "surface"}
               onClick={() => {
-                setIsModifying(!isModifying);
+                if (isModifying) {
+                  handleOnClickCompleteModify();
+                } else {
+                  setSelectedRowIDs([]);
+                  setIsDeleting(false);
+                  setIsModifying(true);
+                }
               }}
             >
               <div className="flex items-center gap-2">
@@ -167,6 +191,8 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                 if (isDeleting) {
                   handleOnClickCompleteDelete();
                 } else {
+                  setSelectedRowIDs([]);
+                  setIsModifying(false);
                   setIsDeleting(true);
                 }
               }}
@@ -183,8 +209,8 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
         </div>
       </div>
 
-      <div className="border rounded">
-        <Table.Root>
+      <div className="border rounded overflow-x-auto">
+        <Table.Root className="overflow-x-auto">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Trạng thái</Table.ColumnHeaderCell>
@@ -196,10 +222,11 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
             </Table.Row>
           </Table.Header>
 
-          <Table.Body>
+          <Table.Body className=" overflow-x-auto">
             {printerListRendered.map((printer: PrinterViewObject) => {
               return (
                 <PrinterViewTableRow
+                  key={printer.id}
                   data={printer}
                   isDeleting={isDeleting}
                   handleSelectRow={handleSelectRow}
