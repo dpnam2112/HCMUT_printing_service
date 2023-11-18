@@ -158,7 +158,7 @@ const SectionTable = () => {
   })
 
   return (
-    <div className="flex flex-col  mt-16 mx-40 max-w-[1700px] min-h-[400px] px-10 py-14 rounded border">
+    <div className="flex flex-col mt-16 mx-40 max-w-[1700px] min-h-[400px] px-10 py-14 rounded border">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">
           <span className="font-bold text-2xl">Xin chào Huy!</span>

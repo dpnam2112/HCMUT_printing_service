@@ -3,7 +3,7 @@ from django.views import View
 
 # Create your views here.
 
-class UserLogin(View):
+class FetchUserInfo(View):
     """
         If users are not logged in before, redirect them to CAS authentication page.
 
@@ -17,16 +17,6 @@ class UserLogin(View):
 
         If the user is logged in the first time, data about users are stored in
         the database.
-    """
-
-    http_method_names = ['get']
-
-    def get(self, request, format=None):
-        pass
-
-class UserLogout(View):
-    """
-        Log user out of the service.
     """
 
     http_method_names = ['get']
