@@ -53,8 +53,9 @@ enum MENU_PRINT_PAGE {
 }
 
 enum ADMIN_MANAGEMENT_VIEW {
-  ADD_EXTENSION = "Phần Mở Rộng",
-  ADD_PRINTER = "Máy In",
+  ADD_EXTENSION = "Thêm Đuôi File",
+  ADD_PRINTER = "Thêm Máy In",
+  PRINTER_MANAGEMENT = "Quản Lý Máy In",
   PRINTING_HISTORY = "Lịch Sử In",
   TRANSACTION_HISTORY = "Lịch Sử Giao Dịch",
 }

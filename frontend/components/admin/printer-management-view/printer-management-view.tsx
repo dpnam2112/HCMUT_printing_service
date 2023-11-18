@@ -19,15 +19,22 @@ import {
   Table,
   TextField,
 } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   PrinterRenderViewProps,
   PrinterViewObject,
 } from "../../../models/types";
 import { mockPrinterData } from "./mock-data";
-import PrinterViewTableRow from "./printer-view-table-row";
+import PrinterViewTableRow from "./printer-management-view-table-row";
+import { ADMIN_MANAGEMENT_VIEW } from "../../../models/constant";
 
-const PrinterView = () => {
+type PrinterManagementViewProps = {
+  setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void;
+};
+
+const PrinterManagementView: FC<PrinterManagementViewProps> = ({
+  setCurrentView,
+}) => {
   const [printerList, setPrinterList] =
     useState<PrinterViewObject[]>(mockPrinterData);
   const [printerListRendered, setPrinterListRendered] =
@@ -68,10 +75,45 @@ const PrinterView = () => {
         return [printer];
       }
     );
+    const newPrinterList = printerList.flatMap((printer: PrinterViewObject) => {
+      if (selectedRowIDs.includes(printer.id)) {
+        return [];
+      }
+      return [printer];
+    });
 
+    setPrinterList(newPrinterList);
     setPrinterListRendered(newPrinterListRendered);
     setSelectedRowIDs([]);
     setIsDeleting(false);
+  };
+
+  const handleOnClickCompleteModify = () => {};
+
+  const handleOnChangeInput = (text: string) => {
+    const newPrinterListRendered = printerList.flatMap(
+      (printer: PrinterRenderViewProps) => {
+        if (printer.name.toLowerCase().includes(text)) {
+          return [printer];
+        }
+        if (printer.facility.toLowerCase().includes(text)) {
+          return [printer];
+        }
+        if (printer.building.toLowerCase().includes(text)) {
+          return [printer];
+        }
+        if (printer.room.toLowerCase().includes(text)) {
+          return [printer];
+        }
+        const status = printer.isRunning ? "Đang hoạt động" : "Không hoạt động";
+        if (status.toLowerCase().includes(text)) {
+          return [printer];
+        }
+        return [];
+      }
+    );
+
+    setPrinterListRendered(newPrinterListRendered);
   };
 
   return (
@@ -89,7 +131,12 @@ const PrinterView = () => {
               <TextField.Slot>
                 <MagnifyingGlassIcon height="16" width="16" />
               </TextField.Slot>
-              <TextField.Input placeholder="Tìm kiếm máy in..." />
+              <TextField.Input
+                placeholder="Lọc các hàng..."
+                onChange={(e) => {
+                  handleOnChangeInput(e.target.value.trim().toLowerCase());
+                }}
+              />
             </TextField.Root>
             <Button
               className="cursor-pointer"
@@ -105,7 +152,13 @@ const PrinterView = () => {
                 {isModifying ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
               </div>
             </Button>
-            <Button className="cursor-pointer" variant={"surface"}>
+            <Button
+              className="cursor-pointer"
+              variant={"surface"}
+              onClick={() => {
+                setCurrentView(ADMIN_MANAGEMENT_VIEW.ADD_PRINTER);
+              }}
+            >
               Thêm mới
             </Button>
             <Button
@@ -160,4 +213,4 @@ const PrinterView = () => {
   );
 };
 
-export default PrinterView;
+export default PrinterManagementView;
