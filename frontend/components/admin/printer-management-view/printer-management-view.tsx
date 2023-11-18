@@ -5,28 +5,20 @@ import {
   CaretSortIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import {
-  Avatar,
-  Button,
-  DropdownMenu,
-  Flex,
-  IconButton,
-  Table,
-  Text,
-  TextField,
-} from "@radix-ui/themes";
+import { Button, Table, TextField } from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
 import {
   PrinterRenderViewProps,
   PrinterViewObject,
 } from "../../../models/types";
 import { mockPrinterData } from "./mock-data";
-import PrinterViewTableRow from "./printer-management-view-table-row";
 import {
   ADMIN_MANAGEMENT_VIEW,
   SORT_CONFIG_PRINTER_MANAGEMENT,
 } from "../../../models/constant";
 import PrinterManagementState from "./models/printer-management-state";
+import PrinterManagementViewBottom from "./printer-management-view-bottom";
+import PrinterViewTableBody from "./printer-management-view-table-body";
 
 type PrinterManagementViewProps = {
   setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void;
@@ -48,14 +40,8 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const [sortConfig, setSortConfig] = useState<
     SORT_CONFIG_PRINTER_MANAGEMENT | undefined
   >(undefined);
-
-  const handleSelectRow = (idRow: string) => {
-    if (selectedRowIDs.includes(idRow)) {
-      setSelectedRowIDs(selectedRowIDs.filter((id) => id !== idRow));
-    } else {
-      setSelectedRowIDs([...selectedRowIDs, idRow]);
-    }
-  };
+  const [rowsNumPerPage, setRowsNumPerPage] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Update table rows when user selects rows
   useEffect(() => {
@@ -85,6 +71,14 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     );
     setPrinterListRendered(getFilteredPrinterList(newPrinterListRendered));
   }, [sortConfig]);
+
+  const handleSelectRow = (idRow: string) => {
+    if (selectedRowIDs.includes(idRow)) {
+      setSelectedRowIDs(selectedRowIDs.filter((id) => id !== idRow));
+    } else {
+      setSelectedRowIDs([...selectedRowIDs, idRow]);
+    }
+  };
 
   const handleOnClickCompleteDelete = () => {
     const newPrinterList = printerList.flatMap((printer: PrinterViewObject) => {
@@ -179,7 +173,7 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
               </TextField.Slot>
               <TextField.Input
                 id="inputFilterPrinter"
-                placeholder="Lọc các hàng..."
+                placeholder="Lọc các hàng"
                 value={textFilter}
                 onChange={(e) => {
                   setTextFilter(e.target.value.trim());
@@ -377,21 +371,28 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
           </Table.Header>
 
           <Table.Body className=" overflow-x-auto">
-            {printerListRendered.map((printer: PrinterViewObject) => {
-              return (
-                <PrinterViewTableRow
-                  key={printer.id}
-                  data={printer}
-                  isEditing={isEditing}
-                  isDeleting={isDeleting}
-                  handleSelectRow={handleSelectRow}
-                  handleClickSave={handleClickSave}
-                />
-              );
-            })}
+            <PrinterViewTableBody
+              printerListRendered={printerListRendered}
+              rowsNumPerPage={rowsNumPerPage}
+              currentPage={currentPage}
+              isEditing={isEditing}
+              isDeleting={isDeleting}
+              handleSelectRow={handleSelectRow}
+              handleClickSave={handleClickSave}
+            />
           </Table.Body>
         </Table.Root>
       </div>
+
+      <PrinterManagementViewBottom
+        isDeleting={isDeleting}
+        selectedRowNum={selectedRowIDs.length}
+        rowsNumPerPage={rowsNumPerPage}
+        rowsNum={printerListRendered.length}
+        setRowsNumPerPage={setRowsNumPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };
