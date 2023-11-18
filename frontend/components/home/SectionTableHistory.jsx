@@ -37,10 +37,10 @@ const SectionTableHistory = () => {
               </TextField.Slot>
               <TextField.Input placeholder="Tìm kiếm bản in..." />
             </TextField.Root>
-            <Button variant="solid" className="cursor-pointer" highContrast>
+            <Button className="cursor-pointer" highContrast>
               Xem lịch sử in
             </Button>
-            <Button variant="solid" className="cursor-pointer" highContrast>
+            <Button className="cursor-pointer" highContrast>
               Mua thêm giấy in
             </Button>
           </div>
@@ -203,19 +203,19 @@ const SectionTableHistory = () => {
           <span className="font-medium text-base">Trang 1 trên 10</span>
           <div className="flex items-center gap-5">
             <div className="flex items-center gap-2">
-              <IconButton variant="solid" highContrast>
+              <IconButton highContrast>
                 <DoubleArrowLeftIcon width="20" height="18" />
               </IconButton>
-              <IconButton variant="solid" highContrast>
+              <IconButton highContrast>
                 <ChevronLeftIcon width="20" height="18" />
               </IconButton>
             </div>
 
             <div className="flex items-center gap-2">
-              <IconButton variant="solid" highContrast>
+              <IconButton highContrast>
                 <ChevronRightIcon width="20" height="18" />
               </IconButton>
-              <IconButton variant="solid" highContrast>
+              <IconButton highContrast>
                 <DoubleArrowRightIcon width="20" height="18" />
               </IconButton>
             </div>
