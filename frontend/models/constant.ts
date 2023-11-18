@@ -20,10 +20,12 @@ enum MENU_BUILDING_CS1 {
 }
 
 enum MENU_ROOM {
+  R_101 = "Phòng 101",
   R_201 = "Phòng 201",
   R_207 = "Phòng 207",
-  R_101 = "Phòng 101",
+  R_304 = "Phòng 304",
   R_401 = "Phòng 401",
+  R_502 = "Phòng 502",
   R_601 = "Phòng 601",
 }
 

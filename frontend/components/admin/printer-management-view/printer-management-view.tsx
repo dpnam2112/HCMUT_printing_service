@@ -1,15 +1,5 @@
-import Link from "next/link";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import {
-  ArrowRightIcon,
-  CaretDownIcon,
-  CaretSortIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
   Avatar,
   Button,
@@ -40,7 +30,7 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const [printerListRendered, setPrinterListRendered] =
     useState<PrinterRenderViewProps[]>(mockPrinterData);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [isModifying, setIsModifying] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedRowIDs, setSelectedRowIDs] = useState<string[]>([]);
   const [textFilter, setTextFilter] = useState<string>("");
 
@@ -90,10 +80,11 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     handleFocusInputField();
   };
 
-  const handleOnClickCompleteModify = () => {
-    setSelectedRowIDs([]);
-    setIsDeleting(false);
+  const handleOnClickCompleteEditing = () => {
+    // Convert newPrinterListRendered to printerList
+    // and send it to server
 
+    setIsEditing(false);
     handleFocusInputField();
   };
 
@@ -102,6 +93,22 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     if (ele) {
       ele.focus();
     }
+  };
+
+  const handleClickSave = (newData: PrinterRenderViewProps) => {
+    const newPrinterListRendered = printerListRendered.map(
+      (printer: PrinterViewObject) => {
+        if (printer.id === newData.id) {
+          return {
+            ...newData,
+          };
+        }
+        return printer;
+      }
+    );
+
+    setPrinterList(newPrinterListRendered);
+    setPrinterListRendered(getFilteredPrinterList(newPrinterListRendered));
   };
 
   const getFilteredPrinterList = (list: PrinterRenderViewProps[]) => {
@@ -158,22 +165,22 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
             </TextField.Root>
             <Button
               className="cursor-pointer"
-              variant={isModifying ? "classic" : "surface"}
+              variant={isEditing ? "classic" : "surface"}
               onClick={() => {
-                if (isModifying) {
-                  handleOnClickCompleteModify();
+                if (isEditing) {
+                  handleOnClickCompleteEditing();
                 } else {
                   setSelectedRowIDs([]);
                   setIsDeleting(false);
-                  setIsModifying(true);
+                  setIsEditing(true);
                 }
               }}
             >
               <div className="flex items-center gap-2">
-                {isModifying && (
+                {isEditing && (
                   <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
                 )}
-                {isModifying ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
+                {isEditing ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
               </div>
             </Button>
             <Button
@@ -192,7 +199,7 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                   handleOnClickCompleteDelete();
                 } else {
                   setSelectedRowIDs([]);
-                  setIsModifying(false);
+                  setIsEditing(false);
                   setIsDeleting(true);
                 }
               }}
@@ -218,7 +225,9 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
               <Table.ColumnHeaderCell>Cơ sở</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Toà</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Phòng</Table.ColumnHeaderCell>
-              {isDeleting && <Table.ColumnHeaderCell> </Table.ColumnHeaderCell>}
+              {(isDeleting || isEditing) && (
+                <Table.ColumnHeaderCell> </Table.ColumnHeaderCell>
+              )}
             </Table.Row>
           </Table.Header>
 
@@ -228,8 +237,10 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                 <PrinterViewTableRow
                   key={printer.id}
                   data={printer}
+                  isEditing={isEditing}
                   isDeleting={isDeleting}
                   handleSelectRow={handleSelectRow}
+                  handleClickSave={handleClickSave}
                 />
               );
             })}

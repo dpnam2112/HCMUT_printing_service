@@ -1,17 +1,22 @@
 import { FC } from "react";
 import type { PrinterRenderViewProps } from "../../../models/types";
-import { Checkbox, Table } from "@radix-ui/themes";
+import { Button, Checkbox, Dialog, Table } from "@radix-ui/themes";
+import DialogEditingPrinter from "./dialog-editing-printer";
 
 type PrinterViewTableRowProps = {
   data: PrinterRenderViewProps;
   isDeleting: boolean;
+  isEditing: boolean;
   handleSelectRow: (idRow: string) => void;
+  handleClickSave: (newData: PrinterRenderViewProps) => void;
 };
 
 const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
   data,
   isDeleting,
+  isEditing,
   handleSelectRow,
+  handleClickSave,
 }) => {
   return (
     <Table.Row>
@@ -63,6 +68,21 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
           </div>
         </Table.Cell>
       )}
+      {isEditing && (
+        <Table.Cell>
+          <div className="w-full h-full cursor-pointer" onClick={() => {}}>
+            <Dialog.Root>
+              <Dialog.Trigger>
+                <Button variant="surface">Chỉnh Sửa</Button>
+              </Dialog.Trigger>
+              <DialogEditingPrinter
+                data={data}
+                handleClickSave={handleClickSave}
+              />
+            </Dialog.Root>
+          </div>
+        </Table.Cell>
+      )}
     </Table.Row>
   );
 };
@@ -73,13 +93,15 @@ const renderText = (
   isSelectedDelete: boolean
 ) => {
   return (
-    <span
-      className={`select-none font-medium text-sm ${
-        isSelectedDelete && "line-through"
-      } ${!isRunning && "text-red-500"}`}
-    >
-      {text}
-    </span>
+    <div className="w-full h-full flex items-center">
+      <span
+        className={`select-none font-medium text-sm ${
+          isSelectedDelete && "line-through"
+        } ${!isRunning && "text-red-500"}`}
+      >
+        {text}
+      </span>
+    </div>
   );
 };
 
