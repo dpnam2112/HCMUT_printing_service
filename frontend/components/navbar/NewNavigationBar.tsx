@@ -28,6 +28,12 @@ export default function NewNavigationBar() {
         </Link>
 
         <div className="items-center justify-end md:flex md:flex-1 lg:w-0 gap-8">
+          <Link href={"/admin"}>
+            <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
+              Admin
+            </span>
+          </Link>
+
           <Link href={"/support"}>
             <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
               Liên hệ

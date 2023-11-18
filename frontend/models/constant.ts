@@ -52,6 +52,13 @@ enum MENU_PRINT_PAGE {
   CUSTOM = "Tùy chỉnh",
 }
 
+enum ADMIN_MANAGEMENT_VIEW {
+  ADD_EXTENSION = "Phần Mở Rộng",
+  ADD_PRINTER = "Máy In",
+  PRINTING_HISTORY = "Lịch Sử In",
+  TRANSACTION_HISTORY = "Lịch Sử Giao Dịch",
+}
+
 export {
   MENU_FACILITY,
   MENU_BUILDING_CS1,
@@ -61,4 +68,5 @@ export {
   MENU_PRINT_TYPE,
   MENU_NUMBER_OF_COPY,
   MENU_PRINT_PAGE,
+  ADMIN_MANAGEMENT_VIEW,
 };
