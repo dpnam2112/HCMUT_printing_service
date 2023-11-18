@@ -22,7 +22,7 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
     <Table.Row>
       <Table.Cell>
         <div
-          className={`flex items-center gap-2 w-full h-full ${
+          className={`flex items-center gap-2 w-full h-full pl-2 ${
             data.isSelectedDelete && "line-through"
           }`}
         >
@@ -93,7 +93,7 @@ const renderText = (
   isSelectedDelete: boolean
 ) => {
   return (
-    <div className="w-full h-full flex items-center">
+    <div className="w-full h-full flex items-center pl-2">
       <span
         className={`select-none font-medium text-sm ${
           isSelectedDelete && "line-through"

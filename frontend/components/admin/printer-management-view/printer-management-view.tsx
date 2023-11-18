@@ -1,5 +1,10 @@
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CaretSortIcon,
+  MagnifyingGlassIcon,
+} from "@radix-ui/react-icons";
 import {
   Avatar,
   Button,
@@ -7,6 +12,7 @@ import {
   Flex,
   IconButton,
   Table,
+  Text,
   TextField,
 } from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
@@ -16,11 +22,17 @@ import {
 } from "../../../models/types";
 import { mockPrinterData } from "./mock-data";
 import PrinterViewTableRow from "./printer-management-view-table-row";
-import { ADMIN_MANAGEMENT_VIEW } from "../../../models/constant";
+import {
+  ADMIN_MANAGEMENT_VIEW,
+  SORT_CONFIG_PRINTER_MANAGEMENT,
+} from "../../../models/constant";
+import PrinterManagementState from "./models/printer-management-state";
 
 type PrinterManagementViewProps = {
   setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void;
 };
+
+const state = new PrinterManagementState();
 
 const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   setCurrentView,
@@ -33,6 +45,9 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedRowIDs, setSelectedRowIDs] = useState<string[]>([]);
   const [textFilter, setTextFilter] = useState<string>("");
+  const [sortConfig, setSortConfig] = useState<
+    SORT_CONFIG_PRINTER_MANAGEMENT | undefined
+  >(undefined);
 
   const handleSelectRow = (idRow: string) => {
     if (selectedRowIDs.includes(idRow)) {
@@ -62,6 +77,14 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
     const newPrinterListRendered = getFilteredPrinterList(printerList);
     setPrinterListRendered(newPrinterListRendered);
   }, [textFilter]);
+
+  useEffect(() => {
+    const newPrinterListRendered = state.getSortedPrinters(
+      printerList,
+      sortConfig
+    );
+    setPrinterListRendered(getFilteredPrinterList(newPrinterListRendered));
+  }, [sortConfig]);
 
   const handleOnClickCompleteDelete = () => {
     const newPrinterList = printerList.flatMap((printer: PrinterViewObject) => {
@@ -220,11 +243,133 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
         <Table.Root className="overflow-x-auto">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Trạng thái</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Tên</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Cơ sở</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Toà</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Phòng</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1">
+                  <span className="text-sm font-semibold">Trạng Thái</span>
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC
+                    ) {
+                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC);
+                    } else if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC);
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">Tên</span>
+                  {sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC
+                    ) {
+                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC);
+                    } else if (
+                      sortConfig ===
+                      SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(
+                        SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC
+                      );
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">Cơ sở</span>
+                  {sortConfig ===
+                  SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC
+                    ) {
+                      setSortConfig(
+                        SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC
+                      );
+                    } else if (
+                      sortConfig ===
+                      SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(
+                        SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC
+                      );
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">Toà</span>
+                  {sortConfig ===
+                  SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC
+                    ) {
+                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC);
+                    } else if (
+                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC);
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">Phòng</span>
+                  {sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
               {(isDeleting || isEditing) && (
                 <Table.ColumnHeaderCell> </Table.ColumnHeaderCell>
               )}

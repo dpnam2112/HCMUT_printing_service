@@ -53,6 +53,12 @@
   }
 }
 
+@layer base {
+  span {
+    @apply select-none;
+  }
+}
+
 @layer utilities {
   .heroTitleBg {
     background-image: url("https://tailwindcss.com/_next/static/media/0.45ad250f635612c1ec4d519c9dca901f.jpg");
