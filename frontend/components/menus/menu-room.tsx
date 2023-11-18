@@ -11,22 +11,23 @@ import { FC } from "react";
 import { MENU_ROOM } from "../../models/constant";
 
 type Props = {
+  width?: string;
   selectedItem: MENU_ROOM;
   setSelectedItem: React.Dispatch<React.SetStateAction<MENU_ROOM>>;
 };
 
-const MenuRoom: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuRoom: FC<Props> = ({ width, selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
-        <Button className="w-2/4 px-0">
+        <Button className={`${width ? "w-full" : "w-2/4"} px-0`}>
           <div className="flex items-center justify-between focus-within:outline-none w-full">
             <span>{selectedItem}</span>
             <CaretSortIcon width="22" height="22" />
           </div>
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenuContent className="w-[320px]">
+      <DropdownMenuContent className={width ? width : "w-[320px]"}>
         <DropdownMenuItem
           onSelect={() => {
             setSelectedItem(MENU_ROOM.R_101);
@@ -52,6 +53,14 @@ const MenuRoom: FC<Props> = ({ selectedItem, setSelectedItem }) => {
           {MENU_ROOM.R_207}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_ROOM.R_304);
+          }}
+        >
+          {MENU_ROOM.R_304}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
@@ -59,6 +68,14 @@ const MenuRoom: FC<Props> = ({ selectedItem, setSelectedItem }) => {
           }}
         >
           {MENU_ROOM.R_401}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_ROOM.R_502);
+          }}
+        >
+          {MENU_ROOM.R_502}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
