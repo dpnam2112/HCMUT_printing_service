@@ -1,9 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views import View
+from django_cas_ng.decorators import login_required
 import django_cas_ng.decorators as cas_decorators
 
 # Create your views here.
+
+@login_required
+def index(request):
+    return HttpResponse("hello world.")
 
 class FileValidate(View):
     """

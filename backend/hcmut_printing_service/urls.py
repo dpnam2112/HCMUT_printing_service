@@ -25,4 +25,6 @@ urlpatterns = [
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path("officer/", include('officer_app.urls')),
     path("printers/", Printers.as_view()),
+    path("payment/", include('payment.urls')),
+    path("print-auth/", include("print_auth.urls")),
 ]
