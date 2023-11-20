@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import  HttpResponse, HttpResponseRedirect
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -8,28 +9,27 @@ from . import models as print_auth_models
 from django.db import models
 from .serializers import CampusUserSerializer
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-
 class FetchUserInfo(APIView):
     """
-        If users are not logged in before, redirect them to CAS authentication page.
-
-        If users are logged in before, return user's information based on sessions
-        set by cas client. The returned data is in JSON format and has the following
-        fields:
-            - first_name: str
-            - last_name: str
-            - campus_id: str
-            - username: str
+        If users are logged in, return user's information based on session's attributes
+        set by cas client (django-cas-ng). The returned data is in JSON format and has the
+        following fields:
+            - id: int, which is the campus id of the user
             - page_balance: int
-
-        If the user is logged in the first time, data about users are stored in
-        the database.
+            - base_user: A JSON object representing information of the campus account.
+                + id: int
+                + username: str
+                + first_name: str
+                + last_name: str
+                + email: str
     """
 
     campus_user_model = print_auth_models.CampusUser
+    authentication_classes = [SessionAuthentication]
 
     def login_first_time(self, campus_id):
         """ Check if the user is logged in the first time. """
@@ -47,9 +47,6 @@ class FetchUserInfo(APIView):
 
 
     def get(self, request):
-        if not request.user.is_authenticated:
-            return HttpResponse("Not authenticated.", content_type="text/plain")
-
         # TODO: Check if user is an administrator
 
         # Additional attributes for campus user
@@ -67,5 +64,19 @@ class FetchUserInfo(APIView):
         else:
             profile = self.campus_user_model.objects.get(pk=campus_id)
 
+        if settings.CAS_USE_TEST_ACCOUNT:
+            profile.base_user.first_name, profile.base_user.last_name = 'John', 'Doe'
+            profile.base_user.email = 'johndoe@hcmut.edu.vn'
+
+        # TODO: Log the logging-in activity of users
+
         serializer = CampusUserSerializer(profile)
         return Response(serializer.data)
+
+class Login(View):
+    def get(self, request):
+        return HttpResponseRedirect(redirect_to="/")
+
+class Logout(View):
+    def get(self, request):
+        return HttpResponse("Not implemented", content_type='text/plain')

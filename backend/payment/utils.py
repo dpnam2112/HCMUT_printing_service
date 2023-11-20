@@ -43,5 +43,28 @@ def convert_sheets(sheet_quantity):
         a4_equivalent += conversion_factors[sheet_type] * quantity
     return a4_equivalent
 
-def calc_price(a4_sheets: int):
-    return a4_sheets * 0.05
+def calc_price(sheet_quantity: dict):
+    price = {
+        "A4": 0.01,
+        "A3": 0.02,
+        "A2": 0.04,
+        "A1": 0.08,
+        "A0": 0.16
+    }
+    
+    total = 0
+    for sheet in sheet_quantity.keys():
+        total += price[sheet] * sheet_quantity[sheet]
+
+    return total
+
+def get_price(sheet_type):
+    price = {
+        "A4": 0.01,
+        "A3": 0.02,
+        "A2": 0.04,
+        "A1": 0.08,
+        "A0": 0.16
+    }
+
+    return price[sheet_type]

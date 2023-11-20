@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+PROJECT_DIR = os.path.join(BASE_DIR, "..")
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +29,6 @@ SECRET_KEY = 'django-insecure--&ogge+s52)h8r9a5rcn1mjjjbww$)@+0v@)cki#w#-_h@q6zv
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -62,7 +64,7 @@ ROOT_URLCONF = 'hcmut_printing_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_DIR, "build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,7 +125,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "static"
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, "build", "static"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -147,14 +153,16 @@ REST_FRAMEWORK = {
 CAS_SERVER_URL = "http://127.0.0.1:9000/cas/"
 CAS_VERSION = '3'
 CAS_APPLY_ATTRIBUTES_TO_USER = True
+CAS_USE_TEST_ACCOUNT = True
 
 #CORS configuration
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000'
 ]
 
-CORS_ALLOWED_ALL_ORIGINS = True
-
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000'
 ]
+
+# React development configuration
+REACT_MAIN_PAGE = "http://localhost:3000"

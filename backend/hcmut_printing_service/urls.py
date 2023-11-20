@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 import django_cas_ng.views
 from officer_app.views import Printers
+from django.views.generic.base import TemplateView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
