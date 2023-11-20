@@ -345,8 +345,6 @@ const SectionTable = () => {
               <IconButton variant="solid" highContrast onClick={() => setcurrentPage(Math.ceil((Object.keys(final_Data).length)/5 - 1))} disabled = {(currentPage > Math.floor((Object.keys(final_Data).length)/5) - 1)}>
                 <DoubleArrowRightIcon width="20" height="18"  />
               </IconButton>
-
-
             </div>
           </div>
         </div>
