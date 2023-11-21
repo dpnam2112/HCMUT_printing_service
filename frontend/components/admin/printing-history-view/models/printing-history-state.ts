@@ -1,7 +1,5 @@
-import { lstat } from "fs";
 import { SORT_CONFIG } from "./constant";
 import { HistoryViewProps } from "./types";
-
 
 
 class PrintingHistoryState {
@@ -37,17 +35,21 @@ class PrintingHistoryState {
 
     if (sortConfig === SORT_CONFIG.LOCATION_ASC) {
       list.sort((a, b) => {
-        return  a.location.facility < b.location.facility ? 1 : 
-                a.location.building < b.location.building ? 1 :
-                a.location.room < b.location.room ? 1 :
+        return  a.location.facility > b.location.facility ? 1 : 
+                a.location.facility < b.location.facility ? -1 :
+                a.location.building > b.location.building ? 1 :
+                a.location.building < b.location.building ? -1 :
+                a.location.room > b.location.room ? 1 :
                 -1;
       });
     }
     if (sortConfig === SORT_CONFIG.LOCATION_DESC) {
       list.sort((a, b) => {
-        return  a.location.facility > b.location.facility ? 1 : 
-                a.location.building > b.location.building ? 1 :
-                a.location.room > b.location.room ? 1 :
+        return  a.location.facility < b.location.facility ? 1 : 
+                a.location.facility > b.location.facility ? -1 :
+                a.location.building < b.location.building ? 1 :
+                a.location.building > b.location.building ? -1 :
+                a.location.room < b.location.room ? 1 :
                 -1;
       });
     }
