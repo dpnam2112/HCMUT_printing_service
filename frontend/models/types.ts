@@ -11,3 +11,9 @@ export type PrinterViewObject = {
 export type PrinterRenderViewProps = PrinterViewObject & {
   isSelectedDelete?: boolean;
 };
+
+export type ExtensionViewObject = {
+  name: string;
+  extension: string;
+  status: boolean;
+};

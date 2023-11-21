@@ -1,29 +1,57 @@
 import { Button, Table, TextField, Switch } from "@radix-ui/themes";
 import { useState } from "react";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import {
+  ArrowDownIcon,
+  CaretSortIcon,
+  MagnifyingGlassIcon,
+  ArrowUpIcon,
+} from "@radix-ui/react-icons";
+import { SORT_CONFIG_EXTENSION_MANAGEMENT } from "../../../models/constant";
+import { ExtensionViewObject } from "../../../models/types";
+import ExtensionManagementState from "./models/extension-management-state";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
+
+const state = new ExtensionManagementState();
 
 const ExtensionView = () => {
   const [textFilter, setTextFilter] = useState("");
   const [editMode, setEditMode] = useState(false);
-  const [data, setData] = useState([
+  const [sortConfig, setSortConfig] = useState<
+    SORT_CONFIG_EXTENSION_MANAGEMENT | undefined
+  >(undefined);
+  const [data, setData] = useState<ExtensionViewObject[]>([
     { name: "DOCX", extension: ".docx", status: true },
     { name: "CSV", extension: ".csv", status: true },
     { name: "PPT", extension: ".ppt", status: false },
   ]);
 
-  const filteredData = data.filter(
-    (item) =>
-      item.name.toLowerCase().includes(textFilter.toLowerCase()) ||
-      (item.status ? "Đang được sử dụng" : "Không được sử dụng")
-        .toLowerCase()
-        .includes(textFilter.toLowerCase())
+  const filteredData = state.getSortedPrinters(
+    data.filter(
+      (item) =>
+        item.name.toLowerCase().includes(textFilter.toLowerCase()) ||
+        item.extension.toLowerCase().includes(textFilter.toLowerCase()) ||
+        (item.status ? "Đang được sử dụng" : "Không được sử dụng")
+          .toLowerCase()
+          .includes(textFilter.toLowerCase())
+    ),
+    sortConfig
   );
 
-  const toggleStatus = (index) => {
-    const newData = [...data];
-    newData[index].status = !newData[index].status;
+  const toggleStatus = (ext: string) => {
+    const newData = data.flatMap((obj: ExtensionViewObject) => {
+      if (obj.extension === ext) {
+        return [{ ...obj, status: !obj.status }];
+      }
+      return [obj];
+    });
     setData(newData);
+  };
+
+  const handleFocusInputField = () => {
+    const ele = document.getElementById("inputFilterPrinter");
+    if (ele) {
+      ele.focus();
+    }
   };
 
   return (
@@ -53,7 +81,12 @@ const ExtensionView = () => {
             <Button
               className="cursor-pointer"
               variant={editMode ? "classic" : "surface"}
-              onClick={() => setEditMode(!editMode)}
+              onClick={() => {
+                if (editMode) {
+                  handleFocusInputField();
+                }
+                setEditMode(!editMode);
+              }}
             >
               <div className="flex items-center gap-2">
                 {editMode && (
@@ -64,12 +97,75 @@ const ExtensionView = () => {
             </Button>
           </div>
         </div>
-        <Table.Root>
+        <Table.Root className="border rounded">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Tên Phần Mở Rộng</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Phần Mở Rộng</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Trạng Thái</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC
+                    ) {
+                      setSortConfig(SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC);
+                    } else if (
+                      sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC);
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">
+                    Tên Phần Mở Rộng
+                  </span>
+                  {sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                <div
+                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
+                  onClick={() => {
+                    if (
+                      sortConfig ===
+                      SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC
+                    ) {
+                      setSortConfig(
+                        SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC
+                      );
+                    } else if (
+                      sortConfig ===
+                      SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC
+                    ) {
+                      setSortConfig(undefined);
+                    } else {
+                      setSortConfig(
+                        SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC
+                      );
+                    }
+                  }}
+                >
+                  <span className="text-sm font-semibold">Phần Mở Rộng</span>
+                  {sortConfig ===
+                  SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC ? (
+                    <ArrowUpIcon />
+                  ) : sortConfig ===
+                    SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC ? (
+                    <ArrowDownIcon />
+                  ) : (
+                    <CaretSortIcon />
+                  )}
+                </div>
+              </Table.ColumnHeaderCell>
               {editMode && <Table.ColumnHeaderCell></Table.ColumnHeaderCell>}
             </Table.Row>
           </Table.Header>
@@ -77,8 +173,6 @@ const ExtensionView = () => {
           <Table.Body>
             {filteredData.map((item, index) => (
               <Table.Row key={index}>
-                <Table.RowHeaderCell>{item.name}</Table.RowHeaderCell>
-                <Table.Cell>{item.extension}</Table.Cell>
                 <Table.Cell>
                   {item.status ? (
                     <div className="flex items-center gap-2 w-full h-full">
@@ -96,13 +190,28 @@ const ExtensionView = () => {
                     </div>
                   )}
                 </Table.Cell>
+
+                <Table.RowHeaderCell>
+                  <div className="w-full h-full pl-2">
+                    <span className={`${item.status ? "" : "text-red-400"}`}>
+                      {item.name}
+                    </span>
+                  </div>
+                </Table.RowHeaderCell>
+                <Table.Cell>
+                  <div className="w-full h-full pl-2">
+                    <span className={`${item.status ? "" : "text-red-400"}`}>
+                      {item.extension}
+                    </span>
+                  </div>
+                </Table.Cell>
                 {editMode && (
                   <Table.Cell>
                     <Switch
                       color="indigo"
                       checked={item.status}
                       onClick={() => {
-                        toggleStatus(index);
+                        toggleStatus(item.extension);
                       }}
                       onChange={() => {}}
                     />
