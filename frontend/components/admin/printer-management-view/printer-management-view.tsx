@@ -135,8 +135,6 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const getFilteredPrinterList = (list: PrinterRenderViewProps[]) => {
     const text = textFilter.toLowerCase();
 
-    console.log("huy : ", text);
-
     if (!text) {
       return list;
     }
@@ -303,7 +301,9 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                     if (
                       sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC
                     ) {
-                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC);
+                      setSortConfig(
+                        SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC
+                      );
                     } else if (
                       sortConfig ===
                       SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC

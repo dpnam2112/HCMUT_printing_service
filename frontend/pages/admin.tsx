@@ -2,16 +2,16 @@ import { FC, useState } from "react";
 import Container from "../components/container";
 import Layout from "../components/layout";
 import { ADMIN_MANAGEMENT_VIEW } from "../models/constant";
-import ExtensionView from "../components/admin/extension-view";
 import PrintingHistoryView from "../components/admin/printing-history-view";
 import TransactionHistoryView from "../components/admin/transaction-history-view";
 import PrinterManagementView from "../components/admin/printer-management-view/printer-management-view";
 import PrinterAddingView from "../components/admin/printer-adding-view";
+import ExtensionView from "../components/admin/extension-view/extension-view";
 
 const views = [
   ADMIN_MANAGEMENT_VIEW.PRINTER_MANAGEMENT,
+  ADMIN_MANAGEMENT_VIEW.EXTENSION_MANAGEMENT,
   ADMIN_MANAGEMENT_VIEW.ADD_PRINTER,
-  ADMIN_MANAGEMENT_VIEW.ADD_EXTENSION,
   ADMIN_MANAGEMENT_VIEW.PRINTING_HISTORY,
   ADMIN_MANAGEMENT_VIEW.TRANSACTION_HISTORY,
 ];
@@ -60,7 +60,7 @@ const RenderView = (
   switch (currentView) {
     case ADMIN_MANAGEMENT_VIEW.PRINTER_MANAGEMENT:
       return <PrinterManagementView setCurrentView={setCurrentView} />;
-    case ADMIN_MANAGEMENT_VIEW.ADD_EXTENSION:
+    case ADMIN_MANAGEMENT_VIEW.EXTENSION_MANAGEMENT:
       return <ExtensionView />;
     case ADMIN_MANAGEMENT_VIEW.ADD_PRINTER:
       return <PrinterAddingView />;
