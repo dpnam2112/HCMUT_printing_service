@@ -3,7 +3,7 @@ import Container from "../components/container";
 import Layout from "../components/layout";
 import { ADMIN_MANAGEMENT_VIEW } from "../models/constant";
 import ExtensionView from "../components/admin/extension-view";
-import PrintingHistoryView from "../components/admin/printing-history-view";
+import PrintingHistoryView from "../components/admin/printing-history-view/printing-history-view";
 import TransactionHistoryView from "../components/admin/transaction-history-view";
 import PrinterManagementView from "../components/admin/printer-management-view/printer-management-view";
 import PrinterAddingView from "../components/admin/printer-adding-view";
