@@ -55,7 +55,7 @@ enum MENU_PRINT_PAGE {
 }
 
 enum ADMIN_MANAGEMENT_VIEW {
-  ADD_EXTENSION = "Thêm Đuôi File",
+  EXTENSION_MANAGEMENT = "Quản Lý Đuôi File",
   ADD_PRINTER = "Thêm Máy In",
   PRINTER_MANAGEMENT = "Quản Lý Máy In",
   PRINTING_HISTORY = "Lịch Sử In",
