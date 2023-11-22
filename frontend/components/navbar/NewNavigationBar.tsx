@@ -1,17 +1,8 @@
-import { Fragment } from "react";
-import { Popover, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  DevicePhoneMobileIcon,
-  ComputerDesktopIcon,
-} from "@heroicons/react/24/outline";
+import { Popover } from "@headlessui/react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@radix-ui/themes";
 
 export default function NewNavigationBar() {
-  const downloadBtnOnClicked = (e: any) => {};
-
   return (
     <Popover className="relative">
       <div className="w-full mx-auto max-w-9xl py-6 px-6 lg:px-8 flex justify-between items-center">
@@ -46,12 +37,14 @@ export default function NewNavigationBar() {
             </span>
           </Link>
 
-          <Button
-            variant="classic"
-            className="text-lg font-semibold cursor-pointer"
-          >
-            Đăng nhập
-          </Button>
+          <Link href={"/login"}>
+            <Button
+              variant="classic"
+              className="text-lg font-semibold cursor-pointer"
+            >
+              Đăng nhập
+            </Button>
+          </Link>
         </div>
       </div>
     </Popover>
