@@ -11,7 +11,7 @@ class PrinterLocation(models.Model):
     room_code = models.CharField(max_length=3)
 
     class Meta:
-        unique_together = ['campus', 'building_name', 'room_code']
+        unique_together = ['campus', 'building_name', 'floor', 'room_code']
 
 class Printer(models.Model):
     location = models.ForeignKey(PrinterLocation, on_delete=models.CASCADE)
