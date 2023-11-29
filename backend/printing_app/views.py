@@ -1,13 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
 from django.views import View
-import django_cas_ng.decorators as cas_decorators
+from rest_framework.views import APIView
+from rest_framework.response import Response
+import models
+import serializers
 
-# Create your views here.
+# Create your views here
 
 class FileValidate(View):
-    """
-        Validate the file sent from users.
+    """ Validate the file sent from users.
 
         After validating the file, metadata about the files, including:
             - campus id of the user who sent it
@@ -35,3 +35,19 @@ class PrintFile(View):
 
     def get(self, request):
         pass
+
+class GetLocations(APIView):
+    """ Retrieve all locations.
+
+        Response's payloads:
+            A list of JSON-formatted object that have these fields:
+                + campus: str, campus name (CS1, CS2)
+                + building: str, building name
+                + floor: int
+                + room_code: str
+    """
+
+    def get(self, request):
+        all_locations = models.PrinterLocation.objects.all()
+        serialized = serializers.PrinterLocation(all_locations, many=True)
+        return Response(serialized.data)

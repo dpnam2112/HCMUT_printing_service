@@ -9,7 +9,7 @@ class PrintConfig:
     left_to_right: bool
     printer_name: str
 
-class PrintServerClient:
+class PrintClient:
     def __init__(self):
         pass
 
