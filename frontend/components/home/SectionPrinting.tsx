@@ -20,6 +20,7 @@ import MenuPrintType from "../menus/menu-print-type";
 import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
+import Link from "next/link";
 
 const SectionPrinting = () => {
   const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
@@ -41,6 +42,7 @@ const SectionPrinting = () => {
   );
   const [selectedCopyNumber, setSelectedCopyNumber] =
     useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
+  const [selectedFilePath, setSelectedFilePath] = useState<string>("");
 
   function handleFileSelect(event) {
     const fileInput = event.target;
@@ -48,6 +50,8 @@ const SectionPrinting = () => {
 
     if (file) {
       const reader = new FileReader();
+
+      setSelectedFilePath(fileInput.value);
 
       reader.onload = function (e) {
         // The content of the file will be available in e.target.result
@@ -64,11 +68,20 @@ const SectionPrinting = () => {
   return (
     <div className="flex items-center gap-5 mt-12 mb-4 mx-40 h-[650px] p-10 rounded border">
       <div className="flex flex-col justify-center items-center w-3/5 h-full rounded border">
-        <input
-          id="inputSelectLocalFile"
-          type="file"
-          onChange={handleFileSelect}
-        />
+        <label className="relative cursor-pointer bg-blue-600 text-white rounded p-2">
+          <span>Chọn tài liệu</span>
+          <input
+            id="inputSelectLocalFile"
+            type="file"
+            className="sr-only"
+            onChange={handleFileSelect}
+          />
+        </label>
+        {selectedFilePath && (
+          <div className="mt-2 text-black font-semibold">
+            Tài liệu: {selectedFilePath}
+          </div>
+        )}
       </div>
       <div className="flex flex-col w-3/6 h-full justify-between rounded border py-5">
         <div className="flex flex-col gap-4">
@@ -173,7 +186,9 @@ const SectionPrinting = () => {
         </div>
         <div className="flex items-center justify-between w-full px-5">
           <div className="flex items-center gap-4">
-            <Button className="w-[120px]">Mua giấy in</Button>
+            <Link href={"/pricing"}>
+              <Button className="w-[120px]">Mua giấy in</Button>
+            </Link>
           </div>
           <Button className="w-[120px]">Hoàn thành</Button>
         </div>
