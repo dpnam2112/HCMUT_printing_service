@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import Container from "../components/container";
 import Layout from "../components/layout";
 import { ADMIN_MANAGEMENT_VIEW } from "../models/constant";
-import PrintingHistoryView from "../components/admin/printing-history-view";
+import PrintingHistoryView from "../components/admin/printing-history-view/printing-history-view";
 import PrinterManagementView from "../components/admin/printer-management-view/printer-management-view";
 import PrinterAddingView from "../components/admin/printer-adding-view";
 import ExtensionView from "../components/admin/extension-view/extension-view";
