@@ -20,13 +20,7 @@ import MenuPrintType from "../menus/menu-print-type";
 import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
-import { Document, Page } from "react-pdf";
-// import { pdfjs } from "react-pdf";
-
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   "pdfjs-dist/build/pdf.worker.min.js",
-//   import.meta.url
-// ).toString();
+import Link from "next/link";
 
 const SectionPrinting = () => {
   const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
@@ -48,45 +42,46 @@ const SectionPrinting = () => {
   );
   const [selectedCopyNumber, setSelectedCopyNumber] =
     useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
-  const [selectedFile, setSeleectedFile] = useState<any>(undefined);
+  const [selectedFilePath, setSelectedFilePath] = useState<string>("");
 
-  const [numPages, setNumPages] = useState<number>();
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  function handleFileSelect(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
 
-  const handleSelectFile = (e: any) => {
-    const file = e.target.files[0];
     if (file) {
-      setSeleectedFile(file);
-      // const reader = new FileReader();
+      const reader = new FileReader();
 
-      // reader.onload = (event) => {
-      //   // The result attribute contains the data as a data URL
-      //   const fileData = event.target.result;
-      // };
+      setSelectedFilePath(fileInput.value);
 
-      // // Read the file as text or other formats based on your requirements
-      // reader.readAsText(file);
+      reader.onload = function (e) {
+        // The content of the file will be available in e.target.result
+        const fileContent = e.target.result;
+        console.log(fileContent);
+
+        // You can do further processing with the file content here
+      };
+
+      reader.readAsText(file);
     }
-  };
-
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
-    setNumPages(numPages);
   }
 
   return (
     <div className="flex items-center gap-5 mt-12 mb-4 mx-40 h-[650px] p-10 rounded border">
       <div className="flex flex-col justify-center items-center w-3/5 h-full rounded border">
-        <label
-          className="w-1/3 py-1 px-5 bg-[#3E62DD] hover:bg-[#3E62DD]/90 rounded cursor-pointer text-center text-white font-medium"
-          // onClick={handleSelectFile}
-        >
-          <span className="cursor-pointer">Chọn file bạn cần in</span>
-          {/* <input
+        <label className="relative cursor-pointer bg-blue-600 text-white rounded p-2">
+          <span>Chọn tài liệu</span>
+          <input
             id="inputSelectLocalFile"
-            // type="file"
-            className="absolute inset-0 z-50 w-full h-full p-0 m-0 outline-none opacity-0 cursor-pointer"
-          /> */}
+            type="file"
+            className="sr-only"
+            onChange={handleFileSelect}
+          />
         </label>
+        {selectedFilePath && (
+          <div className="mt-2 text-black font-semibold">
+            Tài liệu: {selectedFilePath}
+          </div>
+        )}
       </div>
       <div className="flex flex-col w-3/6 h-full justify-between rounded border py-5">
         <div className="flex flex-col gap-4">
@@ -191,10 +186,9 @@ const SectionPrinting = () => {
         </div>
         <div className="flex items-center justify-between w-full px-5">
           <div className="flex items-center gap-4">
-            <Button className="w-[120px]">Mua giấy in</Button>
-            <span className="text-red-500 text-lg font-semibold">
-              50/20 trang
-            </span>
+            <Link href={"/pricing"}>
+              <Button className="w-[120px]">Mua giấy in</Button>
+            </Link>
           </div>
           <Button className="w-[120px]">Hoàn thành</Button>
         </div>

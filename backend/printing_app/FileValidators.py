@@ -21,44 +21,36 @@ class FileValidator:
                 try:
                     #PdfFileReader(file_path)
                     text = extract_text(file_path)
-                    return 'PDF file'
+                    return True
                 except:
-                    return 'Not a PDF file'
+                    return False
             elif extension == '.docx':
                 try:
                     Document(file_path)
-                    return 'DOCX file'
+                    return True
                 except:
-                    return 'Not a DOCX file'
-            elif extension == '.doc':
-                try:
-                    # Attempt to open with python-docx
-                    Document(file_path)
-                    return 'Not a DOC file (possibly DOCX)'
-                except PackageNotFoundError:
-                    # If it fails, it could be a DOC file
-                    return 'DOC file'
+                    return False
             elif extension == '.pptx':
                 try:
                     Presentation(file_path)
-                    return 'PPTX file'
+                    return True
                 except:
-                    return 'Not a PPTX file'
+                    return False
             elif extension == '.xlsx':
                 try:
                     pd.read_excel(file_path,engine = 'openpyxl')
-                    return 'XLSX file'
+                    return True
                 except:
-                    return 'Not a XLSX file'
+                    return False
             elif extension == '.html':
                 try:
                     with open(file_path, 'r') as f:
                         BeautifulSoup(f, 'html.parser')
-                    return 'HTML file'
+                    return True
                 except:
-                    return 'Not a HTML file'
+                    return False
             else:
-                return 'File type not supported'
+                return False  # File type is not supported
         else:
-            return 'File is not exist!'
+            return False      # File is not exist
     

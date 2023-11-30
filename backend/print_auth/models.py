@@ -1,10 +1,9 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
 class CampusUser(models.Model):
-    username = models.CharField(max_length=20, unique=True)
+    base_user = models.OneToOneField(to=settings.AUTH_USER_MODEL, unique=True, on_delete=models.CASCADE)
     id = models.CharField(max_length=10, unique=True, primary_key=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    page_balance = models.PositiveIntegerField(default=0)
+    page_balance = models.PositiveIntegerField(default=100)

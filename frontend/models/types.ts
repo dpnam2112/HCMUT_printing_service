@@ -17,3 +17,9 @@ export type ExtensionViewObject = {
   extension: string;
   status: boolean;
 };
+
+export type TransactionHistoryObject = {
+  name: string;
+  amount: number;
+  madeAt: number;
+};
