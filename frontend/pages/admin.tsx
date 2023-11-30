@@ -4,7 +4,7 @@ import Layout from "../components/layout";
 import { ADMIN_MANAGEMENT_VIEW } from "../models/constant";
 import PrintingHistoryView from "../components/admin/printing-history-view/printing-history-view";
 import PrinterManagementView from "../components/admin/printer-management-view/printer-management-view";
-import PrinterAddingView from "../components/admin/printer-adding-view";
+import PrinterAddingView from "../components/admin/printer-adding/printer-adding-view";
 import ExtensionView from "../components/admin/extension-view/extension-view";
 import TransactionHistoryView from "../components/admin/transaction-history/transaction-history-view";
 
