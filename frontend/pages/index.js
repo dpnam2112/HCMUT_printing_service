@@ -6,7 +6,7 @@ import SectionPrinting from "../components/home/SectionPrinting";
 export default function Index() {
   return (
     <>
-      <Layout>
+      <Layout preview={{}}>
         <Container>
           <SectionHero />
         </Container>

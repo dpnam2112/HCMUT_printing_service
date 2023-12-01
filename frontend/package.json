@@ -4,10 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && next export",
-    "postbuild": "next-sitemap && node rss-gen",
     "start": "next start",
-    "lint": "next lint",
-    "deploy": "trash .next && trash out && npm run build && trash $GOPATH/src/nsproxy-server/resource/site && cp -R ./out $GOPATH/src/nsproxy-server/resource/site && cp ./public/rss.xml $GOPATH/src/nsproxy-server/resource/site/rss.xml && cp ./public/sitemap.xml $GOPATH/src/nsproxy-server/resource/site/sitemap.xml"
+    "lint": "next lint"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.2",
@@ -36,7 +34,6 @@
     "@types/react": "18.2.28",
     "front-matter": "^4.0.2",
     "next-sitemap": "^1.6.111",
-    "rss": "^1.2.2",
     "typescript": "5.2.2"
   },
   "license": "MIT"
