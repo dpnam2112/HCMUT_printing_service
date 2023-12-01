@@ -2,10 +2,10 @@
 
 An application for the printing service inside HCMUT campus
 
-### How to start developing Front end
+### How to build Front end
 
-- Cd to front end folder then run `npm run dev`
-- Follow [radix-ui](https://www.radix-ui.com/) library to build UI components
+- Cd to front end folder then run `npm run build`
+
 
 ### Backend configuration
 
