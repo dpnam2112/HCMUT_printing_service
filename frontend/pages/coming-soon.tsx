@@ -5,7 +5,7 @@ import { Button } from "@radix-ui/themes";
 
 const ComingSoon = () => {
   return (
-    <Layout>
+    <Layout preview={{}}>
       <Container>
         <div className="flex flex-col gap-2 items-center justify-center h-[500px] w-full">
           <span className="text-4xl text-indigo-600 font-bold">

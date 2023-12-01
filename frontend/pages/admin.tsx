@@ -23,7 +23,7 @@ const AdminManagement = () => {
 
   return (
     <>
-      <Layout>
+      <Layout preview={{}}>
         <Container>
           <div className="flex items-center rounded border h-[1000px] w-full mb-4 overflow-auto">
             <div className="flex flex-col w-1/5 h-full border-r-[1px] pt-20">

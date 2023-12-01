@@ -1,15 +1,14 @@
 import Container from "../components/container";
 import Layout from "../components/layout";
-import { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
-import { Button, Dialog } from "@radix-ui/themes";
+import { Dialog } from "@radix-ui/themes";
 import PricingDialogA4 from "../components/pricing/pricing-dialog-a4";
 import PricingDialogA3 from "../components/pricing/pricing-dialog-a3";
 
 export default function Pricing() {
   return (
-    <Layout>
+    <Layout preview={{}}>
       <Container>
         <PricingHeader2 />
         <div className="flex flex-col">

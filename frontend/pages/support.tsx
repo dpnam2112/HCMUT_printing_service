@@ -4,7 +4,7 @@ import PageContainer from "../components/layout-type/PageContainer";
 
 export default function Support() {
   return (
-    <Layout>
+    <Layout preview={{}}>
       <PageContainer
         layout="left"
         width="2/3"
