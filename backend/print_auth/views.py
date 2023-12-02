@@ -42,7 +42,7 @@ class FetchUserInfo(APIView):
         """ Create new campus profile for users who are logged in the first time. """
         return self.campus_user_model.objects.create(
             base_user=request.user,
-            id=request.session["attributes"]["campus_id"],
+            id=request.session["attributes"]["campus_id"]
         )
 
 
