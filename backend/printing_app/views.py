@@ -1,8 +1,12 @@
 from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import models
-import serializers
+from rest_framework import status
+from . import models
+from .models import PrintingActivity
+from print_auth.models import CampusUser
+from . import serializers
+from .serializers import PrintingActivitySerializer
 
 # Create your views here
 
@@ -36,6 +40,12 @@ class PrintFile(View):
     def get(self, request):
         pass
 
+class GetExtensions(APIView):
+    def get(self, request):
+        extensions = models.Extension.objects.all()
+        serializer = serializers.ExtensionSerializer(extensions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class GetLocations(APIView):
     """ Retrieve all locations.
 
@@ -48,6 +58,28 @@ class GetLocations(APIView):
     """
 
     def get(self, request):
-        all_locations = models.PrinterLocation.objects.all()
-        serialized = serializers.PrinterLocation(all_locations, many=True)
-        return Response(serialized.data)
+        locations = models.PrinterLocation.objects.all()
+        serializer = serializers.PrinterLocationSerializer(locations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PrintActivity(APIView):
+    """ Retrieve print activities. """
+
+    def get(self, request):
+        query_params = dict(request.GET)
+        for key, val in query_params.items():
+            query_params[key] = val[0]
+
+        if "id" in query_params:
+            try:
+                user = CampusUser.objects.get(campus_id=id)
+            except CampusUser.DoesNotExist:
+                return Response({"error": "No user"}, status=status.HTTP_400_BAD_REQUEST)
+
+            activities = PrintingActivity.objects.filter(campus_id=query_params["id"])
+            serializer = PrintingActivitySerializer(activities, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        print_activities = PrintingActivity.objects.all()
+        serializer = PrintingActivitySerializer(print_activities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

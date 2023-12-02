@@ -17,15 +17,21 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 import django_cas_ng.views
 from officer_app.views import Printers
+from printing_app.views import GetLocations
+from printing_app.views import GetExtensions
+from printing_app.views import PrintActivity
 from django.views.generic.base import TemplateView 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('print/', include('printing_app.urls')),
+    path('api/print/', include('printing_app.urls')),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
-    path("officer/", include('officer_app.urls')),
-    path("printers/", Printers.as_view()),
-    path("payment/", include('payment.urls')),
-    path("print-auth/", include("print_auth.urls")),
+    path("api/officer/", include('officer_app.urls')),
+    path("api/printers/", Printers.as_view()),
+    path("api/payment/", include('payment.urls')),
+    path("api/print-auth/", include("print_auth.urls")),
+    path("api/location/", GetLocations.as_view()),
+    path("api/get-ext/", GetExtensions.as_view()),
+    path("api/activity/", PrintActivity.as_view())
 ]
