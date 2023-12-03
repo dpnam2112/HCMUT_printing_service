@@ -13,12 +13,18 @@ export default function NewNavigationBar() {
               className="w-28 h-28"
             />
             <div className="text-3xl font-bold text-[#1f2937]">
-              Smart Printing Services
+              Smart Printing Service
             </div>
           </div>
         </Link>
 
         <div className="items-center justify-end md:flex md:flex-1 lg:w-0 gap-8">
+          <Link href={"/pricing"}>
+            <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
+              Mua giấy
+            </span>
+          </Link>
+
           <Link href={"/admin"}>
             <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
               Admin
@@ -28,12 +34,6 @@ export default function NewNavigationBar() {
           <Link href={"/support"}>
             <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
               Liên hệ
-            </span>
-          </Link>
-
-          <Link href={"/pricing"}>
-            <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
-              Mua giấy
             </span>
           </Link>
 
