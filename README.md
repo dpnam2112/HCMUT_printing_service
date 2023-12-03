@@ -6,7 +6,6 @@ An application for the printing service inside HCMUT campus
 
 - Cd to front end folder then run `npm run build`
 
-
 ### Backend configuration
 
 #### Setting up the virtual environment for development
@@ -26,15 +25,55 @@ You should set up two distinct environment for `backend` and `sso_server`, becau
 
 Please read at: `sso_server/README.md`
 
+### How to build backend
+
+- Cd to `backend`
+
+- Install venv: `python3 -m pip install venv`
+
+- Create virtual environment: `python3 -m venv .venv`
+
+- Activate virtual environment: `.venv/Scripts/activate`
+
+- Go to project folder by typing `cd ..` and type: `pip3 install requirements.txt`
+
+- cd to `backend`
+
+- Type the following commands:
+
+`python3 manage.py makemigrations`
+
+`python3 manage.py makemigrations officer_app`
+
+`python3 manage.py makemigrations payment`
+
+`python3 manage.py makemigrations print_auth`
+
+`python3 manage.py makemigrations printing_app`
+
+`python3 manage.py migrate`
+
+Type `python3 manage.py createsuperuser`
+
+Following the steps shown in the CLI
+
+Type `python3 manage.py runserver` to run the server.
+
+Go to `localhost:8000/admin`, logging in and add data.
+
 #### Connect frontend to backend
 
 Follow the below steps:
 
- - change directory (cd) frontend folder and type 'npm run build'. The directory frontend/out should appear.
+ - change directory (cd) frontend folder and type `npm run build`
+    
+ - The directory frontend/out should appear.
 
  - In the frontend folder, type `npx next export -o output`
 
  - Type `mv output ..` to move the generated `output` folder to the project folder.
+
+ - Rename `output` to `static`
 
  - cd to the backend folder and type `python3 manage.py collectstatic`
 
