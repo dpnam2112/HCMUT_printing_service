@@ -6,4 +6,5 @@ from django.contrib.auth.models import User
 class Officer(User):
     class Meta:
         proxy = True
+        auto_created = True
         permissions = [("officer_app_access", "Officer app access")]
