@@ -25,3 +25,17 @@ You should set up two distinct environment for `backend` and `sso_server`, becau
 #### Setting up the CAS server
 
 Please read at: `sso_server/README.md`
+
+#### Connect frontend to backend
+
+Follow the below steps:
+
+ - change directory (cd) frontend folder and type 'npm run build'. The directory frontend/out should appear.
+
+ - In the frontend folder, type `npx next export -o output`
+
+ - Type `mv output ..` to move the generated `output` folder to the project folder.
+
+ - cd to the backend folder and type `python3 manage.py collectstatic`
+
+ - Done!

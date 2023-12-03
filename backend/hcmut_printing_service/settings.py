@@ -64,7 +64,7 @@ ROOT_URLCONF = 'hcmut_printing_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(PROJECT_DIR, "build")],
+        'DIRS': [os.path.join(PROJECT_DIR, "static")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,10 +125,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = '/_next/'
+MEDIA_URL = '/assets/images/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'static/assets/images')
+
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "build", "static"),
+    os.path.join(PROJECT_DIR, "static/_next")
 ]
 
 # Default primary key field type

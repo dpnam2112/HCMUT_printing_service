@@ -21,6 +21,9 @@ from printing_app.views import GetLocations
 from printing_app.views import GetExtensions
 from printing_app.views import PrintActivity
 from django.views.generic.base import TemplateView 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,5 +36,19 @@ urlpatterns = [
     path("api/print-auth/", include("print_auth.urls")),
     path("api/location/", GetLocations.as_view()),
     path("api/get-ext/", GetExtensions.as_view()),
-    path("api/activity/", PrintActivity.as_view())
+    path("api/activity/", PrintActivity.as_view()),
+    path('', TemplateView.as_view(template_name='index.html'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    static_folders = [
+        'static/css', 
+        'static/chunks', 
+        'static/chunks/pages', 
+        'static/chunks/css/', 
+        'assets/images/']
+    for folder in static_folders:
+        urlpatterns += static(f"{settings.STATIC_URL}{folder}", document_root=f"{settings.STATIC_ROOT}{folder}")
