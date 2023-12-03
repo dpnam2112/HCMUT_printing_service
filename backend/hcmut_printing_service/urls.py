@@ -17,17 +17,21 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 import django_cas_ng.views
 from officer_app.views import Printers
+from print_auth.views import FetchUserInfo
 from printing_app.views import GetLocations
 from printing_app.views import GetExtensions
 from printing_app.views import PrintActivity
+from printing_app.views import MainPage
 from django.views.generic.base import TemplateView 
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from print_auth.views import Login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/print/', include('printing_app.urls')),
+    path('login/', Login.as_view()),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path("api/officer/", include('officer_app.urls')),
@@ -37,7 +41,8 @@ urlpatterns = [
     path("api/location/", GetLocations.as_view()),
     path("api/get-ext/", GetExtensions.as_view()),
     path("api/activity/", PrintActivity.as_view()),
-    path('', TemplateView.as_view(template_name='index.html'))
+    path("api/user-info/", FetchUserInfo.as_view()),
+    path("", MainPage.as_view())
 ]
 
 if settings.DEBUG:

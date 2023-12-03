@@ -1,12 +1,15 @@
 from django.views import View
+from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import render
 from rest_framework import status
 from . import models
 from .models import PrintingActivity
 from print_auth.models import CampusUser
 from . import serializers
 from .serializers import PrintingActivitySerializer
+from django.conf import settings
 
 # Create your views here
 
@@ -83,3 +86,9 @@ class PrintActivity(APIView):
         print_activities = PrintingActivity.objects.all()
         serializer = PrintingActivitySerializer(print_activities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class MainPage(View):
+    def get(self, request):
+        if settings.TESTING_LOGIN:
+            return HttpResponse("Hello world")
+        return render(request, 'index.html')

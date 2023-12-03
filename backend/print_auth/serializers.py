@@ -14,7 +14,7 @@ class CampusUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampusUser
-        fields = ['id', 'page_balance', 'base_user']
+        fields = ['page_balance', 'base_user', 'is_admin']
 
     def create(self, validated_data):
         base_user_data = validated_data.pop('base_user')

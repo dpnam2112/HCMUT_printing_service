@@ -169,3 +169,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 # React development configuration
 REACT_MAIN_PAGE = "http://localhost:3000"
+
+# Testing login
+TESTING_LOGIN = True

@@ -4,3 +4,4 @@ django
 djangorestframework
 django-cas-server
 django-cas-ng
+django-cors-headers
