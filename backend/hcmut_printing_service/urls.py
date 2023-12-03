@@ -26,12 +26,10 @@ from django.views.generic.base import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from print_auth.views import Login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/print/', include('printing_app.urls')),
-    path('login/', Login.as_view()),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path("api/officer/", include('officer_app.urls')),

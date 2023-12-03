@@ -31,6 +31,9 @@ class FetchUserInfo(APIView):
         # TODO: Check if user is an administrator
 
         user = request.user
+        if not settings.FRONTEND_DEV and (not user or not user.is_authenticated):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         profile = None
         if not CampusUser.objects.filter(base_user=user).exists():
             profile = CampusUser.objects.create(base_user=user, page_balance=500)
@@ -42,12 +45,3 @@ class FetchUserInfo(APIView):
 
         serializer = CampusUserSerializer(profile)
         return Response(serializer.data)
-
-class Login(View):
-    login_required = True
-    def get(self, request):
-        return HttpResponseRedirect(redirect_to="/")
-
-class Logout(View):
-    def get(self, request):
-        return HttpResponse("Not implemented", content_type='text/plain')
