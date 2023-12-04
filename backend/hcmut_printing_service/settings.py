@@ -172,3 +172,5 @@ FRONTEND_DEV = True
 
 # Testing authentication
 TESTING_LOGIN = False
+
+PAYPAL_API_TESTING = True

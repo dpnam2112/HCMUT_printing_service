@@ -1,0 +1,3 @@
+[submodule "PayPal-example"]
+	path = PayPal-example
+	url = https://github.com/paypaldev/PayPal-Standard-Checkout-Tutorial.git
