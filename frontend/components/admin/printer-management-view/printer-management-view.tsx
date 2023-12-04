@@ -1,10 +1,20 @@
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { Button, TextField, Tooltip } from "@radix-ui/themes";
+import {
+  AlertDialog,
+  Button,
+  Dialog,
+  TextField,
+  Tooltip,
+} from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
 import { Printer } from "../../../models/types";
 import { ADMIN_MANAGEMENT_VIEW } from "../../../models/constant";
 import networkService from "../../../models/network-service";
 import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
+import DialogEditingPrinter from "./dialog-editing-printer";
+import toast from "react-hot-toast";
+import AlertDeletePrinters from "./alert-delete-printers";
+import { set } from "date-fns";
 
 type PrinterManagementViewProps = {
   setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void;
@@ -78,6 +88,11 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const [selectedPrinters, setSelectedPrinters] = useState<Printer[]>([]);
   const [textFilter, setTextFilter] = useState<string>("");
 
+  const [openDialogEditingPrinter, setOpenDialogEditingPrinter] =
+    useState<boolean>(false);
+  const [openDialogDeletePrinters, setOpenDialogDeletePrinters] =
+    useState<boolean>(false);
+
   const apiRef = useGridApiRef();
 
   useEffect(() => {
@@ -129,23 +144,65 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
               />
             </TextField.Root>
             <Tooltip content={"Bấm để chỉnh sửa thông tin các máy in"}>
-              <Button
-                className="cursor-pointer"
-                variant={"surface"}
-                onClick={() => {}}
-              >
-                <div className="flex items-center gap-2">Chỉnh sửa</div>
-              </Button>
+              <Dialog.Root open={openDialogEditingPrinter}>
+                <Dialog.Trigger>
+                  <Button
+                    className="cursor-pointer"
+                    variant={"surface"}
+                    onClick={() => {
+                      if (selectedPrinters.length === 0) {
+                        toast.error("Vui lòng chọn máy in để chỉnh sửa");
+                        return;
+                      }
+                      setOpenDialogEditingPrinter(true);
+                    }}
+                  >
+                    Chỉnh sửa
+                  </Button>
+                </Dialog.Trigger>
+                {selectedPrinters.length > 0 ? (
+                  <DialogEditingPrinter
+                    printer={selectedPrinters[selectedPrinters.length - 1]}
+                    handleClose={() => {
+                      handleUpdateNewPrinters();
+                      setOpenDialogEditingPrinter(false);
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </Dialog.Root>
             </Tooltip>
 
             <Tooltip content={"Bấm để chọn các máy in muốn xoá"}>
-              <Button
-                className={`cursor-pointer`}
-                onClick={() => {}}
-                variant={"surface"}
-              >
-                <div className="flex items-center gap-2">Xoá</div>
-              </Button>
+              <AlertDialog.Root open={openDialogDeletePrinters}>
+                <AlertDialog.Trigger>
+                  <Button
+                    className={`cursor-pointer`}
+                    onClick={() => {
+                      if (selectedPrinters.length === 0) {
+                        toast.error("Vui lòng chọn máy in bạn muốn xoá");
+                        return;
+                      }
+                      setOpenDialogDeletePrinters(true);
+                    }}
+                    variant={"surface"}
+                  >
+                    Xoá
+                  </Button>
+                </AlertDialog.Trigger>
+                {selectedPrinters.length > 0 ? (
+                  <AlertDeletePrinters
+                    printers={selectedPrinters}
+                    handleClose={() => {
+                      handleUpdateNewPrinters();
+                      setOpenDialogDeletePrinters(false);
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </AlertDialog.Root>
             </Tooltip>
 
             <Tooltip content="Thêm một máy in mới">
