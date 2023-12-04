@@ -1,5 +1,10 @@
 import { BACKEND_API } from "./constant";
-import { Extension, Printer, PrintingHistory } from "./types";
+import {
+  Extension,
+  Printer,
+  PrintingHistory,
+  TransactionHistory,
+} from "./types";
 
 class NetworkService {
   constructor() {}
@@ -105,6 +110,20 @@ class NetworkService {
     try {
       const data: PrintingHistory[] = await fetch(
         `${BACKEND_API}/api/activity/`
+      )
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return [];
+    }
+  }
+
+  public async getTransactionsHistory(): Promise<TransactionHistory[]> {
+    try {
+      const data: TransactionHistory[] = await fetch(
+        `${BACKEND_API}/api/officer/transactions/`
       )
         .then((res) => res.json())
         .then((data) => data);
