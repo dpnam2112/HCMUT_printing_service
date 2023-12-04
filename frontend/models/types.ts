@@ -8,6 +8,12 @@ export type ExtensionViewObject = {
   status: boolean;
 };
 
+export type Extension = {
+  name: string;
+  ext: string;
+  status: boolean;
+};
+
 export type TransactionHistoryObject = {
   name: string;
   amount: number;
