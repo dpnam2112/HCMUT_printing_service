@@ -3,6 +3,8 @@ import { FC, useState } from "react";
 import { Printer } from "../../../models/types";
 import toast from "react-hot-toast";
 import networkService from "../../../models/network-service";
+import InputTextField from "../../input-text-field";
+import InputNumberField from "../../input-number-field";
 
 type DialogEditingPrinterProps = {
   printer: Printer;
@@ -128,57 +130,6 @@ const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
         <Button onClick={handleClick}>Lưu</Button>
       </Flex>
     </Dialog.Content>
-  );
-};
-
-type InputTextFieldProps = {
-  title: string;
-  value: string;
-  setValue: (value: string) => void;
-};
-
-const InputTextField = ({ title, value, setValue }: InputTextFieldProps) => {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="font-semibold text-sm ml-[2px]">{title}</span>
-      <TextField.Root className="w-full" variant="surface" size={"2"}>
-        <TextField.Input
-          placeholder={title}
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-          }}
-        />
-      </TextField.Root>
-    </div>
-  );
-};
-
-type InputNumberFieldProps = {
-  title: string;
-  value: number;
-  setValue: (value: number) => void;
-};
-
-const InputNumberField = ({
-  title,
-  value,
-  setValue,
-}: InputNumberFieldProps) => {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="font-semibold text-sm ml-[2px]">{title}</span>
-      <TextField.Root className="w-full" variant="surface" size={"2"}>
-        <TextField.Input
-          placeholder={title}
-          value={value}
-          type="number"
-          onChange={(e) => {
-            setValue(Number(e.target.value));
-          }}
-        />
-      </TextField.Root>
-    </div>
   );
 };
 
