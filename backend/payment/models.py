@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 
 class Transactions(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=20, primary_key=True)
     a0_sheets = models.SmallIntegerField(default=0)
     a1_sheets = models.SmallIntegerField(default=0)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import PrinterLocation, Printer, Extension, PrintingActivity
+from print_auth.serializers import UserSerializer
 
 class PrinterLocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +35,7 @@ class ExtensionSerializer(serializers.ModelSerializer):
         fields = ('status', 'name', 'ext')
 
 class PrintingActivitySerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = PrintingActivity
-        fields = ('date', 'campus_id', 'file_name', 'page_count', 'sheet_type')
+        fields = ('date', 'user', 'printer_name', 'file_name', 'file_ext', 'page_count', 'two_sided', 'sheet_type')

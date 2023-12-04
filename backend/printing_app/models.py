@@ -1,5 +1,6 @@
 from django.db import models
 from print_auth.models import CampusUser
+from django.conf import settings
 
 # Create your models here.
 
@@ -34,7 +35,10 @@ class Extension(models.Model):
 
 class PrintingActivity(models.Model):
     date = models.DateTimeField(auto_now_add=True)
-    campus_id = models.CharField(max_length=11)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    printer_name = models.CharField(max_length=200)
     file_name = models.CharField(max_length=200)
+    file_ext = models.CharField(max_length=6)
     page_count = models.PositiveIntegerField()
+    two_sided = models.BooleanField(default=False)
     sheet_type = models.CharField(max_length=2)
