@@ -1,50 +1,205 @@
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CaretSortIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
-import { Button, Table, TextField, Tooltip } from "@radix-ui/themes";
-import { useState } from "react";
-import {
-  HISTORY_TIME,
-  SORT_CONFIG_TRANSACTION_HISTORY,
-} from "../../../models/constant";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Button, TextField, Tooltip } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import { HISTORY_TIME } from "../../../models/constant";
 import MenuHistoryTime from "../../menus/menu-history-time";
-import { TransactionHistoryObject } from "../../../models/types";
-import dataTransactionHistory from "./mock-data";
-import moment from "moment";
-import TransactionHistoryTableBody from "./transaction-history-table-body";
-import TransactionHistoryViewBottom from "./transaction-history-view-bottom";
-import TransactionHistoryState from "./models/transaction-history-state";
+import { TransactionHistory } from "../../../models/types";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import networkService from "../../../models/network-service";
 
-const state = new TransactionHistoryState();
+const columns: GridColDef[] = [
+  {
+    field: "date",
+    headerName: "Ngày giao dịch",
+    width: 300,
+  },
+  {
+    field: "user",
+    headerName: "Người dùng",
+    width: 300,
+  },
+  {
+    field: "total_cost",
+    headerName: "Tổng tiền",
+    width: 200,
+    renderCell: (params) => {
+      try {
+        const totalCost = Number(params.value);
+        const vndToUSD = 23000;
+        const total = (totalCost * vndToUSD).toString();
+        let str = "";
+        let cnt = 0;
+        for (let i = total.length - 1; i >= 0; i--) {
+          str = total[i] + str;
+          cnt++;
+          if (cnt === 3 && i !== 0) {
+            str = "." + str;
+            cnt = 0;
+          }
+        }
+        return <span>{str} VNĐ</span>;
+      } catch (e) {
+        return <span>{params.value}</span>;
+      }
+    },
+  },
+  {
+    field: "status",
+    headerName: "Trạng thái",
+    width: 200,
+    renderCell: (params) => {
+      const value = params.value;
+      return (
+        <div className="flex items-center gap-2">
+          <div
+            className={`w-3 h-3 rounded-full ${
+              value === "COMPLETED"
+                ? "bg-[#00B341]"
+                : value === "INCOMPLETED"
+                ? "bg-[#FF0000]"
+                : "bg-[#FFC000]"
+            }`}
+          ></div>
+          <span>
+            {value === "COMPLETED" ? "Đã thanh toán" : "Chưa thanh toán"}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    field: "a0_sheets",
+    headerName: "Số tờ A0",
+    width: 100,
+  },
+  {
+    field: "a1_sheets",
+    headerName: "Số tờ A1",
+    width: 100,
+  },
+  {
+    field: "a2_sheets",
+    headerName: "Số tờ A2",
+    width: 100,
+  },
+  {
+    field: "a3_sheets",
+    headerName: "Số tờ A3",
+    width: 100,
+  },
+  {
+    field: "a4_sheets",
+    headerName: "Số tờ A4",
+    width: 100,
+  },
+
+  {
+    field: "transaction_id",
+    headerName: "Mã giao dịch",
+    width: 200,
+  },
+];
+
+const convertToRows = (transactionHistory: TransactionHistory[]) => {
+  return transactionHistory.map((transactionHistory: TransactionHistory) => {
+    return {
+      id: transactionHistory.transaction_id,
+      transaction_id: transactionHistory.transaction_id,
+      user: transactionHistory.user,
+      total_cost: transactionHistory.total_cost,
+      a0_sheets: transactionHistory.a0_sheets,
+      a1_sheets: transactionHistory.a1_sheets,
+      a2_sheets: transactionHistory.a2_sheets,
+      a3_sheets: transactionHistory.a3_sheets,
+      a4_sheets: transactionHistory.a4_sheets,
+      status: transactionHistory.status,
+      date: transactionHistory.date,
+    };
+  });
+};
 
 const TransactionHistoryView = () => {
-  const [sortConfig, setSortConfig] = useState<
-    SORT_CONFIG_TRANSACTION_HISTORY | undefined
-  >(undefined);
   const [historyTime, setHistoryTime] = useState<HISTORY_TIME>(
     HISTORY_TIME.A_WEEK_AGO
   );
-  const [data, setData] = useState<TransactionHistoryObject[]>(
-    dataTransactionHistory
-  );
   const [textFilter, setTextFilter] = useState<string>("");
-  const [rowsNumPerPage, setRowsNumPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [transactionsHistory, setTransactionsHistory] = useState<
+    TransactionHistory[]
+  >([]);
 
-  const filteredData = state.getSortedList(
-    data.flatMap((obj: TransactionHistoryObject) => {
-      const date = moment(obj.madeAt).format("DD/MM/YYYY");
-      const text = `${obj.name} ${obj.amount} ${date}`;
+  useEffect(() => {
+    handleGetNewTransactionsHistory();
+  }, []);
 
-      if (text.toLowerCase().includes(textFilter.toLowerCase())) {
-        return [obj];
+  const handleGetNewTransactionsHistory = async () => {
+    const newTransactionsHistory =
+      await networkService.getTransactionsHistory();
+    setTransactionsHistory(newTransactionsHistory);
+  };
+
+  const getFilteredTimeList = (list: TransactionHistory[]) => {
+    return list.flatMap((row: TransactionHistory) => {
+      if (historyTime === HISTORY_TIME.ALL) {
+        return [row];
       }
+
+      const timestamp = new Date(row.date);
+      const currentDate = new Date();
+
+      if (historyTime === HISTORY_TIME.A_WEEK_AGO) {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 7);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (historyTime === HISTORY_TIME.TWO_WEEKS_AGO) {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 14);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (historyTime === HISTORY_TIME.A_MONTH_AGO) {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 31);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (historyTime === HISTORY_TIME.THREE_MONTHS_AGO) {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 93);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+
+      if (historyTime === HISTORY_TIME.SIX_MONTHS_AGO) {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 186);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+
       return [];
-    }),
-    sortConfig
+    });
+  };
+
+  const getFilteredList = (list: TransactionHistory[]) => {
+    const text = textFilter.toLowerCase();
+    if (!text) {
+      return list;
+    }
+    return list.flatMap((obj: TransactionHistory) => {
+      const textObj = `${obj.date} ${obj.transaction_id} ${obj.user} ${obj.total_cost} ${obj.a0_sheets} ${obj.a1_sheets} ${obj.a2_sheets} ${obj.a3_sheets} ${obj.a4_sheets} ${obj.status}`;
+      return textObj.toLowerCase().includes(text.toLowerCase()) ? [obj] : [];
+    });
+  };
+
+  const rows = convertToRows(
+    getFilteredList(getFilteredTimeList(transactionsHistory))
   );
 
   return (
@@ -85,7 +240,7 @@ const TransactionHistoryView = () => {
                 onClick={() => {}}
                 variant={"classic"}
               >
-                <div className="flex items-center gap-2">Xuất dữ liệu</div>
+                <div className="flex items-center gap-2">Xuất file Excel</div>
               </Button>
             </Tooltip>
           </div>
@@ -93,115 +248,18 @@ const TransactionHistoryView = () => {
       </div>
 
       <div className="border rounded overflow-x-auto">
-        <Table.Root className="overflow-x-auto">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.NAME_ASC
-                    ) {
-                      setSortConfig(SORT_CONFIG_TRANSACTION_HISTORY.NAME_DESC);
-                    } else if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.NAME_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_TRANSACTION_HISTORY.NAME_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Tên</span>
-                  {sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.NAME_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_TRANSACTION_HISTORY.NAME_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_ASC
-                    ) {
-                      setSortConfig(
-                        SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_DESC
-                      );
-                    } else if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Chi phí</span>
-                  {sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_TRANSACTION_HISTORY.AMOUNT_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.DATE_ASC
-                    ) {
-                      setSortConfig(SORT_CONFIG_TRANSACTION_HISTORY.DATE_DESC);
-                    } else if (
-                      sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.DATE_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_TRANSACTION_HISTORY.DATE_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Ngày giao dịch</span>
-                  {sortConfig === SORT_CONFIG_TRANSACTION_HISTORY.DATE_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_TRANSACTION_HISTORY.DATE_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body className=" overflow-x-auto">
-            <TransactionHistoryTableBody
-              data={filteredData}
-              rowsNumPerPage={rowsNumPerPage}
-              currentPage={currentPage}
-            />
-          </Table.Body>
-        </Table.Root>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 20 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+          disableRowSelectionOnClick
+        />
       </div>
-
-      <TransactionHistoryViewBottom
-        rowsNum={data.length}
-        rowsNumPerPage={rowsNumPerPage}
-        setRowsNumPerPage={setRowsNumPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
     </div>
   );
 };
