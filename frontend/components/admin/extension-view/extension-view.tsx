@@ -1,58 +1,89 @@
-import { Button, Table, TextField, Switch } from "@radix-ui/themes";
-import { useState } from "react";
-import {
-  ArrowDownIcon,
-  CaretSortIcon,
-  MagnifyingGlassIcon,
-  ArrowUpIcon,
-} from "@radix-ui/react-icons";
-import { SORT_CONFIG_EXTENSION_MANAGEMENT } from "../../../models/constant";
-import { ExtensionViewObject } from "../../../models/types";
-import ExtensionManagementState from "./models/extension-management-state";
-import { ArrowPathIcon } from "@heroicons/react/20/solid";
+import { TextField, Switch } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Extension } from "../../../models/types";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import networkService from "../../../models/network-service";
+import toast from "react-hot-toast";
 
-const state = new ExtensionManagementState();
+const columns: GridColDef[] = [
+  {
+    field: "status",
+    headerName: "Trạng thái",
+    width: 200,
+    renderCell: (params) => {
+      const [isChecked, setIsChecked] = useState<boolean>(false);
+
+      useEffect(() => {
+        setIsChecked(params.value);
+      }, [params.value]);
+
+      const handleOnClick = async () => {
+        const isSuccess = await networkService.activateExtension({
+          activate: !isChecked,
+          ext: [params.row.ext],
+        });
+
+        console.log(isSuccess);
+
+        if (isSuccess) {
+          setIsChecked(!isChecked);
+          toast.success("Thay đổi trạng thái thành công!");
+        } else {
+          toast.error("Có lỗi xảy ra!");
+        }
+      };
+
+      return <Switch checked={isChecked} onClick={handleOnClick} />;
+    },
+  },
+  {
+    field: "name",
+    headerName: "Tên phần mở rộng",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "ext",
+    headerName: "Phần mở rộng",
+    width: 200,
+    resizable: true,
+  },
+];
+
+const convertToRows = (extensions: Extension[]): any[] => {
+  return extensions.map((extension, index) => {
+    return {
+      id: index,
+      status: extension.status,
+      name: extension.name,
+      ext: extension.ext,
+    };
+  });
+};
 
 const ExtensionView = () => {
   const [textFilter, setTextFilter] = useState("");
-  const [editMode, setEditMode] = useState(false);
-  const [sortConfig, setSortConfig] = useState<
-    SORT_CONFIG_EXTENSION_MANAGEMENT | undefined
-  >(undefined);
-  const [data, setData] = useState<ExtensionViewObject[]>([
-    { name: "DOCX", extension: ".docx", status: true },
-    { name: "CSV", extension: ".csv", status: true },
-    { name: "PPT", extension: ".ppt", status: false },
-  ]);
+  const [extensions, setExtensions] = useState<Extension[]>([]);
 
-  const filteredData = state.getSortedPrinters(
-    data.filter(
-      (item) =>
-        item.name.toLowerCase().includes(textFilter.toLowerCase()) ||
-        item.extension.toLowerCase().includes(textFilter.toLowerCase()) ||
-        (item.status ? "Đang được sử dụng" : "Không được sử dụng")
-          .toLowerCase()
-          .includes(textFilter.toLowerCase())
-    ),
-    sortConfig
-  );
+  useEffect(() => {
+    handleUpdateExtensions();
+  }, []);
 
-  const toggleStatus = (ext: string) => {
-    const newData = data.flatMap((obj: ExtensionViewObject) => {
-      if (obj.extension === ext) {
-        return [{ ...obj, status: !obj.status }];
-      }
-      return [obj];
-    });
-    setData(newData);
+  const handleUpdateExtensions = async () => {
+    const newExtensions = await networkService.getExtensions();
+    setExtensions(newExtensions);
   };
 
-  const handleFocusInputField = () => {
-    const ele = document.getElementById("inputFilterPrinter");
-    if (ele) {
-      ele.focus();
+  const filteredExtensions = extensions.flatMap((ext) => {
+    const text = `${ext.name} ${ext.ext}`;
+    if (text.toLowerCase().includes(textFilter.toLowerCase())) {
+      return [ext];
+    } else {
+      return [];
     }
-  };
+  });
+  const rows = convertToRows(filteredExtensions);
 
   return (
     <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
@@ -64,163 +95,30 @@ const ExtensionView = () => {
           </span>
         </div>
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center justify-center gap-2 w-full">
-            <TextField.Root className="w-full" variant="surface" size={"2"}>
-              <TextField.Slot>
-                <MagnifyingGlassIcon height="16" width="16" />
-              </TextField.Slot>
-              <TextField.Input
-                id="inputFilterPrinter"
-                placeholder="Lọc các đuôi file"
-                value={textFilter}
-                onChange={(e) => {
-                  setTextFilter(e.target.value);
-                }}
-              />
-            </TextField.Root>
-            <Button
-              className="cursor-pointer"
-              variant={editMode ? "classic" : "surface"}
-              onClick={() => {
-                if (editMode) {
-                  handleFocusInputField();
-                }
-                setEditMode(!editMode);
+          <TextField.Root className="w-full" variant="surface" size={"2"}>
+            <TextField.Slot>
+              <MagnifyingGlassIcon height="16" width="16" />
+            </TextField.Slot>
+            <TextField.Input
+              placeholder="Lọc các phần mở rộng"
+              value={textFilter}
+              onChange={(e) => {
+                setTextFilter(e.target.value);
               }}
-            >
-              <div className="flex items-center gap-2">
-                {editMode && (
-                  <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
-                )}
-                {editMode ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
-              </div>
-            </Button>
-          </div>
+            />
+          </TextField.Root>
         </div>
-        <Table.Root className="border rounded">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>Trạng Thái</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC
-                    ) {
-                      setSortConfig(SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC);
-                    } else if (
-                      sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">
-                    Tên Phần Mở Rộng
-                  </span>
-                  {sortConfig === SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_EXTENSION_MANAGEMENT.NAME_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig ===
-                      SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC
-                    ) {
-                      setSortConfig(
-                        SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC
-                      );
-                    } else if (
-                      sortConfig ===
-                      SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(
-                        SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC
-                      );
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Phần Mở Rộng</span>
-                  {sortConfig ===
-                  SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_EXTENSION_MANAGEMENT.EXTENSION_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              {editMode && <Table.ColumnHeaderCell></Table.ColumnHeaderCell>}
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {filteredData.map((item, index) => (
-              <Table.Row key={index}>
-                <Table.Cell>
-                  {item.status ? (
-                    <div className="flex items-center gap-2 w-full h-full">
-                      <div className="bg-green-400 rounded-full w-4 h-4"></div>
-                      <span className="text-sm font-medium text-green-400">
-                        Đang được sử dụng
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 w-full h-full">
-                      <div className="bg-red-400 rounded-full w-4 h-4"></div>
-                      <span className="text-sm font-medium text-red-400">
-                        Không được sử dụng
-                      </span>
-                    </div>
-                  )}
-                </Table.Cell>
-
-                <Table.RowHeaderCell>
-                  <div className="w-full h-full pl-2">
-                    <span className={`${item.status ? "" : "text-red-400"}`}>
-                      {item.name}
-                    </span>
-                  </div>
-                </Table.RowHeaderCell>
-                <Table.Cell>
-                  <div className="w-full h-full pl-2">
-                    <span className={`${item.status ? "" : "text-red-400"}`}>
-                      {item.extension}
-                    </span>
-                  </div>
-                </Table.Cell>
-                {editMode && (
-                  <Table.Cell>
-                    <Switch
-                      color="indigo"
-                      checked={item.status}
-                      onClick={() => {
-                        toggleStatus(item.extension);
-                      }}
-                      onChange={() => {}}
-                    />
-                  </Table.Cell>
-                )}
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          disableRowSelectionOnClick
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 20 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+        />
       </div>
     </div>
   );
