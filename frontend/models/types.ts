@@ -28,3 +28,11 @@ export type Printer = {
   manufacturer: string;
   name: string;
 };
+
+export type PrintingHistory = {
+  date: string;
+  campus_id: string;
+  file_name: string;
+  page_count: number;
+  sheet_type: string;
+};

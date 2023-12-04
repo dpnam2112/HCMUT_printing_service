@@ -1,196 +1,147 @@
-import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CaretSortIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
+import { CaretSortIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
   Button,
-  Table,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuSeparator,
-  IconButton,
   TextField,
-  Tooltip,
 } from "@radix-ui/themes";
-import { FC, useEffect, useState } from "react";
-import { HistoryDataObject, HistoryViewProps } from "./models/types";
-import { mData } from "./mock-data";
-import {
-  ADMIN_MANAGEMENT_VIEW,
-  SORT_CONFIG_PRINTER_MANAGEMENT,
-} from "../../../models/constant";
-import PrintingHistoryState from "./models/printing-history-state";
-import { SORT_CONFIG } from "./models/constant";
-import TableViewBottom from "./printing-history-view-bottom";
-import PrinterViewTableBody from "./printing-history-view-table-body";
+import { useEffect, useState } from "react";
+import { PrintingHistory } from "../../../models/types";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import networkService from "../../../models/network-service";
 
-const state = new PrintingHistoryState();
+const columns: GridColDef[] = [
+  {
+    field: "date",
+    headerName: "Ngày giao dịch",
+    width: 300,
+  },
+  {
+    field: "campus_id",
+    headerName: "Campus (Update later)",
+    width: 200,
+  },
+  {
+    field: "file_name",
+    headerName: "Tên file",
+    width: 200,
+  },
+  {
+    field: "page_count",
+    headerName: "Số trang",
+    width: 200,
+  },
+  {
+    field: "sheet_type",
+    headerName: "Loại giấy",
+    width: 200,
+  },
+];
 
-type TableHeaderProps = {
-  label: string;
-  ASConfig: SORT_CONFIG;
-  DESConfig: SORT_CONFIG;
+const convertToRows = (printingsHistory: PrintingHistory[]): any[] => {
+  return printingsHistory.map((printingHistory, index) => {
+    return {
+      id: index,
+      date: printingHistory.date,
+      campus_id: printingHistory.campus_id,
+      file_name: printingHistory.file_name,
+      page_count: printingHistory.page_count,
+      sheet_type: printingHistory.sheet_type,
+    };
+  });
 };
 
 const PrintingTableView = () => {
-  const [tableList, setTableList] = useState<HistoryDataObject[]>(mData);
-  const [tableListRendered, setTableListRendered] =
-    useState<HistoryViewProps[]>(mData);
-  const [textFilter, setTextFilter] = useState<string>("");
-  const [sortConfig, setSortConfig] = useState<SORT_CONFIG | undefined>(
-    undefined
+  const [printingsHistory, setPrintingsHistory] = useState<PrintingHistory[]>(
+    []
   );
+  const [textFilter, setTextFilter] = useState<string>("");
   const [filterTime, setFilterTime] = useState<string>("Tất cả lịch sử");
-  const [rowsNumPerPage, setRowsNumPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
-    const newTableListRendered = state.getSorted(
-      getFilteredTimeList(tableList),
-      sortConfig
-    );
+    handleGetNewPrintingsHistory();
+  }, []);
 
-    setTableListRendered(newTableListRendered);
-  }, [filterTime]);
+  const handleGetNewPrintingsHistory = async () => {
+    const newPrintingsHistory = await networkService.getPrintingsHistory();
+    setPrintingsHistory(newPrintingsHistory);
+  };
 
-  useEffect(() => {
-    const newTableListRendered = state.getSorted(
-      getFilteredList(tableList),
-      sortConfig
-    );
-
-    setTableListRendered(getFilteredTimeList(newTableListRendered));
-  }, [textFilter]);
-
-  useEffect(() => {
-    const newHistoryListRendered = state.getSorted(
-      tableListRendered,
-      sortConfig
-    );
-    setTableListRendered(
-      getFilteredTimeList(getFilteredList(newHistoryListRendered))
-    );
-  }, [sortConfig]);
-
-  const getFilteredTimeList = (list: HistoryViewProps[]) => {
-    const oldDate = new Date().setMonth(new Date().getMonth() - 36);
-    return list.flatMap((row: HistoryViewProps) => {
-      if (filterTime === "Lịch sử 1 tuần trước") {
-        const oldDate = new Date();
-        oldDate.setDate(new Date().getDate() - 7);
-        if (oldDate < row.time) return [row];
-      }
-      if (filterTime === "Lịch sử 2 tuần trước") {
-        const oldDate = new Date();
-        oldDate.setDate(new Date().getDate() - 14);
-        if (oldDate < row.time) return [row];
-      }
-      if (filterTime === "Lịch sử 1 tháng trước") {
-        const oldDate = new Date();
-        oldDate.setMonth(new Date().getMonth() - 1);
-        if (oldDate < row.time) return [row];
-      }
-      if (filterTime === "Lịch sử 2 tháng trước") {
-        const oldDate = new Date();
-        oldDate.setMonth(new Date().getMonth() - 2);
-        if (oldDate < row.time) return [row];
-      }
-      if (filterTime === "Lịch sử 4 tháng trước") {
-        const oldDate = new Date();
-        oldDate.setMonth(new Date().getMonth() - 4);
-        if (oldDate < row.time) return [row];
-      }
-      if (filterTime === "Lịch sử 6 tháng trước") {
-        const oldDate = new Date();
-        oldDate.setMonth(new Date().getMonth() - 6);
-        if (oldDate < row.time) return [row];
-      }
+  const getFilteredTimeList = (list: PrintingHistory[]) => {
+    return list.flatMap((row: PrintingHistory) => {
       if (filterTime === "Tất cả lịch sử") {
         return [row];
       }
 
+      const timestamp = new Date(row.date);
+      const currentDate = new Date();
+
+      if (filterTime === "Lịch sử 1 tuần trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 7);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (filterTime === "Lịch sử 2 tuần trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 14);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (filterTime === "Lịch sử 1 tháng trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 31);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (filterTime === "Lịch sử 2 tháng trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 62);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (filterTime === "Lịch sử 4 tháng trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 124);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+      if (filterTime === "Lịch sử 6 tháng trước") {
+        const sevenDaysFromNow = new Date(currentDate);
+        sevenDaysFromNow.setDate(currentDate.getDate() - 186);
+        if (timestamp >= sevenDaysFromNow) {
+          return [row];
+        }
+      }
+
       return [];
     });
   };
 
-  const getFilteredList = (list: HistoryViewProps[]) => {
+  const getFilteredList = (list: PrintingHistory[]) => {
     const text = textFilter.toLowerCase();
     if (!text) {
       return list;
     }
-    return list.flatMap((row: HistoryViewProps) => {
-      if (row.username.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.time.toLocaleString().toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.location.facility.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.location.building.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.location.room.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.file_name.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.file_name.toLowerCase().includes(text)) {
-        return [row];
-      }
-      if (row.pages.toString().includes(text)) {
-        return [row];
-      }
-      if (row.size.toString().includes(text)) {
-        return [row];
-      }
-      if (row.type.toLowerCase().includes(text)) {
-        return [row];
-      }
-      return [];
+    return list.flatMap((obj: PrintingHistory) => {
+      const textObj = `${obj.date} ${obj.campus_id} ${obj.file_name} ${obj.page_count} ${obj.sheet_type}`;
+      return textObj.toLowerCase().includes(text.toLowerCase()) ? [obj] : [];
     });
   };
 
-  const RenderSortableHeaderCell: FC<TableHeaderProps> = ({
-    label,
-    ASConfig,
-    DESConfig,
-  }) => {
-    const handleSortClick = () => {
-      if (sortConfig === ASConfig) {
-        setSortConfig(DESConfig);
-      } else if (sortConfig === DESConfig) {
-        setSortConfig(undefined);
-      } else {
-        setSortConfig(ASConfig);
-      }
-    };
-    return (
-      <div
-        className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-        onClick={handleSortClick}
-      >
-        <span className="text-sm font-semibold">{label}</span>
-        {sortConfig === ASConfig ? (
-          <ArrowUpIcon />
-        ) : sortConfig === DESConfig ? (
-          <ArrowDownIcon />
-        ) : (
-          <CaretSortIcon />
-        )}
-      </div>
-    );
-  };
+  const rows = convertToRows(
+    getFilteredTimeList(getFilteredList(printingsHistory))
+  );
 
   return (
     <div className=" w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
-      {/* <div className="flex flex-col gap-5"> */}
       <div className="flex flex-col">
         <span className="font-bold text-2xl">Xin chào SPSO!</span>
         <span className="font-semibold text-base text-[#71717A]">
@@ -285,83 +236,18 @@ const PrintingTableView = () => {
         </div>
       </div>
       <div className="border rounded overflow-x-auto overflow-auto">
-        <Table.Root className="overflow-auto">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Người dùng"
-                  ASConfig={SORT_CONFIG.USERNAME_ASC}
-                  DESConfig={SORT_CONFIG.USERNAME_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Thời gian"
-                  ASConfig={SORT_CONFIG.TIME_ASC}
-                  DESConfig={SORT_CONFIG.TIME_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Địa điểm"
-                  ASConfig={SORT_CONFIG.LOCATION_ASC}
-                  DESConfig={SORT_CONFIG.LOCATION_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Tên File"
-                  ASConfig={SORT_CONFIG.FILENAME_ASC}
-                  DESConfig={SORT_CONFIG.FILENAME_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Số trang"
-                  ASConfig={SORT_CONFIG.PAGES_ASC}
-                  DESConfig={SORT_CONFIG.PAGES_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Số bản sao"
-                  ASConfig={SORT_CONFIG.COPYS_ASC}
-                  DESConfig={SORT_CONFIG.COPYS_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <RenderSortableHeaderCell
-                  label="Kích thước"
-                  ASConfig={SORT_CONFIG.SIZE_ASC}
-                  DESConfig={SORT_CONFIG.SIZE_DESC}
-                />
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1">
-                  <span className="text-sm font-semibold">In trang</span>
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body className="overflow-x-auto overflow-y-auto">
-            <PrinterViewTableBody
-              rowListRendered={tableListRendered}
-              rowsNumPerPage={rowsNumPerPage}
-              currentPage={currentPage}
-            />
-          </Table.Body>
-        </Table.Root>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 20 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+          disableRowSelectionOnClick
+        />
       </div>
-      <TableViewBottom
-        rowsNumPerPage={rowsNumPerPage}
-        rowsNum={tableListRendered.length}
-        setRowsNumPerPage={setRowsNumPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
     </div>
   );
 };

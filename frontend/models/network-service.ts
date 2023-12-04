@@ -1,5 +1,5 @@
 import { BACKEND_API } from "./constant";
-import { Extension, Printer } from "./types";
+import { Extension, Printer, PrintingHistory } from "./types";
 
 class NetworkService {
   constructor() {}
@@ -98,6 +98,20 @@ class NetworkService {
     } catch (e) {
       console.error("Error: ", e);
       return false;
+    }
+  }
+
+  public async getPrintingsHistory(): Promise<PrintingHistory[]> {
+    try {
+      const data: PrintingHistory[] = await fetch(
+        `${BACKEND_API}/api/activity/`
+      )
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return [];
     }
   }
 }
