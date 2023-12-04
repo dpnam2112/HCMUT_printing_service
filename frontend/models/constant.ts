@@ -98,6 +98,8 @@ enum HISTORY_TIME {
   ALL = "Tất cả",
 }
 
+const BACKEND_API = "http://localhost:8000";
+
 export {
   MENU_FACILITY,
   MENU_BUILDING_CS1,
@@ -112,4 +114,5 @@ export {
   SORT_CONFIG_EXTENSION_MANAGEMENT,
   SORT_CONFIG_TRANSACTION_HISTORY,
   HISTORY_TIME,
+  BACKEND_API,
 };
