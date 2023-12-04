@@ -36,3 +36,16 @@ export type PrintingHistory = {
   page_count: number;
   sheet_type: string;
 };
+
+export type TransactionHistory = {
+  user: number;
+  transaction_id: string;
+  a0_sheets: number;
+  a1_sheets: number;
+  a2_sheets: number;
+  a3_sheets: number;
+  a4_sheets: number;
+  total_cost: string;
+  status: string;
+  date: string;
+};
