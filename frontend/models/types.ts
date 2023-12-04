@@ -8,12 +8,6 @@ export type Extension = {
   status: boolean;
 };
 
-export type TransactionHistoryObject = {
-  name: string;
-  amount: number;
-  madeAt: number;
-};
-
 export type Location = {
   campus: string;
   floor: number;
