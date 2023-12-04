@@ -14,4 +14,5 @@ class Transactions(models.Model):
     a4_sheets = models.SmallIntegerField(default=0)
     total_cost = models.DecimalField(verbose_name="Total cost in USD", decimal_places=2, max_digits=5)
     status = models.CharField(max_length=20, default="INCOMPLETED")
+    status = models.CharField(max_length=20, default="INCOMPLETED")
     date = models.DateTimeField(auto_now_add=True)

@@ -1,185 +1,133 @@
-import {
-  Button,
-  Dialog,
-  Flex,
-  Switch,
-  Text,
-  TextField,
-} from "@radix-ui/themes";
-import { FC, useEffect, useState } from "react";
-import { PrinterRenderViewProps } from "../../../models/types";
-import {
-  MENU_BUILDING_CS1,
-  MENU_BUILDING_CS2,
-  MENU_FACILITY,
-  MENU_ROOM,
-} from "../../../models/constant";
-import MenuFacility from "../../menus/menu-facility";
-import MenuBuildingCS1 from "../../menus/menu-building-cs1";
-import MenuBuildingCS2 from "../../menus/menu-building-cs2";
-import MenuRoom from "../../menus/menu-room";
+import { Button, Dialog, Flex, TextField } from "@radix-ui/themes";
+import { FC, useState } from "react";
+import { Printer } from "../../../models/types";
+import toast from "react-hot-toast";
+import networkService from "../../../models/network-service";
+import InputTextField from "../../input-text-field";
+import InputNumberField from "../../input-number-field";
 
 type DialogEditingPrinterProps = {
-  data: PrinterRenderViewProps;
-  handleClickSave: (newData: PrinterRenderViewProps) => void;
+  printer: Printer;
+  handleClose: () => void;
 };
 
 const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
-  data,
-  handleClickSave,
+  printer,
+  handleClose,
 }) => {
-  const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
-    MENU_FACILITY.LY_THUONG_KIET
+  const [name, setName] = useState<string>(printer.name);
+  const [manufacturer, setManufacturer] = useState<string>(
+    printer.manufacturer
   );
-  const [selectedBuildingCS1, setSelectedBuildingCS1] =
-    useState<MENU_BUILDING_CS1>(MENU_BUILDING_CS1.A1);
-  const [selectedBuildingCS2, setSelectedBuildingCS2] =
-    useState<MENU_BUILDING_CS2>(MENU_BUILDING_CS2.H2);
-  const [selectedRoom, setSelectedRoom] = useState<MENU_ROOM>(MENU_ROOM.R_101);
-  const [isRunning, setIsRunning] = useState<boolean>(data.isRunning);
-  const [printerName, setPrinterName] = useState<string>(data.name);
+  const [description, setDescription] = useState<string>(printer.description);
+  const [campus, setCampus] = useState<string>(printer.location.campus);
+  const [buildingName, setBuildingName] = useState<string>(
+    printer.location.building_name
+  );
+  const [floor, setFloor] = useState<number>(printer.location.floor);
+  const [roomCode, setRoomCode] = useState<string>(printer.location.room_code);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined
+  );
 
-  // Set up data
-  useEffect(() => {
-    if (data.facility === MENU_FACILITY.LY_THUONG_KIET) {
-      setSelectedFacility(MENU_FACILITY.LY_THUONG_KIET);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const handleClick = async () => {
+    if (
+      !name ||
+      !manufacturer ||
+      !description ||
+      !campus ||
+      !buildingName ||
+      !floor ||
+      !roomCode
+    ) {
+      setErrorMessage("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
+    setErrorMessage(undefined);
+
+    const newPrinter: Printer = {
+      id: printer.id,
+      name: name,
+      manufacturer: manufacturer,
+      description: description,
+      location: {
+        campus: campus,
+        building_name: buildingName,
+        floor: floor,
+        room_code: roomCode,
+      },
+    };
+
+    const isSuccess = await networkService.updatePrinter(newPrinter);
+
+    if (isSuccess) {
+      handleClose();
+      toast.success("Cập nhật máy in thành công!");
     } else {
-      setSelectedFacility(MENU_FACILITY.DI_AN);
+      setErrorMessage("Vị trí đặt máy in không tồn tại!");
     }
-
-    const buildingCS1 = Object.values(MENU_BUILDING_CS1).find((ele) =>
-      ele.includes(data.building)
-    );
-    const buildingCS2 = Object.values(MENU_BUILDING_CS2).find((ele) =>
-      ele.includes(data.building)
-    );
-    const room = Object.values(MENU_ROOM).find((ele) =>
-      ele.includes(data.room)
-    );
-
-    if (buildingCS1) {
-      setSelectedBuildingCS1(buildingCS1);
-    }
-    if (buildingCS2) {
-      setSelectedBuildingCS2(buildingCS2);
-    }
-    if (room) {
-      setSelectedRoom(room);
-    }
-  }, []);
+  };
 
   return (
-    <Dialog.Content style={{ maxWidth: 600 }}>
-      <Dialog.Title>Chỉnh sửa {data.name}</Dialog.Title>
+    <Dialog.Content style={{ maxWidth: 500 }}>
+      <Dialog.Title>Chỉnh sửa {printer.name}</Dialog.Title>
       <Dialog.Description size="2" mb="4">
-        Nhấn vào nút "Hoàn tất chỉnh sửa" để cập nhật thông tin lên server.
+        Nhấn vào nút "Lưu" để cập nhật thông tin lên server.
       </Dialog.Description>
 
-      <Flex direction="column" gap="3">
-        <label>
-          <Text as="div" size="2" mb="1" weight="bold">
-            Trạng thái
-          </Text>
-          <Flex gap="2">
-            <Switch
-              checked={isRunning}
-              onChange={() => {}}
-              onClick={() => {
-                setIsRunning(!isRunning);
-              }}
-            />
-            <Text
-              as="div"
-              size="2"
-              mb="1"
-              weight="bold"
-              className={isRunning ? "text-green-500" : "text-red-500"}
-            >
-              {isRunning ? "Đang hoạt động" : "Không hoạt động"}
-            </Text>
-          </Flex>
-        </label>
-
-        <label>
-          <Text as="div" size="2" mb="1" weight="bold">
-            Tên máy in
-          </Text>
-          <TextField.Input
+      <div className="flex flex-col gap-4">
+        <InputTextField title="Tên máy in" value={name} setValue={setName} />
+        <InputTextField
+          title="Hãng sản xuất"
+          value={manufacturer}
+          setValue={setManufacturer}
+        />
+        <InputTextField
+          title="Đặt tại cơ sở"
+          value={campus}
+          setValue={setCampus}
+        />
+        <InputTextField
+          title="Đặt tại toà"
+          value={buildingName}
+          setValue={setBuildingName}
+        />
+        <InputNumberField
+          title="Đặt tại lầu"
+          value={floor}
+          setValue={setFloor}
+        />
+        <InputTextField
+          title="Đặt tại phòng"
+          value={roomCode}
+          setValue={setRoomCode}
+        />
+        <div className="flex flex-col gap-1">
+          <span className="font-semibold text-sm ml-[2px]">Mô tả máy in</span>
+          <textarea
+            className="rounded h-[100px] p-1"
+            value={description}
             onChange={(e) => {
-              setPrinterName(e.target.value.trim());
+              setDescription(e.target.value);
             }}
-            value={printerName}
-            placeholder="Điền tên máy in"
-          />
-        </label>
+          ></textarea>
+        </div>
 
-        <label className="w-full">
-          <Text as="div" size="2" mb="1" weight="bold">
-            Cơ sở
-          </Text>
-          <MenuFacility
-            width="w-[550px]"
-            selectedFacility={selectedFacility}
-            setSelectedFacility={setSelectedFacility}
-          />
-        </label>
+        {errorMessage && (
+          <span className="text-sm font-semibold text-red-500 -mt-2">
+            {errorMessage}
+          </span>
+        )}
+      </div>
 
-        <label className="w-full">
-          <Text as="div" size="2" mb="1" weight="bold">
-            Toà
-          </Text>
-          {selectedFacility === MENU_FACILITY.LY_THUONG_KIET ? (
-            <MenuBuildingCS1
-              width="w-[550px]"
-              selectedItem={selectedBuildingCS1}
-              setSelectedItem={setSelectedBuildingCS1}
-            />
-          ) : (
-            <MenuBuildingCS2
-              width="w-[550px]"
-              selectedItem={selectedBuildingCS2}
-              setSelectedItem={setSelectedBuildingCS2}
-            />
-          )}
-        </label>
-
-        <label className="w-full">
-          <Text as="div" size="2" mb="1" weight="bold">
-            Phòng
-          </Text>
-          <MenuRoom
-            width="w-[550px]"
-            selectedItem={selectedRoom}
-            setSelectedItem={setSelectedRoom}
-          />
-        </label>
-      </Flex>
-
-      <Flex gap="3" mt="4" justify="end">
-        <Dialog.Close>
-          <Button variant="soft" color="gray">
-            Huỷ bỏ
-          </Button>
-        </Dialog.Close>
-        <Dialog.Close disabled={!printerName}>
-          <Button
-            onClick={() => {
-              handleClickSave({
-                ...data,
-                name: printerName,
-                isRunning: isRunning,
-                facility: selectedFacility,
-                building:
-                  selectedFacility === MENU_FACILITY.LY_THUONG_KIET
-                    ? selectedBuildingCS1
-                    : selectedBuildingCS2,
-                room: selectedRoom,
-              });
-            }}
-          >
-            Lưu
-          </Button>
-        </Dialog.Close>
+      <Flex gap="3" mt={errorMessage ? "1" : "4"} justify="end">
+        <Button variant="soft" color="gray" onClick={handleClose}>
+          Huỷ bỏ
+        </Button>
+        <Button onClick={handleClick}>Lưu</Button>
       </Flex>
     </Dialog.Content>
   );
