@@ -3,9 +3,14 @@ from django.http import HttpResponse
 from django.views import View
 from django.conf import settings
 import json
-from . import config, create_order, models as payment_models
+from . import config, create_order
+from .models import Transactions
+from django.contrib.auth.models import User
 import requests
 from .utils import convert_sheets, calc_price, get_paypal_token, get_price
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import TransactionsSerializer
 
 # Create your views here.
 
@@ -13,6 +18,7 @@ PAYPAL_API_TESTING = True
 
 class CreateOrder(View):
     """ create Paypal order.
+    api/payment/create-order/
 
     Request payload:
         A JSON object:
@@ -49,6 +55,21 @@ class CreateOrder(View):
         serialized_data = create_order.CreateOrderPayloadSerializer(create_order_data)
         return serialized_data
 
+    def create_transaction(self, user, req_payload: dict, trans_id, total_cost):
+        keymaps = {
+            "A0": "a0_sheets",
+            "A1": "a1_sheets",
+            "A2": "a2_sheets",
+            "A3": "a3_sheets",
+            "A4": "a4_sheets",
+        }
+
+        sheet_info = dict()
+        for key, val in req_payload.items():
+            sheet_info[keymaps[key]] = val
+
+        transaction = Transactions.objects.create(user=user, **sheet_info, transaction_id=trans_id, total_cost=total_cost, status="INCOMPLETED")
+
 
     def post(self, request):
         # TODO: Handle incoming payloads.
@@ -71,26 +92,22 @@ class CreateOrder(View):
                                 headers=headers,
                                 data=json.dumps(serialized_data.data))
 
+        parsed_res = json.loads(response.text)
+
+        trans_id = parsed_res["id"]
+
+        user = User.objects.get(pk=1) if settings.PAYPAL_API_TESTING else request.user
+        transaction = self.create_transaction(user=user, req_payload=sheet_quantity, trans_id=trans_id, total_cost=calc_price(sheet_quantity))
+
         return HttpResponse(response.text, content_type='application/json') 
 
 
 class CaptureOrder(View):
     """ Capture order.
-
+        /api/payment/capture-order
         Request payload: A JSON-formatted text including the following fields:
             - order_id: Paypal order ID
     """
-
-    def save_transaction_info(self, user, capture_resp):
-        """ Save the transaction information to the database.
-
-        Args:
-            user: an instance of User model.
-            capture_resp: parsed response's payload received from Paypal's capture API.
-        """
-        
-        """ TODO: Save the transaction information to the database. """
-        pass
 
     def post(self, request):
         # TODO: Authenticate the incoming request
@@ -110,14 +127,34 @@ class CaptureOrder(View):
         order_id = req_payload["order_id"]
         capture_url = f"{config.API_URL}/v2/checkout/orders/{order_id}/capture"
 
-        capture_raw_resp = requests.post(url=capture_url,headers=headers,data={}) 
-        print(capture_raw_resp)
-        if capture_raw_resp.status_code == 201 and not PAYPAL_API_TESTING:
-            # Indicate that the payment is completed
-
+        capture_raw_resp = requests.post(url=capture_url,headers=headers,data={})
+        capture_payload = json.loads(capture_raw_resp.text)
+        if capture_raw_resp.status_code == 201:
+            # payment is completed
             # TODO: Record the transaction
             capture_resp = capture_raw_resp.json()
-            self.save_transaction_info(request.user, capture_resp)
 
-            
+            transaction = Transactions.objects.get(transaction_id=capture_resp["id"])
+            transaction.status = capture_payload["status"]
+            transaction.save()
+
         return HttpResponse(capture_raw_resp, content_type="application/json")
+
+
+class GetTransactions(APIView):
+    def get(self, request):
+        """ Retrieve all transactions if user_id is not specified.
+            If user_id is specified, Retrieve all transactions if that user. """
+        query_params = dict(request.GET)
+        for key, val in query_params.items():
+            query_params[key] = val[0]
+
+        user_id = None
+        if "user_id" in query_params:
+            user_id = query_params["user_id"]
+
+        user = User.objects.get(pk=user_id) if user_id else None
+        transactions = Transactions.objects.filter(user=user) if user else Transactions.objects.all()
+
+        serializer = TransactionsSerializer(transactions, many=True)
+        return Response(data=serializer.data)
