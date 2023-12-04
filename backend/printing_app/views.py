@@ -90,5 +90,5 @@ class PrintActivity(APIView):
 class MainPage(View):
     def get(self, request):
         if settings.TESTING_LOGIN:
-            return HttpResponse("Hello world")
+            return render(request, "index_1.html")
         return render(request, 'index.html')
