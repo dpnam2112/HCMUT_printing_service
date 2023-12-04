@@ -1,14 +1,4 @@
-export type PrinterViewObject = {
-  id: string;
-  name: string;
-  facility: string;
-  building: string;
-  room: string;
-  description?: string;
-  isRunning: boolean;
-};
-
-export type PrinterRenderViewProps = PrinterViewObject & {
+export type PrinterRenderViewProps = Printer & {
   isSelectedDelete?: boolean;
 };
 
@@ -22,4 +12,19 @@ export type TransactionHistoryObject = {
   name: string;
   amount: number;
   madeAt: number;
+};
+
+export type Location = {
+  campus: string;
+  floor: number;
+  room_code: string;
+  building_name: string;
+};
+
+export type Printer = {
+  id: string;
+  location: Location;
+  description: string;
+  manufacturer: string;
+  name: string;
 };

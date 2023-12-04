@@ -1,164 +1,108 @@
-import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CaretSortIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
-import { Button, Table, TextField, Tooltip } from "@radix-ui/themes";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Button, TextField, Tooltip } from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
-import {
-  PrinterRenderViewProps,
-  PrinterViewObject,
-} from "../../../models/types";
-import { mockPrinterData } from "./mock-data";
-import {
-  ADMIN_MANAGEMENT_VIEW,
-  SORT_CONFIG_PRINTER_MANAGEMENT,
-} from "../../../models/constant";
-import PrinterManagementState from "./models/printer-management-state";
-import PrinterManagementViewBottom from "./printer-management-view-bottom";
-import PrinterViewTableBody from "./printer-management-view-table-body";
+import { Printer } from "../../../models/types";
+import { ADMIN_MANAGEMENT_VIEW } from "../../../models/constant";
+import networkService from "../../../models/network-service";
+import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 
 type PrinterManagementViewProps = {
   setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void;
 };
 
-const state = new PrinterManagementState();
+const columns: GridColDef[] = [
+  { field: "id", headerName: "ID máy", width: 100, resizable: true },
+  {
+    field: "name",
+    headerName: "Tên máy",
+    width: 250,
+    resizable: true,
+  },
+  {
+    field: "manufacturer",
+    headerName: "Hãng sản xuất",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "campus",
+    headerName: "Cơ sở",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "building_name",
+    headerName: "Toà",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "floor",
+    headerName: "Lầu",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "room_code",
+    headerName: "Phòng",
+    width: 200,
+    resizable: true,
+  },
+  {
+    field: "description",
+    headerName: "Mô tả",
+    width: 350,
+    resizable: true,
+  },
+];
+
+const convertToRows = (printers: Printer[]) => {
+  return printers.map((printer: Printer) => {
+    return {
+      id: printer.id,
+      name: printer.name,
+      manufacturer: printer.manufacturer,
+      campus: printer.location.campus,
+      floor: printer.location.floor,
+      room_code: printer.location.room_code,
+      building_name: printer.location.building_name,
+      description: printer.description,
+    };
+  });
+};
 
 const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   setCurrentView,
 }) => {
-  const [printerList, setPrinterList] =
-    useState<PrinterViewObject[]>(mockPrinterData);
-  const [printerListRendered, setPrinterListRendered] =
-    useState<PrinterRenderViewProps[]>(mockPrinterData);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [selectedRowIDs, setSelectedRowIDs] = useState<string[]>([]);
+  const [printers, setPrinters] = useState<Printer[]>([]);
+  const [selectedPrinters, setSelectedPrinters] = useState<Printer[]>([]);
   const [textFilter, setTextFilter] = useState<string>("");
-  const [sortConfig, setSortConfig] = useState<
-    SORT_CONFIG_PRINTER_MANAGEMENT | undefined
-  >(undefined);
-  const [rowsNumPerPage, setRowsNumPerPage] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Update table rows when user selects rows
-  useEffect(() => {
-    if (isDeleting) {
-      setPrinterListRendered(
-        printerListRendered.map((printer: PrinterRenderViewProps) => {
-          return {
-            ...printer,
-            isSelectedDelete: selectedRowIDs.includes(printer.id),
-          };
-        })
-      );
-      return;
-    }
-  }, [selectedRowIDs.length]);
-
-  // Update table rows when user type text in filter input
-  useEffect(() => {
-    const newPrinterListRendered = state.getSortedPrinters(
-      getFilteredPrinterList(printerList),
-      sortConfig
-    );
-
-    setPrinterListRendered(newPrinterListRendered);
-  }, [textFilter]);
+  const apiRef = useGridApiRef();
 
   useEffect(() => {
-    const newPrinterListRendered = state.getSortedPrinters(
-      printerList,
-      sortConfig
-    );
-    setPrinterListRendered(getFilteredPrinterList(newPrinterListRendered));
-  }, [sortConfig]);
+    handleUpdateNewPrinters();
+  }, []);
 
-  const handleSelectRow = (idRow: string) => {
-    if (selectedRowIDs.includes(idRow)) {
-      setSelectedRowIDs(selectedRowIDs.filter((id) => id !== idRow));
-    } else {
-      setSelectedRowIDs([...selectedRowIDs, idRow]);
-    }
+  const handleUpdateNewPrinters = async () => {
+    const newPrinters = await networkService.getPrinters();
+    setPrinters(newPrinters);
   };
 
-  const handleOnClickCompleteDelete = () => {
-    const newPrinterList = printerList.flatMap((printer: PrinterViewObject) => {
-      if (selectedRowIDs.includes(printer.id)) {
-        return [];
-      }
-      return [printer];
-    });
-
-    setPrinterList(newPrinterList);
-    setPrinterListRendered(getFilteredPrinterList(newPrinterList));
-
-    setSelectedRowIDs([]);
-    setIsDeleting(false);
-
-    handleFocusInputField();
-  };
-
-  const handleOnClickCompleteEditing = () => {
-    // Convert newPrinterListRendered to printerList
-    // and send it to server
-
-    setIsEditing(false);
-    handleFocusInputField();
-  };
-
-  const handleFocusInputField = () => {
-    const ele = document.getElementById("inputFilterPrinter");
-    if (ele) {
-      ele.focus();
-    }
-  };
-
-  const handleClickSave = (newData: PrinterRenderViewProps) => {
-    const newPrinterListRendered = printerListRendered.map(
-      (printer: PrinterViewObject) => {
-        if (printer.id === newData.id) {
-          return {
-            ...newData,
-          };
-        }
-        return printer;
-      }
-    );
-
-    setPrinterList(newPrinterListRendered);
-    setPrinterListRendered(getFilteredPrinterList(newPrinterListRendered));
-  };
-
-  const getFilteredPrinterList = (list: PrinterRenderViewProps[]) => {
+  const getFilteredPrinterList = (list: Printer[]) => {
     const text = textFilter.toLowerCase();
 
     if (!text) {
       return list;
     }
 
-    return list.flatMap((printer: PrinterRenderViewProps) => {
-      if (printer.name.toLowerCase().includes(text)) {
-        return [printer];
-      }
-      if (printer.facility.toLowerCase().includes(text)) {
-        return [printer];
-      }
-      if (printer.building.toLowerCase().includes(text)) {
-        return [printer];
-      }
-      if (printer.room.toLowerCase().includes(text)) {
-        return [printer];
-      }
-      const status = printer.isRunning ? "Đang hoạt động" : "Không hoạt động";
-      if (status.toLowerCase().includes(text)) {
-        return [printer];
-      }
-      return [];
+    return list.flatMap((printer: Printer) => {
+      const textPrinter = `${printer.id} ${printer.name} ${printer.description} ${printer.location} ${printer.manufacturer} ${printer.location.building_name} ${printer.location.campus} ${printer.location.floor} ${printer.location.room_code}`;
+      return textPrinter.toLowerCase().includes(text) ? [printer] : [];
     });
   };
+
+  const rows = convertToRows(getFilteredPrinterList(printers));
 
   return (
     <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
@@ -169,7 +113,7 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
             Đây là giao diện quản lý máy in.
           </span>
         </div>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col gap-5 w-full h-full">
           <div className="flex items-center justify-center gap-2 w-full">
             <TextField.Root className="w-full" variant="surface" size={"2"}>
               <TextField.Slot>
@@ -184,61 +128,23 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
                 }}
               />
             </TextField.Root>
-            <Tooltip
-              content={`${
-                isEditing
-                  ? "Bấm để cập nhật thông tin các máy in đã được chỉnh sửa lên server"
-                  : "Bấm để chỉnh sửa thông tin các máy in"
-              }`}
-            >
+            <Tooltip content={"Bấm để chỉnh sửa thông tin các máy in"}>
               <Button
                 className="cursor-pointer"
-                variant={isEditing ? "classic" : "surface"}
-                onClick={() => {
-                  if (isEditing) {
-                    handleOnClickCompleteEditing();
-                  } else {
-                    setSelectedRowIDs([]);
-                    setIsDeleting(false);
-                    setIsEditing(true);
-                  }
-                }}
+                variant={"surface"}
+                onClick={() => {}}
               >
-                <div className="flex items-center gap-2">
-                  {isEditing && (
-                    <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
-                  )}
-                  {isEditing ? "Hoàn tất chỉnh sửa" : "Chỉnh sửa"}
-                </div>
+                <div className="flex items-center gap-2">Chỉnh sửa</div>
               </Button>
             </Tooltip>
 
-            <Tooltip
-              content={`${
-                isDeleting
-                  ? "Bấm để xoá các máy in đang được chọn"
-                  : "Bấm để chọn các máy in muốn xoá"
-              }`}
-            >
+            <Tooltip content={"Bấm để chọn các máy in muốn xoá"}>
               <Button
                 className={`cursor-pointer`}
-                onClick={() => {
-                  if (isDeleting) {
-                    handleOnClickCompleteDelete();
-                  } else {
-                    setSelectedRowIDs([]);
-                    setIsEditing(false);
-                    setIsDeleting(true);
-                  }
-                }}
-                variant={isDeleting ? "classic" : "surface"}
+                onClick={() => {}}
+                variant={"surface"}
               >
-                <div className="flex items-center gap-2">
-                  {isDeleting && (
-                    <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-400" />
-                  )}
-                  {isDeleting ? "Hoàn tất xoá" : "Xoá"}
-                </div>
+                <div className="flex items-center gap-2">Xoá</div>
               </Button>
             </Tooltip>
 
@@ -254,171 +160,27 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
               </Button>
             </Tooltip>
           </div>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            apiRef={apiRef}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 20 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 20, 50, 100]}
+            pagination
+            checkboxSelection
+            onRowSelectionModelChange={(indexes: any[]) => {
+              const selectedPrinters = printers.flatMap((printer) => {
+                return indexes.includes(printer.id) ? [printer] : [];
+              });
+              setSelectedPrinters(selectedPrinters);
+            }}
+          />
         </div>
       </div>
-
-      <div className="border rounded overflow-x-auto">
-        <Table.Root className="overflow-x-auto">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>
-                <div className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1">
-                  <span className="text-sm font-semibold">Trạng Thái</span>
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC
-                    ) {
-                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC);
-                    } else if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Tên</span>
-                  {sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.NAME_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_PRINTER_MANAGEMENT.NAME_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC
-                    ) {
-                      setSortConfig(
-                        SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC
-                      );
-                    } else if (
-                      sortConfig ===
-                      SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(
-                        SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC
-                      );
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Cơ sở</span>
-                  {sortConfig ===
-                  SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_PRINTER_MANAGEMENT.FACILITY_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC
-                    ) {
-                      setSortConfig(
-                        SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC
-                      );
-                    } else if (
-                      sortConfig ===
-                      SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(
-                        SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC
-                      );
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Toà</span>
-                  {sortConfig ===
-                  SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_PRINTER_MANAGEMENT.BUILDING_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <div
-                  className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 w-fit rounded-md px-2 py-1"
-                  onClick={() => {
-                    if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC
-                    ) {
-                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC);
-                    } else if (
-                      sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC
-                    ) {
-                      setSortConfig(undefined);
-                    } else {
-                      setSortConfig(SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC);
-                    }
-                  }}
-                >
-                  <span className="text-sm font-semibold">Phòng</span>
-                  {sortConfig === SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_ASC ? (
-                    <ArrowUpIcon />
-                  ) : sortConfig ===
-                    SORT_CONFIG_PRINTER_MANAGEMENT.ROOM_DESC ? (
-                    <ArrowDownIcon />
-                  ) : (
-                    <CaretSortIcon />
-                  )}
-                </div>
-              </Table.ColumnHeaderCell>
-              {(isDeleting || isEditing) && (
-                <Table.ColumnHeaderCell> </Table.ColumnHeaderCell>
-              )}
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body className=" overflow-x-auto">
-            <PrinterViewTableBody
-              printerListRendered={printerListRendered}
-              rowsNumPerPage={rowsNumPerPage}
-              currentPage={currentPage}
-              isEditing={isEditing}
-              isDeleting={isDeleting}
-              handleSelectRow={handleSelectRow}
-              handleClickSave={handleClickSave}
-            />
-          </Table.Body>
-        </Table.Root>
-      </div>
-
-      <PrinterManagementViewBottom
-        isDeleting={isDeleting}
-        selectedRowNum={selectedRowIDs.length}
-        rowsNumPerPage={rowsNumPerPage}
-        rowsNum={printerListRendered.length}
-        setRowsNumPerPage={setRowsNumPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
     </div>
   );
 };

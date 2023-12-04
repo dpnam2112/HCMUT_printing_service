@@ -20,37 +20,15 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
 }) => {
   return (
     <Table.Row>
+      <Table.Cell>{renderText(data.name, data.isSelectedDelete)}</Table.Cell>
       <Table.Cell>
-        <div
-          className={`flex items-center gap-2 w-full h-full pl-2 ${
-            data.isSelectedDelete && "line-through"
-          }`}
-        >
-          <div
-            className={`${
-              data.isRunning ? "bg-green-500" : "bg-red-500"
-            } rounded-full w-4 h-4`}
-          ></div>
-          <span
-            className={`text-sm font-medium ${
-              data.isRunning ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {data.isRunning ? "Đang hoạt động" : "Không hoạt động"}
-          </span>
-        </div>
+        {renderText(data.location.campus, data.isSelectedDelete)}
       </Table.Cell>
       <Table.Cell>
-        {renderText(data.name, data.isRunning, data.isSelectedDelete)}
+        {renderText(data.location.building_name, data.isSelectedDelete)}
       </Table.Cell>
       <Table.Cell>
-        {renderText(data.facility, data.isRunning, data.isSelectedDelete)}
-      </Table.Cell>
-      <Table.Cell>
-        {renderText(data.building, data.isRunning, data.isSelectedDelete)}
-      </Table.Cell>
-      <Table.Cell>
-        {renderText(data.room, data.isRunning, data.isSelectedDelete)}
+        {renderText(data.location.room_code, data.isSelectedDelete)}
       </Table.Cell>
       {isDeleting && (
         <Table.Cell>
@@ -88,17 +66,13 @@ const PrinterViewTableRow: FC<PrinterViewTableRowProps> = ({
   );
 };
 
-const renderText = (
-  text: string,
-  isRunning: boolean,
-  isSelectedDelete: boolean
-) => {
+const renderText = (text: string, isSelectedDelete: boolean) => {
   return (
     <div className="w-full h-full flex items-center pl-2">
       <span
         className={`select-none font-medium text-sm ${
           isSelectedDelete && "line-through"
-        } ${!isRunning && "text-red-500"}`}
+        }`}
       >
         {text}
       </span>
