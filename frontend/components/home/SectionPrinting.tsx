@@ -13,11 +13,12 @@ import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
 import Link from "next/link";
-import { Location } from "../../models/types";
+import { Location, UserInfo } from "../../models/types";
 import networkService from "../../models/network-service";
 import { sortLocations } from "../../models/utils";
 import MenuLocation from "../menus/menu-location";
 import MenuOrientation from "../menus/menu-orientation";
+import toast from "react-hot-toast";
 
 const SectionPrinting = () => {
   const [selectedPaperSize, setSelectedPaperSize] = useState<"A3" | "A4">("A4");
@@ -42,9 +43,17 @@ const SectionPrinting = () => {
 
   const [locations, setLocations] = useState<Location[]>([]);
 
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+
   useEffect(() => {
     fetchLocations();
+    fetchUserInfo();
   }, []);
+
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
 
   const fetchLocations = async () => {
     const newLocations = await networkService.getLocations();
@@ -63,6 +72,13 @@ const SectionPrinting = () => {
 
     if (sortedLocations.length > 0) {
       setSelectedLocation(sortedLocations[0]);
+    }
+  };
+
+  const handleOnClickDone = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành in tài liệu!");
+      return;
     }
   };
 
@@ -204,7 +220,9 @@ const SectionPrinting = () => {
               <Button className="w-[120px]">Mua giấy in</Button>
             </Link>
           </div>
-          <Button className="w-[120px]">Hoàn thành</Button>
+          <Button className="w-[120px]" onClick={handleOnClickDone}>
+            Hoàn thành
+          </Button>
         </div>
       </div>
     </div>

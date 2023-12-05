@@ -12,7 +12,7 @@ const PricingDialogA3 = () => {
 
   return (
     <Dialog.Content style={{ maxWidth: 500 }}>
-      <Dialog.Title>Mua giấy A4</Dialog.Title>
+      <Dialog.Title>Mua giấy A3</Dialog.Title>
       <Dialog.Description size="2" mb="4">
         Nhấn vào nút "Xác nhận mua" để mua giấy
       </Dialog.Description>
