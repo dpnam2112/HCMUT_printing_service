@@ -56,7 +56,7 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
 
     #kiem tra so trang
     page_balance = (CampusUser.objects.filter(base_user = username))[0].page_balance
-    if count < page_balance:
+    if count > page_balance:
         check_info.append("Số giấy in hiện tại không đủ để thực hiện thao tác in")
         return False
     check_info.append(count)
