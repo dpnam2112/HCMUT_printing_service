@@ -54,3 +54,9 @@ export type User = {
   last_name: string;
   id: number;
 };
+
+export type UserInfo = {
+  base_user: User;
+  page_balance: number;
+  is_admin: boolean;
+};

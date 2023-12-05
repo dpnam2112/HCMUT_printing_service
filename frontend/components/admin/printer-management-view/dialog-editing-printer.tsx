@@ -1,10 +1,10 @@
-import { Button, Dialog, Flex, TextField } from "@radix-ui/themes";
-import { FC, useState } from "react";
-import { Printer } from "../../../models/types";
+import { Button, Dialog, Flex, Select, TextField } from "@radix-ui/themes";
+import { FC, useEffect, useState } from "react";
+import { Location, Printer } from "../../../models/types";
 import toast from "react-hot-toast";
 import networkService from "../../../models/network-service";
 import InputTextField from "../../input-text-field";
-import InputNumberField from "../../input-number-field";
+import { sortLocations } from "../../../models/utils";
 
 type DialogEditingPrinterProps = {
   printer: Printer;
@@ -20,29 +20,70 @@ const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
     printer.manufacturer
   );
   const [description, setDescription] = useState<string>(printer.description);
-  const [campus, setCampus] = useState<string>(printer.location.campus);
-  const [buildingName, setBuildingName] = useState<string>(
-    printer.location.building_name
-  );
-  const [floor, setFloor] = useState<number>(printer.location.floor);
-  const [roomCode, setRoomCode] = useState<string>(printer.location.room_code);
+
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined
   );
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<
+    Location | undefined
+  >(undefined);
+  const [defaultLocation, setDefaultLocation] = useState<string>("");
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const newLocations = await networkService.getLocations();
+      const locationsCS1: Location[] = sortLocations(
+        newLocations.flatMap((location) =>
+          location.campus === "CS1" ? [location] : []
+        )
+      );
+      const locationsCS2: Location[] = sortLocations(
+        newLocations.flatMap((location) =>
+          location.campus === "CS2" ? [location] : []
+        )
+      );
+
+      const sortedLocations = [...locationsCS1, ...locationsCS2];
+      setLocations(sortedLocations);
+
+      if (sortedLocations.length > 0) {
+        const index = sortedLocations.findIndex(
+          (l) =>
+            l.campus === printer.location.campus &&
+            l.building_name === printer.location.building_name &&
+            l.floor === printer.location.floor &&
+            l.room_code === printer.location.room_code
+        );
+
+        console.log(index, sortedLocations);
+
+        if (index >= 0 && index < sortedLocations.length) {
+          setSelectedLocation(sortedLocations[index]);
+          setDefaultLocation(`${index}_location`);
+        }
+      }
+    };
+
+    fetchLocations();
+  }, []);
 
   const handleClick = async () => {
-    if (
-      !name ||
-      !manufacturer ||
-      !description ||
-      !campus ||
-      !buildingName ||
-      !floor ||
-      !roomCode
-    ) {
-      setErrorMessage("Vui lòng điền đầy đủ thông tin!");
+    if (!name) {
+      setErrorMessage("Vui lòng điền tên máy in!");
+      return;
+    }
+    if (!manufacturer) {
+      setErrorMessage("Vui lòng điền hãng sản xuất!");
+      return;
+    }
+    if (!description) {
+      setErrorMessage("Vui lòng điền mô tả!");
+      return;
+    }
+    if (!selectedLocation) {
+      setErrorMessage("Vui lòng chọn vị trí đặt máy in!");
       return;
     }
 
@@ -53,12 +94,7 @@ const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
       name: name,
       manufacturer: manufacturer,
       description: description,
-      location: {
-        campus: campus,
-        building_name: buildingName,
-        floor: floor,
-        room_code: roomCode,
-      },
+      location: selectedLocation,
     };
 
     const isSuccess = await networkService.updatePrinter(newPrinter);
@@ -68,6 +104,13 @@ const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
       toast.success("Cập nhật máy in thành công!");
     } else {
       setErrorMessage("Vị trí đặt máy in không tồn tại!");
+    }
+  };
+
+  const handleChange = (newValue) => {
+    const index = parseInt(newValue.split("_")[0]);
+    if (index >= 0 && index < locations.length) {
+      setSelectedLocation(locations[index]);
     }
   };
 
@@ -85,26 +128,30 @@ const DialogEditingPrinter: FC<DialogEditingPrinterProps> = ({
           value={manufacturer}
           setValue={setManufacturer}
         />
-        <InputTextField
-          title="Đặt tại cơ sở"
-          value={campus}
-          setValue={setCampus}
-        />
-        <InputTextField
-          title="Đặt tại toà"
-          value={buildingName}
-          setValue={setBuildingName}
-        />
-        <InputNumberField
-          title="Đặt tại lầu"
-          value={floor}
-          setValue={setFloor}
-        />
-        <InputTextField
-          title="Đặt tại phòng"
-          value={roomCode}
-          setValue={setRoomCode}
-        />
+        <Select.Root
+          defaultValue={defaultLocation}
+          onValueChange={handleChange}
+        >
+          <Select.Trigger />
+          <Select.Content>
+            <Select.Group>
+              {locations.map((location, index) => {
+                const isSeparator =
+                  index - 1 >= 0 &&
+                  locations[index - 1].campus !== location.campus;
+                return (
+                  <>
+                    {isSeparator && <Select.Separator />}
+                    <Select.Item
+                      key={`${index}_location`}
+                      value={`${index}_location`}
+                    >{`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}</Select.Item>
+                  </>
+                );
+              })}
+            </Select.Group>
+          </Select.Content>
+        </Select.Root>
         <div className="flex flex-col gap-1">
           <span className="font-semibold text-sm ml-[2px]">Mô tả máy in</span>
           <textarea

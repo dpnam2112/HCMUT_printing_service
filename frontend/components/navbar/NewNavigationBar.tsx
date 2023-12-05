@@ -1,8 +1,22 @@
 import { Popover } from "@headlessui/react";
 import Link from "next/link";
 import { Button } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
+import { UserInfo } from "../../models/types";
+import networkService from "../../models/network-service";
 
 export default function NewNavigationBar() {
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
+
   return (
     <Popover className="relative">
       <div className="w-full mx-auto max-w-9xl py-6 px-6 lg:px-8 flex justify-between items-center">
@@ -25,11 +39,13 @@ export default function NewNavigationBar() {
             </span>
           </Link>
 
-          <Link href={"/admin"}>
-            <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
-              Admin
-            </span>
-          </Link>
+          {userInfo && userInfo.is_admin && (
+            <Link href={"/admin"}>
+              <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
+                Admin
+              </span>
+            </Link>
+          )}
 
           <Link href={"/support"}>
             <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">

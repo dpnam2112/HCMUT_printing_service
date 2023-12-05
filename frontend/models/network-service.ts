@@ -1,9 +1,11 @@
 import { BACKEND_API } from "./constant";
 import {
   Extension,
+  Location,
   Printer,
   PrintingHistory,
   TransactionHistory,
+  UserInfo,
 } from "./types";
 
 class NetworkService {
@@ -19,7 +21,7 @@ class NetworkService {
         body: JSON.stringify([printer]),
       });
 
-      return data.status !== 400 && data.status !== 500;
+      return data.status.toString().startsWith("2");
     } catch (e) {
       console.error("Error: ", e);
       return false;
@@ -48,7 +50,7 @@ class NetworkService {
         body: JSON.stringify([printer]),
       });
 
-      return data.status !== 400 && data.status !== 500;
+      return data.status.toString().startsWith("2");
     } catch (e) {
       console.error("Error: ", e);
       return false;
@@ -67,10 +69,22 @@ class NetworkService {
         }),
       });
 
-      return data.status !== 400 && data.status !== 500;
+      return data.status.toString().startsWith("2");
     } catch (e) {
       console.error("Error: ", e);
       return false;
+    }
+  }
+
+  public async getLocations(): Promise<Location[]> {
+    try {
+      const data: Location[] = await fetch(`${BACKEND_API}/api/location/`)
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return [];
     }
   }
 
@@ -99,7 +113,7 @@ class NetworkService {
         body: JSON.stringify(body),
       });
 
-      return data.status !== 400 && data.status !== 500;
+      return data.status.toString().startsWith("2");
     } catch (e) {
       console.error("Error: ", e);
       return false;
@@ -131,6 +145,18 @@ class NetworkService {
     } catch (e) {
       console.error("Error: ", e);
       return [];
+    }
+  }
+
+  public async getUserInfo(): Promise<UserInfo | undefined> {
+    try {
+      const data: UserInfo = await fetch(`${BACKEND_API}/api/user-info/`)
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return undefined;
     }
   }
 }
