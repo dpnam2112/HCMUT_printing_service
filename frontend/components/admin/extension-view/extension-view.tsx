@@ -41,13 +41,11 @@ const columns: GridColDef[] = [
     field: "name",
     headerName: "Tên phần mở rộng",
     width: 200,
-    resizable: true,
   },
   {
     field: "ext",
     headerName: "Phần mở rộng",
     width: 200,
-    resizable: true,
   },
 ];
 
