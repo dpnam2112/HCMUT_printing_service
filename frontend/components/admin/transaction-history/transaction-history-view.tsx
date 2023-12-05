@@ -6,7 +6,6 @@ import MenuHistoryTime from "../../menus/menu-history-time";
 import { TransactionHistory } from "../../../models/types";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import networkService from "../../../models/network-service";
-import NoRowsTableView from "../../no-rows-table-view";
 
 const columns: GridColDef[] = [
   {
@@ -260,9 +259,6 @@ const TransactionHistoryView = () => {
             pagination: {
               paginationModel: { page: 0, pageSize: 20 },
             },
-          }}
-          slots={{
-            noRowsOverlay: () => <NoRowsTableView />,
           }}
           pageSizeOptions={[5, 10, 20, 50, 100]}
           disableRowSelectionOnClick
