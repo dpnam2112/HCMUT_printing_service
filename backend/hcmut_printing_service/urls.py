@@ -21,11 +21,9 @@ from print_auth.views import FetchUserInfo
 from printing_app.views import GetLocations
 from printing_app.views import GetExtensions
 from printing_app.views import PrintActivity
-from printing_app.views import MainPage
-from django.views.generic.base import TemplateView 
+from printing_app.views import MainPage, OfficerPage, PricingPage, SupportPage
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,7 +38,10 @@ urlpatterns = [
     path("api/get-ext/", GetExtensions.as_view()),
     path("api/activity/", PrintActivity.as_view()),
     path("api/user-info/", FetchUserInfo.as_view()),
-    path("", MainPage.as_view())
+    path("", MainPage.as_view()),
+    path("officer/", OfficerPage.as_view()),
+    path("pricing/", PricingPage.as_view()),
+    path("support/", SupportPage.as_view())
 ]
 
 if settings.DEBUG:
