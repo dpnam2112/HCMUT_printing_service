@@ -24,6 +24,8 @@ from django.core.files.storage import FileSystemStorage
 from pathlib import Path
 import pandas as pd
 import requests
+import json
+from django.conf import settings
 # Create your views here
 
 class FileValidate(View):
@@ -127,10 +129,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.join(BASE_DIR, 'data')
 
 def perform_print(request):
+    if not (settings.FRONTEND_DEV or request.user.is_authenticated):
+        return HttpResponse(status=401)
+
     if request.method == "POST" and request.FILES['filename']:
         #time
         tz_VN = pytz.timezone('Asia/Ho_Chi_Minh') 
         datetime_VN = datetime.now(tz_VN) 
+        format_date = str(datetime_VN).replace(" ","")
+        format_date = format_date.replace(".","")
+        format_date = format_date.replace(":",'')
         
         #create filepath and store file
 
@@ -138,11 +146,12 @@ def perform_print(request):
         file_path = os.path.join(BASE_DIR, 'documents')
         file_url = file_path
         fs = FileSystemStorage(location = file_path,base_url = file_url)
-        fs.save(file.name,file)
+        username = request.user.username if not settings.FRONTEND_DEV else "admin"
+        fs.save(request.user.username + format_date + file.name,file)
         uploaded_file_url = fs.url(file.name)
         
         #split file ext and calculate size
-        document_path = os.path.join(file_path, file.name)
+        document_path = os.path.join(file_path, request.user.username + format_date + file.name)
         file_stats = ""
         with open(document_path,"rb"):
             file_stats = os.stat(document_path)
@@ -170,7 +179,7 @@ def perform_print(request):
 
         if pre_check(document_path, pages_print,check_info, request.user, 
                      datetime_VN, file.name, num_copies, side) == False:
-            return render(request, check_info[0], content_type="text/plain")
+            return HttpResponse(json.dumps(check_info), status=400)
         else:
             new_pages = check_info[1]
             print(new_pages)
@@ -178,6 +187,7 @@ def perform_print(request):
             linux_document_path = document_path.replace("\\","//")
             linux_document_path = linux_document_path.replace("C:","c")
 
+            print(linux_document_path)
 
             proc= subprocess.Popen(['wsl','-u','root','-d','Ubuntu','cd','/mnt',
                                      ';','lp','-d','{}'.format(printer_name),'-o','media={}'.format(page_size),
@@ -199,14 +209,17 @@ def perform_print(request):
                 if side == 'one-sided':
                     two_sided = False
 
+                if settings.FRONTEND_DEV and not request.user.is_authenticated:
+                    return HttpResponse("In thành công!",content_type="text/plain")
+
                 p = PrintingActivity(user = request.user, printer_name = 
                                      printer_name,date = datetime_VN, file_name = file.name,
                                      file_ext = file_ext.replace(".",""), pape_count = check_info[0],
                                      sheet_type = page_size, job_id = job_id, two_sided = two_sided)
                 p.save()
-                return render(request, "in thanh cong",content_type="text/plain")
+                return HttpResponse("In thành công!",content_type="text/plain")
             else:
-                return render(request, "Khong thuc hien duoc tac vu in",content_type="text/plain")
+                return HttpResponse("Không thực hiện được tác vụ in.",content_type="text/plain")
     
 
 def check_print_status_success(request):
@@ -224,7 +237,7 @@ def check_print_status_success(request):
                     row.job_id = -1
                     row.save()
 
-        return render(request, "kiem trang trang thai thanh cong",content_type="text/plain")
+        return HttpResponse("kiem trang trang thai thanh cong",content_type="text/plain")
 
 class MainPage(View):
     def get(self, request):
@@ -241,3 +254,7 @@ class PricingPage(View):
 class SupportPage(View):
     def get(self, request):
         return render(request, 'support.html')
+
+class TestPrinting(View):
+    def get(self, request):
+        return render(request, 'print.html')

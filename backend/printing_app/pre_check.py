@@ -4,6 +4,8 @@ import PyPDF2
 from fpdf import FPDF
 import math
 from print_auth.models import CampusUser
+from django.conf import settings
+
 def pre_check(document_path, pages_print, check_info, username, date_send, filename, num_copies, side):
 
     #check format
@@ -38,7 +40,7 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
     all_pages = re.findall("\d+", pages_print)
     all_pages = [eval(i) for i in all_pages]
 
-    if min(all_pages) < 1 or max(all_pages) > total_pages:
+    if (min(all_pages) < 1 or max(all_pages) > total_pages):
         check_info.append("Số trang in bạn nhập nhỏ hơn 1 hoặc lớn hơn tổng số trang hiện tại")
         return False
 
@@ -55,10 +57,11 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
     count = count*int(num_copies)
 
     #kiem tra so trang
-    page_balance = (CampusUser.objects.filter(base_user = username))[0].page_balance
-    if count < page_balance:
-        check_info.append("Số giấy in hiện tại không đủ để thực hiện thao tác in")
-        return False
+    if not settings.FRONTEND_DEV:
+        page_balance = (CampusUser.objects.filter(base_user = username))[0].page_balance
+        if count > page_balance:
+            check_info.append("Số giấy in hiện tại không đủ để thực hiện thao tác in")
+            return False
     check_info.append(count)
     
     #Create first page

@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from .serializers import TransactionsSerializer
 from print_auth.utils import is_admin
 from rest_framework import status
+from print_auth.models import CampusUser
 
 # Create your views here.
 
@@ -98,6 +99,19 @@ class CreateOrder(View):
 
         user = User.objects.get(pk=1) if settings.FRONTEND_DEV else request.user
         transaction = self.create_transaction(user=user, req_payload=sheet_quantity, trans_id=trans_id, total_cost=calc_price(sheet_quantity))
+
+        sheet_quantity = {
+            'A4': transaction.a4_sheets,
+            'A3': transaction.a3_sheets,
+            'A2': transaction.a2_sheets,
+            'A1': transaction.a1_sheets,
+            'A0': transaction.a0_sheets
+        }
+
+        total_a4 = convert_sheets(sheet_quantity)
+        campus_user = CampusUser.objects.get(base_user=user)
+        campus_user.page_balance -= total_a4
+        campus_user.save()
 
         return HttpResponse(response.text, content_type='application/json') 
 

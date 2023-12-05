@@ -21,13 +21,13 @@ from print_auth.views import FetchUserInfo
 from printing_app.views import GetLocations
 from printing_app.views import GetExtensions
 from printing_app.views import PrintActivity
-from printing_app.views import MainPage, OfficerPage, PricingPage, SupportPage
+from printing_app.views import MainPage, OfficerPage, PricingPage, SupportPage, perform_print, TestPrinting
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/print/', include('printing_app.urls')),
+    path('api/perform-print/', perform_print),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path("api/officer/", include('officer_app.urls')),
@@ -38,8 +38,11 @@ urlpatterns = [
     path("api/get-ext/", GetExtensions.as_view()),
     path("api/activity/", PrintActivity.as_view()),
     path("api/user-info/", FetchUserInfo.as_view()),
+
+    # Routes for rendering static pages
     path("", MainPage.as_view()),
     path("officer/", OfficerPage.as_view()),
+    path("test-print/", TestPrinting.as_view()),
     path("pricing/", PricingPage.as_view()),
     path("support/", SupportPage.as_view())
 ]
