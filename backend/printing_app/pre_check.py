@@ -65,7 +65,7 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
     pdf.add_page()
     pdf.set_xy(0, 0)
     pdf.set_font('arial', 'B', 13.0)
-    text = "\n\n\n\n\n\nnguoi dung: {}. Ngay gui: {}. So giay in: {}. Trang in: {}".format(username, date_send, count, pages_print)
+    text = "\n\n\n\n\n\nnguoi dung: {}. Ngay gui: {}. So giay in: {}. Trang in: {}".format(username.username, date_send, count, pages_print)
     pdf.write(h = 5,txt=text)
     path = 'header page for {}.pdf'.format(filename)
     pdf.output(path, 'F')
