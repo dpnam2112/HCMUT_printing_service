@@ -42,3 +42,5 @@ class PrintingActivity(models.Model):
     page_count = models.PositiveIntegerField()
     two_sided = models.BooleanField(default=False)
     sheet_type = models.CharField(max_length=2)
+    status = models.BooleanField(default=False)
+    job_id = models.IntegerField(default=False)
