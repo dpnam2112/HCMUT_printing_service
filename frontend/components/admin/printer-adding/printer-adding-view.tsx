@@ -1,34 +1,61 @@
-import { Button, Table, TextField, Tooltip, TextArea } from "@radix-ui/themes";
-import { useState } from "react";
-import InputNumberField from "../../input-number-field";
+import { Button, Select } from "@radix-ui/themes";
+import { useEffect, useState } from "react";
 import InputTextField from "../../input-text-field";
-import { Printer } from "../../../models/types";
+import { Location, Printer } from "../../../models/types";
 import networkService from "../../../models/network-service";
 import toast from "react-hot-toast";
+import { sortLocations } from "../../../models/utils";
 
 const PrinterAddingView = () => {
   const [name, setName] = useState<string>("");
   const [manufacturer, setManufacturer] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [campus, setCampus] = useState<string>("");
-  const [buildingName, setBuildingName] = useState<string>("");
-  const [floor, setFloor] = useState<number>(1);
-  const [roomCode, setRoomCode] = useState<string>("101");
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined
   );
 
+  const [locationsCS1, setLocationsCS1] = useState<Location[]>([]);
+  const [locationsCS2, setLocationsCS2] = useState<Location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<
+    Location | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const locations = await networkService.getLocations();
+      const locationsCS1: Location[] = locations.flatMap((location) =>
+        location.campus === "CS1" ? [location] : []
+      );
+      const locationsCS2: Location[] = locations.flatMap((location) =>
+        location.campus === "CS2" ? [location] : []
+      );
+
+      setLocationsCS1(sortLocations(locationsCS1));
+      setLocationsCS2(sortLocations(locationsCS2));
+
+      if (locations.length > 0) {
+        setSelectedLocation(locations[0]);
+      }
+    };
+
+    fetchLocations();
+  }, []);
+
   const handleAddPrinter = async () => {
-    if (
-      !name ||
-      !manufacturer ||
-      !description ||
-      !campus ||
-      !buildingName ||
-      !floor ||
-      !roomCode
-    ) {
-      setErrorMessage("Vui lòng điền đầy đủ thông tin!");
+    if (!name) {
+      setErrorMessage("Vui lòng điền tên máy in!");
+      return;
+    }
+    if (!manufacturer) {
+      setErrorMessage("Vui lòng điền hãng sản xuất!");
+      return;
+    }
+    if (!description) {
+      setErrorMessage("Vui lòng điền mô tả!");
+      return;
+    }
+    if (!selectedLocation) {
+      setErrorMessage("Vui lòng chọn vị trí đặt máy in!");
       return;
     }
 
@@ -38,12 +65,7 @@ const PrinterAddingView = () => {
       name: name,
       manufacturer: manufacturer,
       description: description,
-      location: {
-        campus: campus,
-        building_name: buildingName,
-        floor: floor,
-        room_code: roomCode,
-      },
+      location: selectedLocation,
     };
 
     const isSuccess = await networkService.addPrinter(newPrinter);
@@ -51,10 +73,6 @@ const PrinterAddingView = () => {
       setName("");
       setManufacturer("");
       setDescription("");
-      setCampus("");
-      setBuildingName("");
-      setFloor(1);
-      setRoomCode("101");
       setErrorMessage(undefined);
       toast.success("Thêm máy in thành công!");
       return;
@@ -82,26 +100,44 @@ const PrinterAddingView = () => {
             value={manufacturer}
             setValue={setManufacturer}
           />
-          <InputTextField
-            title="Đặt tại cơ sở"
-            value={campus}
-            setValue={setCampus}
-          />
-          <InputTextField
-            title="Đặt tại toà"
-            value={buildingName}
-            setValue={setBuildingName}
-          />
-          <InputNumberField
-            title="Đặt tại lầu"
-            value={floor}
-            setValue={setFloor}
-          />
-          <InputTextField
-            title="Đặt tại phòng"
-            value={roomCode}
-            setValue={setRoomCode}
-          />
+
+          <Select.Root
+            defaultValue={
+              locationsCS1.length > 0 ? "0_locationCS1" : "0_locationCS2"
+            }
+          >
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Group>
+                {locationsCS1.map((location, index) => {
+                  return (
+                    <Select.Item
+                      key={`${index}_locationCS1`}
+                      value={`${index}_locationCS1`}
+                      onSelect={() => {
+                        setSelectedLocation(location);
+                      }}
+                    >{`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}</Select.Item>
+                  );
+                })}
+              </Select.Group>
+              <Select.Separator />
+              <Select.Group>
+                {locationsCS2.map((location, index) => {
+                  return (
+                    <Select.Item
+                      key={`${index}_locationCS2`}
+                      value={`${index}_locationCS2`}
+                      onSelect={() => {
+                        setSelectedLocation(location);
+                      }}
+                    >{`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}</Select.Item>
+                  );
+                })}
+              </Select.Group>
+            </Select.Content>
+          </Select.Root>
+
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-sm ml-[2px]">Mô tả máy in</span>
             <textarea
