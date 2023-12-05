@@ -20,6 +20,9 @@ import subprocess
 from .pre_check import pre_check
 import re
 from django.http import JsonResponse
+from django.core.files.storage import FileSystemStorage
+from pathlib import Path
+import pandas as pd
 import requests
 # Create your views here
 
@@ -226,3 +229,15 @@ def check_print_status_success(request):
 class MainPage(View):
     def get(self, request):
         return render(request, 'index.html')
+
+class OfficerPage(View):
+    def get(self, request):
+        return render(request, 'officer.html')
+
+class PricingPage(View):
+    def get(self, request):
+        return render(request, 'pricing.html')
+
+class SupportPage(View):
+    def get(self, request):
+        return render(request, 'support.html')

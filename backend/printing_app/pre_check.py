@@ -3,7 +3,7 @@ import os
 import PyPDF2 
 from fpdf import FPDF
 import math
-from ..print_auth.models import CampusUser
+from print_auth.models import CampusUser
 def pre_check(document_path, pages_print, check_info, username, date_send, filename, num_copies, side):
 
     #check format
@@ -21,6 +21,7 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
             if len(re.findall("\d+-\d+",l)) == 0 or re.findall("\d+-\d+",l)[0] != l:
                 check_info.append("Sai định dạng nhập trang in")
                 return False
+
     #Check pages valid... ex: 3-4, 4-5, 3-6 are allowed but 3-3, 3-2, 6-4
 
     for l in lists:
@@ -56,7 +57,7 @@ def pre_check(document_path, pages_print, check_info, username, date_send, filen
     #kiem tra so trang
     page_balance = (CampusUser.objects.filter(base_user = username))[0].page_balance
     if count < page_balance:
-         check_info.append("Số giấy in hiện tại không đủ để thực hiện thao tác in")
+        check_info.append("Số giấy in hiện tại không đủ để thực hiện thao tác in")
         return False
     check_info.append(count)
     

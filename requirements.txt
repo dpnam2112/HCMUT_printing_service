@@ -5,3 +5,11 @@ djangorestframework
 django-cas-server
 django-cas-ng
 django-cors-headers
+
+# You may need to manually install the following packages.
+
+docx2pdf
+fpdf2
+PyPDF2
+pandas
+request
