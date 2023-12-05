@@ -11,10 +11,10 @@ from .utils import convert_sheets, calc_price, get_paypal_token, get_price
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import TransactionsSerializer
+from print_auth.utils import is_admin
+from rest_framework import status
 
 # Create your views here.
-
-PAYPAL_API_TESTING = True
 
 class CreateOrder(View):
     """ create Paypal order.
@@ -73,7 +73,7 @@ class CreateOrder(View):
 
     def post(self, request):
         # TODO: Handle incoming payloads.
-        if not PAYPAL_API_TESTING and request.user and not request.user.is_authenticated:
+        if not (settings.FRONTEND_DEV or request.user.is_authenticated):
             return HttpResponse("Unauthenticated", status_code=401, content_type="text/plain")
 
         sheet_quantity = json.loads(request.body)
@@ -96,7 +96,7 @@ class CreateOrder(View):
 
         trans_id = parsed_res["id"]
 
-        user = User.objects.get(pk=1) if settings.PAYPAL_API_TESTING else request.user
+        user = User.objects.get(pk=1) if settings.FRONTEND_DEV else request.user
         transaction = self.create_transaction(user=user, req_payload=sheet_quantity, trans_id=trans_id, total_cost=calc_price(sheet_quantity))
 
         return HttpResponse(response.text, content_type='application/json') 
@@ -111,7 +111,7 @@ class CaptureOrder(View):
 
     def post(self, request):
         # TODO: Authenticate the incoming request
-        if not PAYPAL_API_TESTING and request.user and not request.user.is_authenticated:
+        if not (settings.FRONTEND_DEV or request.user.is_authenticated):
             return HttpResponse("Unauthenticated", status_code=401, content_type="text/plain")
 
         # Complete the user's order
@@ -149,9 +149,13 @@ class GetTransactions(APIView):
         for key, val in query_params.items():
             query_params[key] = val[0]
 
+
         user_id = None
+        user_is_admin = is_admin(request.user)
         if "user_id" in query_params:
             user_id = query_params["user_id"]
+            if not (settings.FRONTEND_DEV or user_is_admin or request.user.id == user_id):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         user = User.objects.get(pk=user_id) if user_id else None
         transactions = Transactions.objects.filter(user=user) if user else Transactions.objects.all()

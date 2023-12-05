@@ -26,22 +26,23 @@ class FetchUserInfo(APIView):
                 + last_name: str
                 + email: str
     """
-
-    def get(self, request):
-        # TODO: Check if user is an administrator
-
-        user = request.user
-        if not settings.FRONTEND_DEV and (not user or not user.is_authenticated):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
+    def get_campus_profile(self, user):
         profile = None
+
         if not CampusUser.objects.filter(base_user=user).exists():
             profile = CampusUser.objects.create(base_user=user, page_balance=500)
-        else:
-            try:
-                profile = CampusUser.objects.get(base_user=user)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        profile = CampusUser.objects.get(base_user=user)
+        return profile
+
+    def get(self, request):
+        user = request.user
+
+        if settings.FRONTEND_DEV:
+            user = User.objects.get(pk=1)
+        elif not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        profile = self.get_campus_profile(user)
         serializer = CampusUserSerializer(profile)
         return Response(serializer.data)

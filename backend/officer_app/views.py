@@ -48,7 +48,6 @@ class Printers(APIView):
             except Exception as e:
                 pass
 
-        print(query_params)
         try:
             location = PrinterLocation.objects.get(**query_params)
         except Exception as e:

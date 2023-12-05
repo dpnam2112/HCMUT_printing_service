@@ -169,8 +169,3 @@ CSRF_TRUSTED_ORIGINS = [
 
 # React development configuration
 FRONTEND_DEV = True
-
-# Testing authentication
-TESTING_LOGIN = False
-
-PAYPAL_API_TESTING = True
