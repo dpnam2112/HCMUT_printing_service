@@ -5,36 +5,37 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@radix-ui/themes";
+
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC, useEffect, useState } from "react";
 import { Printer } from "../../models/types";
 
-type Props = {
+type MenuCampusProps = {
   width?: string;
   printers: Printer[];
-  selectedBuilding: string;
-  setSelectedBuilding: React.Dispatch<React.SetStateAction<string>>;
+  selectedCampus: string;
+  setSelectedCampus: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const MenuBuildingCS1: FC<Props> = ({
+const MenuCampus: FC<MenuCampusProps> = ({
   width,
   printers,
-  selectedBuilding,
-  setSelectedBuilding,
+  selectedCampus,
+  setSelectedCampus,
 }) => {
-  const [buildings, setBuildings] = useState<string[]>([]);
+  const [facilities, setFacilities] = useState<string[]>([]);
 
   useEffect(() => {
-    const newBuildings = printers
-      .filter((printer) => printer.location.campus === "CS1")
-      .map((printer) => printer.location.building_name)
+    const newFacilities = printers
+      .map((printer) => printer.location.campus)
       .reduce((arr, value) => {
         return arr.includes(value) ? arr : [...arr, value];
       }, []);
-    setBuildings(newBuildings);
 
-    if (newBuildings.length > 0) {
-      setSelectedBuilding(newBuildings[0]);
+    setFacilities(newFacilities);
+
+    if (newFacilities.length > 0) {
+      setSelectedCampus(newFacilities[0]);
     }
   }, [printers]);
 
@@ -43,24 +44,24 @@ const MenuBuildingCS1: FC<Props> = ({
       <DropdownMenu.Trigger className="w-full">
         <Button className={`${width ? "w-full" : "w-2/4"} px-0`}>
           <div className="flex items-center justify-between focus-within:outline-none w-full">
-            <span>{selectedBuilding}</span>
+            <span>{selectedCampus === "CS1" ? "Lý Thường Kiệt" : "Dĩ An"}</span>
             <CaretSortIcon width="22" height="22" />
           </div>
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenuContent className={width ? width : "w-[320px]"}>
-        {buildings.map((building, index) => {
+        {facilities.map((facility, index) => {
           return (
             <>
               <DropdownMenuItem
-                key={`${building}_${index}`}
+                key={`${facility}_${index}`}
                 onSelect={() => {
-                  setSelectedBuilding(building);
+                  setSelectedCampus(facility);
                 }}
               >
-                {building}
+                {facility === "CS1" ? "Lý Thường Kiệt" : "Dĩ An"}
               </DropdownMenuItem>
-              {index !== buildings.length - 1 && <DropdownMenuSeparator />}
+              {index !== facilities.length - 1 && <DropdownMenuSeparator />}
             </>
           );
         })}
@@ -69,4 +70,4 @@ const MenuBuildingCS1: FC<Props> = ({
   );
 };
 
-export default MenuBuildingCS1;
+export default MenuCampus;

@@ -11,8 +11,8 @@ import { FC } from "react";
 import { MENU_PRINT_PAGE, MENU_PRINT_TYPE } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_PRINT_TYPE;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PRINT_TYPE>>;
+  selectedItem: string;
+  setSelectedItem: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const MenuPrintType: FC<Props> = ({ selectedItem, setSelectedItem }) => {

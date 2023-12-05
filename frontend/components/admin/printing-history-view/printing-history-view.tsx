@@ -19,8 +19,8 @@ const columns: GridColDef[] = [
     width: 300,
   },
   {
-    field: "campus_id",
-    headerName: "Campus (Update later)",
+    field: "user",
+    headerName: "Người dùng",
     width: 200,
   },
   {
@@ -29,24 +29,40 @@ const columns: GridColDef[] = [
     width: 200,
   },
   {
+    field: "file_ext",
+    headerName: "Đuôi file",
+    width: 100,
+  },
+  {
+    field: "two_sided",
+    headerName: "In 2 mặt",
+    width: 100,
+  },
+  {
     field: "page_count",
     headerName: "Số trang",
-    width: 200,
+    width: 100,
   },
   {
     field: "sheet_type",
     headerName: "Loại giấy",
-    width: 200,
+    width: 100,
   },
 ];
 
 const convertToRows = (printingsHistory: PrintingHistory[]): any[] => {
   return printingsHistory.map((printingHistory, index) => {
+    const user = printingHistory.user;
     return {
       id: index,
       date: printingHistory.date,
-      campus_id: printingHistory.campus_id,
+      user:
+        user.first_name || user.last_name
+          ? `${user.first_name} ${user.last_name}`
+          : user.username,
       file_name: printingHistory.file_name,
+      file_ext: printingHistory.file_ext,
+      two_sided: printingHistory.two_sided ? "Có" : "Không",
       page_count: printingHistory.page_count,
       sheet_type: printingHistory.sheet_type,
     };
@@ -131,7 +147,14 @@ const PrintingTableView = () => {
       return list;
     }
     return list.flatMap((obj: PrintingHistory) => {
-      const textObj = `${obj.date} ${obj.campus_id} ${obj.file_name} ${obj.page_count} ${obj.sheet_type}`;
+      const user = obj.user;
+      const name =
+        user.first_name || user.last_name
+          ? `${user.first_name} ${user.last_name}`
+          : user.username;
+      const textObj = `${obj.date} ${name} ${obj.two_sided ? "Có" : "Không"} ${
+        obj.file_ext
+      } ${obj.page_count} ${obj.sheet_type}`;
       return textObj.toLowerCase().includes(text.toLowerCase()) ? [obj] : [];
     });
   };

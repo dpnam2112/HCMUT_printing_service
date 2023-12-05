@@ -6,6 +6,7 @@ import MenuHistoryTime from "../../menus/menu-history-time";
 import { TransactionHistory } from "../../../models/types";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import networkService from "../../../models/network-service";
+import NoRowsTableView from "../../no-rows-table-view";
 
 const columns: GridColDef[] = [
   {
@@ -102,10 +103,14 @@ const columns: GridColDef[] = [
 
 const convertToRows = (transactionHistory: TransactionHistory[]) => {
   return transactionHistory.map((transactionHistory: TransactionHistory) => {
+    const user = transactionHistory.user;
     return {
       id: transactionHistory.transaction_id,
       transaction_id: transactionHistory.transaction_id,
-      user: transactionHistory.user,
+      user:
+        user.first_name || user.last_name
+          ? `${user.first_name} ${user.last_name}`
+          : user.username,
       total_cost: transactionHistory.total_cost,
       a0_sheets: transactionHistory.a0_sheets,
       a1_sheets: transactionHistory.a1_sheets,
@@ -255,6 +260,9 @@ const TransactionHistoryView = () => {
             pagination: {
               paginationModel: { page: 0, pageSize: 20 },
             },
+          }}
+          slots={{
+            noRowsOverlay: () => <NoRowsTableView />,
           }}
           pageSizeOptions={[5, 10, 20, 50, 100]}
           disableRowSelectionOnClick

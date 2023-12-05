@@ -25,14 +25,17 @@ export type Printer = {
 
 export type PrintingHistory = {
   date: string;
-  campus_id: string;
+  user: User;
+  printer_name: string;
   file_name: string;
+  file_ext: string;
   page_count: number;
+  two_sided: boolean;
   sheet_type: string;
 };
 
 export type TransactionHistory = {
-  user: number;
+  user: User;
   transaction_id: string;
   a0_sheets: number;
   a1_sheets: number;
@@ -42,4 +45,12 @@ export type TransactionHistory = {
   total_cost: string;
   status: string;
   date: string;
+};
+
+export type User = {
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  id: number;
 };
