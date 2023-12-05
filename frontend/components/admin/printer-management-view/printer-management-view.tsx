@@ -26,43 +26,36 @@ const columns: GridColDef[] = [
     field: "name",
     headerName: "Tên máy",
     width: 250,
-    resizable: true,
   },
   {
     field: "manufacturer",
     headerName: "Hãng sản xuất",
     width: 200,
-    resizable: true,
   },
   {
     field: "campus",
     headerName: "Cơ sở",
     width: 200,
-    resizable: true,
   },
   {
     field: "building_name",
     headerName: "Toà",
     width: 200,
-    resizable: true,
   },
   {
     field: "floor",
     headerName: "Lầu",
     width: 200,
-    resizable: true,
   },
   {
     field: "room_code",
     headerName: "Phòng",
     width: 200,
-    resizable: true,
   },
   {
     field: "description",
     headerName: "Mô tả",
     width: 350,
-    resizable: true,
   },
 ];
 

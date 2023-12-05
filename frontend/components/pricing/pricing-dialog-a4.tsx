@@ -1,6 +1,8 @@
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 
+const price = 500;
+
 const PricingDialogA4 = () => {
   const [quantity, setQuantity] = useState<number>(1);
 
@@ -34,7 +36,7 @@ const PricingDialogA4 = () => {
 
         <div className="flex items-center justify-between gap-3 w-full mt-4">
           <Text className="text-base font-medium">Giá 1 tờ A4:</Text>
-          <Text className="text-base font-bold">600 VNĐ</Text>
+          <Text className="text-base font-bold">{price} VNĐ</Text>
         </div>
         <div className="flex items-center justify-between gap-3 w-full mt-1">
           <div className="w-2/3 h-1"></div>
@@ -43,7 +45,7 @@ const PricingDialogA4 = () => {
 
         <div className="flex items-center justify-between gap-3 w-full mt-3">
           <Text className="text-base font-medium">Tổng cộng:</Text>
-          <Text className="text-base font-bold">{600 * quantity} VNĐ</Text>
+          <Text className="text-base font-bold">{price * quantity} VNĐ</Text>
         </div>
       </div>
 

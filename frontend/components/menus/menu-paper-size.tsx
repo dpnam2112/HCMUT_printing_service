@@ -5,23 +5,24 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@radix-ui/themes";
-
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_PAPER_SIZE } from "../../models/constant";
 
 type Props = {
-  selectedItem: MENU_PAPER_SIZE;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PAPER_SIZE>>;
+  selectedPaperSize: string;
+  setSelectedPaperSize: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const MenuPaperSize: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuPaperSize: FC<Props> = ({
+  selectedPaperSize,
+  setSelectedPaperSize,
+}) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
         <Button className="w-2/4 px-0">
           <div className="flex items-center justify-between focus-within:outline-none w-full">
-            <span>{selectedItem}</span>
+            <span>{selectedPaperSize}</span>
             <CaretSortIcon width="22" height="22" />
           </div>
         </Button>
@@ -29,19 +30,19 @@ const MenuPaperSize: FC<Props> = ({ selectedItem, setSelectedItem }) => {
       <DropdownMenuContent className="w-[320px]">
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_PAPER_SIZE.SIZE_A4);
+            setSelectedPaperSize("A4");
           }}
         >
-          {MENU_PAPER_SIZE.SIZE_A4}
+          A4
         </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_PAPER_SIZE.SIZE_A3);
+            setSelectedPaperSize("A3");
           }}
         >
-          {MENU_PAPER_SIZE.SIZE_A3}
+          A3
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>

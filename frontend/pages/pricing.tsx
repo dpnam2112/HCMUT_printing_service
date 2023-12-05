@@ -65,7 +65,7 @@ const StandardLincenseComponent2 = () => {
         với 1 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        600 VNĐ / 1 tờ
+        500 VNĐ / 1 tờ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -94,14 +94,14 @@ const PersonalLicenseComponent2 = () => {
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">150 tờ A4</h3>
       <div className="bg-[#506FE0] px-3 py-1 text-white rounded-full text-base font-semibold shadow-lg shadow-gray-900/5 absolute -top-3 right-5">
-        Tiết kiệm 20%
+        Khuyên mua
       </div>
       <p className="mt-5 text-base text-gray-500 font-display">
         Thích hợp cho <span className="font-bold text-gray-700">1 học kỳ</span>{" "}
         với <span className="">nhóm 2 người.</span>
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        <span>70.000 VNĐ</span>
+        <span>75.000 VNĐ</span>
       </p>
 
       <ul className="mt-10 order-last flex flex-col gap-y-3 text-sm">
@@ -121,15 +121,12 @@ const TeamLicenseComponent2 = () => {
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">300 tờ A4</h3>
-      <div className="bg-[#506FE0] px-3 py-1 text-white rounded-full text-base font-semibold shadow-lg shadow-gray-900/5 absolute -top-3 right-5">
-        Tiết kiệm 40%
-      </div>
       <p className="mt-5 text-base text-gray-500 font-display">
         Thích hợp cho <span className="text-gray-700 font-bold">1 năm học</span>{" "}
         với nhóm 2 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        120.000 VNĐ
+        150.000 VNĐ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -153,7 +150,7 @@ const StandardLincenseComponent3 = () => {
         với 1 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        700 VNĐ / 1 tờ
+        1000 VNĐ / 1 tờ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -182,14 +179,14 @@ const PersonalLicenseComponent3 = () => {
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">150 tờ A3</h3>
       <div className="bg-[#506FE0] px-3 py-1 text-white rounded-full text-base font-semibold shadow-lg shadow-gray-900/5 absolute -top-3 right-5">
-        Tiết kiệm 20%
+        Khuyên mua
       </div>
       <p className="mt-5 text-base text-gray-500 font-display">
         Thích hợp cho <span className="font-bold text-gray-700">1 học kỳ</span>{" "}
         với <span className="">nhóm 2 người.</span>
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        <span>90.000 VNĐ</span>
+        <span>150.000 VNĐ</span>
       </p>
 
       <ul className="mt-10 order-last flex flex-col gap-y-3 text-sm">
@@ -209,15 +206,13 @@ const TeamLicenseComponent3 = () => {
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">300 tờ A3</h3>
-      <div className="bg-[#506FE0] px-3 py-1 text-white rounded-full text-base font-semibold shadow-lg shadow-gray-900/5 absolute -top-3 right-5">
-        Tiết kiệm 45%
-      </div>
+
       <p className="mt-5 text-base text-gray-500 font-display">
         Thích hợp cho <span className="text-gray-700 font-bold">1 năm học</span>{" "}
         với nhóm 2 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        160.000 VNĐ
+        300.000 VNĐ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">

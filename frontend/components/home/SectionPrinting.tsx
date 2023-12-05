@@ -1,39 +1,30 @@
 "use client";
 
-import MenuFacility from "../menus/menu-facility";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  MENU_BUILDING_CS1,
-  MENU_BUILDING_CS2,
-  MENU_FACILITY,
   MENU_NUMBER_OF_COPY,
-  MENU_PAPER_SIZE,
   MENU_PRINT_PAGE,
   MENU_PRINT_TYPE,
-  MENU_ROOM,
 } from "../../models/constant";
 import MenuBuildingCS1 from "../menus/menu-building-cs1";
 import MenuBuildingCS2 from "../menus/menu-building-cs2";
-import MenuRoom from "../menus/menu-room";
 import MenuPaperSize from "../menus/menu-paper-size";
 import MenuPrintType from "../menus/menu-print-type";
 import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
 import Link from "next/link";
+import { Printer } from "../../models/types";
+import networkService from "../../models/network-service";
+import MenuCampus from "../menus/menu-campus";
+import MenuRoom from "../menus/menu-room";
 
 const SectionPrinting = () => {
-  const [selectedFacility, setSelectedFacility] = useState<MENU_FACILITY>(
-    MENU_FACILITY.LY_THUONG_KIET
-  );
-  const [selectedBuildingCS1, setSelectedBuildingCS1] =
-    useState<MENU_BUILDING_CS1>(MENU_BUILDING_CS1.A1);
-  const [selectedBuildingCS2, setSelectedBuildingCS2] =
-    useState<MENU_BUILDING_CS2>(MENU_BUILDING_CS2.H2);
-  const [selectedRoom, setSelectedRoom] = useState<MENU_ROOM>(MENU_ROOM.R_101);
-  const [selectedPaperSize, setSelectedPaperSize] = useState<MENU_PAPER_SIZE>(
-    MENU_PAPER_SIZE.SIZE_A3
-  );
+  const [selectedCampus, setSelectedCampus] = useState<string>("");
+  const [selectedBuildingCS1, setSelectedBuildingCS1] = useState<string>("");
+  const [selectedBuildingCS2, setSelectedBuildingCS2] = useState<string>("");
+  const [selectedRoom, setSelectedRoom] = useState<number>(101);
+  const [selectedPaperSize, setSelectedPaperSize] = useState<"A3" | "A4">("A4");
   const [selectedPrintType, setSelectedPrintType] = useState<MENU_PRINT_TYPE>(
     MENU_PRINT_TYPE.DOUBLE
   );
@@ -43,6 +34,20 @@ const SectionPrinting = () => {
   const [selectedCopyNumber, setSelectedCopyNumber] =
     useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
   const [selectedFilePath, setSelectedFilePath] = useState<string>("");
+
+  const [printingPage, setPrintingPage] = useState<string>("");
+  const [printingCopyNumber, setPrintingCopyNumber] = useState<number>(10);
+
+  const [printers, setPrinters] = useState<Printer[]>([]);
+
+  useEffect(() => {
+    handleUpdateNewPrinters();
+  }, []);
+
+  const handleUpdateNewPrinters = async () => {
+    const newPrinters = await networkService.getPrinters();
+    setPrinters(newPrinters);
+  };
 
   function handleFileSelect(event) {
     const fileInput = event.target;
@@ -89,9 +94,10 @@ const SectionPrinting = () => {
             <span className="w-2/4 text-lg font-semibold select-none">
               Máy in tại cơ sở:
             </span>
-            <MenuFacility
-              selectedFacility={selectedFacility}
-              setSelectedFacility={setSelectedFacility}
+            <MenuCampus
+              printers={printers}
+              selectedCampus={selectedCampus}
+              setSelectedCampus={setSelectedCampus}
             />
           </div>
 
@@ -99,15 +105,17 @@ const SectionPrinting = () => {
             <span className="w-2/4 text-lg font-semibold select-none">
               Máy in tại toà:
             </span>
-            {selectedFacility === MENU_FACILITY.LY_THUONG_KIET ? (
+            {selectedCampus === "CS1" ? (
               <MenuBuildingCS1
-                selectedItem={selectedBuildingCS1}
-                setSelectedItem={setSelectedBuildingCS1}
+                printers={printers}
+                selectedBuilding={selectedBuildingCS1}
+                setSelectedBuilding={setSelectedBuildingCS1}
               />
             ) : (
               <MenuBuildingCS2
-                selectedItem={selectedBuildingCS2}
-                setSelectedItem={setSelectedBuildingCS2}
+                printers={printers}
+                selectedBuilding={selectedBuildingCS2}
+                setSelectedBuilding={setSelectedBuildingCS2}
               />
             )}
           </div>
@@ -117,8 +125,15 @@ const SectionPrinting = () => {
               Máy in tại phòng:
             </span>
             <MenuRoom
-              selectedItem={selectedRoom}
-              setSelectedItem={setSelectedRoom}
+              printers={printers}
+              selectedCampus={selectedCampus}
+              selectedBuilding={
+                selectedCampus === "CS1"
+                  ? selectedBuildingCS1
+                  : selectedBuildingCS2
+              }
+              selectedRoom={selectedRoom}
+              setSelectedRoom={setSelectedRoom}
             />
           </div>
 
@@ -127,8 +142,8 @@ const SectionPrinting = () => {
               Kích thước giấy:
             </span>
             <MenuPaperSize
-              selectedItem={selectedPaperSize}
-              setSelectedItem={setSelectedPaperSize}
+              selectedPaperSize={selectedPaperSize}
+              setSelectedPaperSize={setSelectedPaperSize}
             />
           </div>
 
@@ -158,7 +173,11 @@ const SectionPrinting = () => {
               </span>
               <input
                 className="w-2/4 h-full border rounded px-2 "
-                placeholder="Ví dụ: 10"
+                type="number"
+                value={printingCopyNumber}
+                onChange={(e) => {
+                  setPrintingCopyNumber(Number(e.target.value));
+                }}
               />
             </div>
           )}
@@ -178,8 +197,12 @@ const SectionPrinting = () => {
                 Nhập trang bạn cần in:
               </span>
               <input
-                className="w-2/4 h-full border rounded px-2 "
-                placeholder="Ví dụ: 1, 2, 5, 7, 12"
+                className="w-2/4 h-full border rounded px-2"
+                placeholder="Ví dụ: 5-7"
+                value={printingPage}
+                onChange={(e) => {
+                  setPrintingPage(e.target.value);
+                }}
               />
             </div>
           )}

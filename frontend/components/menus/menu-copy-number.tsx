@@ -55,18 +55,19 @@ const MenuCopyNumber: FC<Props> = ({ selectedItem, setSelectedItem }) => {
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_NUMBER_OF_COPY.CUSTOM);
-          }}
-        >
-          {MENU_NUMBER_OF_COPY.CUSTOM}
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onSelect={() => {
             setSelectedItem(MENU_NUMBER_OF_COPY.NONE);
           }}
         >
           {MENU_NUMBER_OF_COPY.NONE}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_NUMBER_OF_COPY.CUSTOM);
+          }}
+        >
+          {MENU_NUMBER_OF_COPY.CUSTOM}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
