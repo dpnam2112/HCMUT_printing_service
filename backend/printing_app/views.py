@@ -12,7 +12,14 @@ from . import serializers
 from .serializers import PrintingActivitySerializer
 from django.conf import settings
 from print_auth.utils import is_admin
-
+from django.core.files.storage import FileSystemStorage
+import pandas as pd
+from datetime import datetime
+import pytz
+from docx2pdf import convert
+import subprocess
+import re
+from django.http import JsonResponse
 # Create your views here
 
 class FileValidate(View):
@@ -111,6 +118,91 @@ class PrintActivity(APIView):
 
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+#file location
+BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.join(BASE_DIR, 'data')
+def perform_print(request):
+    if request.method == "POST" and request.FILES['filename']:
+        #time
+        tz_VN = pytz.timezone('Asia/Ho_Chi_Minh') 
+        datetime_VN = datetime.now(tz_VN) 
+        
+        #create filepath and store file
+
+        file = request.FILES['filename']
+        file_path = os.path.join(BASE_DIR, 'documents')
+        file_url = file_path
+        fs = FileSystemStorage(location = file_path,base_url = file_url)
+        fs.save(file.name,file)
+        uploaded_file_url = fs.url(file.name)
+        
+        #split file ext and calculate size
+        document_path = os.path.join(file_path, file.name)
+        file_stats = ""
+        with open(document_path,"rb"):
+            file_stats = os.stat(document_path)
+        file_size = file_stats.st_size / 1024
+        temp, file_ext = os.path.splitext(os.path.join(document_path))
+
+
+        #Perform print action
+        
+        if ((file_ext == ".doc") or (file_ext == ".docx")):
+            convert(document_path, temp + ".pdf")
+                
+            os.remove(document_path)
+            document_path = temp + ".pdf"
+
+        #print options
+        pages_print = request.POST["pages_print"]
+        printer_name = request.POST["printer_name"]
+        orient = request.POST["orient"] 
+        side = request.POST["side"] #one-sided, two-sided-long-edge, two-sided-short-edge
+        page_size = request.POST["page_size"]
+        num_copies = request.POST["num_copies"]
+        #pre_check
+        check_info = []
+
+        if pre_check(document_path, pages_print,check_info, request.user.username, 
+                     datetime_VN, file.name, num_copies, side) == False:
+            return render(request, check_info[0], content_type="text/plain")
+        else:
+            new_pages = check_info[1]
+            print(new_pages)
+        #Linux path covert:
+            linux_document_path = document_path.replace("\\","//")
+            linux_document_path = linux_document_path.replace("C:","c")
+
+
+            proc= subprocess.Popen(['wsl','-u','root','-d','Ubuntu','cd','/mnt',
+                                     ';','lp','-d','{}'.format(printer_name),'-o','media={}'.format(page_size),
+                                     '-n','{}'.format(num_copies),'-o',
+                                     'sides={}'.format(side),'-o','page-ranges={}'.format(new_pages),
+                                     '{}'.format(linux_document_path)], 
+                                     stdout= subprocess.PIPE, stderr=subprocess.PIPE, shell = True)
+            
+
+            (result, error) = proc.communicate()
+            result = result.decode()
+            
+            
+            if result.find("request id is") != -1:
+                job_id = int(re.findall("\d+",result)[0]) - 1
+
+                #save history
+                
+                if side == 'one-sided':
+                    two_sided = False
+
+                p = PrintingActivity(user = request.user, printer_name = 
+                                     printer_name,date = datetime_VN, file_name = file.name,
+                                     file_ext = file_ext.replace(".",""), paper_count = check_info[0],
+                                     sheet_type = page_size, job_id = job_id, two_sided = two_sided)
+                p.save()
+                return render(request, "in thanh cong",content_type="text/plain")
+            else:
+                return render(request, "Khong thuc hien duoc tac vu in",content_type="text/plain")
+    
 
 class MainPage(View):
     def get(self, request):
