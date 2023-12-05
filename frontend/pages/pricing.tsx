@@ -9,6 +9,7 @@ import { UserInfo } from "../models/types";
 import { useEffect, useState } from "react";
 import networkService from "../models/network-service";
 import toast from "react-hot-toast";
+import PricingConfirmDialog from "../components/pricing/pricing-confirm-dialog";
 
 type Props = {
   userInfo: UserInfo | undefined;
@@ -136,12 +137,18 @@ const PersonalLicenseComponent2 = ({ userInfo }: Props) => {
           Phù hợp cho nhóm 2 người.
         </li>
       </ul>
-      <button
-        onClick={handleOnClick}
-        className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
-      >
-        Mua ngay
-      </button>
+
+      <Dialog.Root>
+        <Dialog.Trigger>
+          <button
+            onClick={handleOnClick}
+            className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
+          >
+            Mua ngay
+          </button>
+        </Dialog.Trigger>
+        <PricingConfirmDialog />
+      </Dialog.Root>
     </section>
   );
 };
