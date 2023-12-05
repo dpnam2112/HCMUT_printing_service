@@ -3,50 +3,83 @@
 import { useEffect, useState } from "react";
 import {
   MENU_NUMBER_OF_COPY,
+  MENU_PRINT_ORIENTATION,
   MENU_PRINT_PAGE,
   MENU_PRINT_TYPE,
 } from "../../models/constant";
-import MenuBuildingCS1 from "../menus/menu-building-cs1";
-import MenuBuildingCS2 from "../menus/menu-building-cs2";
 import MenuPaperSize from "../menus/menu-paper-size";
 import MenuPrintType from "../menus/menu-print-type";
 import MenuPrintPage from "../menus/menu-print-page";
 import MenuCopyNumber from "../menus/menu-copy-number";
 import { Button } from "@radix-ui/themes";
 import Link from "next/link";
-import { Printer } from "../../models/types";
+import { Location, UserInfo } from "../../models/types";
 import networkService from "../../models/network-service";
-import MenuCampus from "../menus/menu-campus";
-import MenuRoom from "../menus/menu-room";
+import { sortLocations } from "../../models/utils";
+import MenuLocation from "../menus/menu-location";
+import MenuOrientation from "../menus/menu-orientation";
+import toast from "react-hot-toast";
 
 const SectionPrinting = () => {
-  const [selectedCampus, setSelectedCampus] = useState<string>("");
-  const [selectedBuildingCS1, setSelectedBuildingCS1] = useState<string>("");
-  const [selectedBuildingCS2, setSelectedBuildingCS2] = useState<string>("");
-  const [selectedRoom, setSelectedRoom] = useState<number>(101);
   const [selectedPaperSize, setSelectedPaperSize] = useState<"A3" | "A4">("A4");
   const [selectedPrintType, setSelectedPrintType] = useState<MENU_PRINT_TYPE>(
-    MENU_PRINT_TYPE.DOUBLE
+    MENU_PRINT_TYPE.DOUBLE_LONG
   );
+  const [selectedPrintOrientation, setSelectedPrintOrientation] =
+    useState<MENU_PRINT_ORIENTATION>(MENU_PRINT_ORIENTATION.VERTICAL);
   const [selectedPrintPage, setSelectedPrintPage] = useState<MENU_PRINT_PAGE>(
     MENU_PRINT_PAGE.ALL
   );
   const [selectedCopyNumber, setSelectedCopyNumber] =
     useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
+  const [selectedLocation, setSelectedLocation] = useState<
+    Location | undefined
+  >(undefined);
+
   const [selectedFilePath, setSelectedFilePath] = useState<string>("");
 
   const [printingPage, setPrintingPage] = useState<string>("");
   const [printingCopyNumber, setPrintingCopyNumber] = useState<number>(10);
 
-  const [printers, setPrinters] = useState<Printer[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
 
   useEffect(() => {
-    handleUpdateNewPrinters();
+    fetchLocations();
+    fetchUserInfo();
   }, []);
 
-  const handleUpdateNewPrinters = async () => {
-    const newPrinters = await networkService.getPrinters();
-    setPrinters(newPrinters);
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
+
+  const fetchLocations = async () => {
+    const newLocations = await networkService.getLocations();
+    const locationsCS1: Location[] = newLocations.flatMap((location) =>
+      location.campus === "CS1" ? [location] : []
+    );
+    const locationsCS2: Location[] = newLocations.flatMap((location) =>
+      location.campus === "CS2" ? [location] : []
+    );
+    const sortedLocations = [
+      ...sortLocations(locationsCS1),
+      ...sortLocations(locationsCS2),
+    ];
+
+    setLocations(sortedLocations);
+
+    if (sortedLocations.length > 0) {
+      setSelectedLocation(sortedLocations[0]);
+    }
+  };
+
+  const handleOnClickDone = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành in tài liệu!");
+      return;
+    }
   };
 
   function handleFileSelect(event) {
@@ -92,48 +125,12 @@ const SectionPrinting = () => {
         <div className="flex flex-col gap-4">
           <div className="flex items-center w-full px-5">
             <span className="w-2/4 text-lg font-semibold select-none">
-              Máy in tại cơ sở:
+              Vị trí máy in:
             </span>
-            <MenuCampus
-              printers={printers}
-              selectedCampus={selectedCampus}
-              setSelectedCampus={setSelectedCampus}
-            />
-          </div>
-
-          <div className="flex items-center w-full px-5">
-            <span className="w-2/4 text-lg font-semibold select-none">
-              Máy in tại toà:
-            </span>
-            {selectedCampus === "CS1" ? (
-              <MenuBuildingCS1
-                printers={printers}
-                selectedBuilding={selectedBuildingCS1}
-                setSelectedBuilding={setSelectedBuildingCS1}
-              />
-            ) : (
-              <MenuBuildingCS2
-                printers={printers}
-                selectedBuilding={selectedBuildingCS2}
-                setSelectedBuilding={setSelectedBuildingCS2}
-              />
-            )}
-          </div>
-
-          <div className="flex items-center w-full px-5 ">
-            <span className="w-2/4 text-lg font-semibold select-none">
-              Máy in tại phòng:
-            </span>
-            <MenuRoom
-              printers={printers}
-              selectedCampus={selectedCampus}
-              selectedBuilding={
-                selectedCampus === "CS1"
-                  ? selectedBuildingCS1
-                  : selectedBuildingCS2
-              }
-              selectedRoom={selectedRoom}
-              setSelectedRoom={setSelectedRoom}
+            <MenuLocation
+              locations={locations}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
             />
           </div>
 
@@ -144,6 +141,16 @@ const SectionPrinting = () => {
             <MenuPaperSize
               selectedPaperSize={selectedPaperSize}
               setSelectedPaperSize={setSelectedPaperSize}
+            />
+          </div>
+
+          <div className="flex items-center w-full px-5">
+            <span className="w-2/4 text-lg font-semibold select-none">
+              Hướng trang in:
+            </span>
+            <MenuOrientation
+              selectedOrientation={selectedPrintOrientation}
+              setSelectedOrientation={setSelectedPrintOrientation}
             />
           </div>
 
@@ -213,7 +220,9 @@ const SectionPrinting = () => {
               <Button className="w-[120px]">Mua giấy in</Button>
             </Link>
           </div>
-          <Button className="w-[120px]">Hoàn thành</Button>
+          <Button className="w-[120px]" onClick={handleOnClickDone}>
+            Hoàn thành
+          </Button>
         </div>
       </div>
     </div>

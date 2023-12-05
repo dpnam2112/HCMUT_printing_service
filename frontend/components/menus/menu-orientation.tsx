@@ -8,51 +8,50 @@ import {
 
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { FC } from "react";
-import { MENU_PRINT_TYPE } from "../../models/constant";
+import { MENU_PRINT_ORIENTATION } from "../../models/constant";
 
-type Props = {
-  selectedItem: MENU_PRINT_TYPE;
-  setSelectedItem: React.Dispatch<React.SetStateAction<MENU_PRINT_TYPE>>;
+type MenuOrientationProps = {
+  width?: string;
+  selectedOrientation: MENU_PRINT_ORIENTATION;
+  setSelectedOrientation: React.Dispatch<
+    React.SetStateAction<MENU_PRINT_ORIENTATION>
+  >;
 };
 
-const MenuPrintType: FC<Props> = ({ selectedItem, setSelectedItem }) => {
+const MenuOrientation: FC<MenuOrientationProps> = ({
+  width,
+  selectedOrientation,
+  setSelectedOrientation,
+}) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
-        <Button className="w-2/4 px-0">
+        <Button className={`${width ? "w-full" : "w-2/4"} px-0`}>
           <div className="flex items-center justify-between focus-within:outline-none w-full">
-            <span>{selectedItem}</span>
+            <span>{selectedOrientation}</span>
             <CaretSortIcon width="22" height="22" />
           </div>
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenuContent className="w-[320px]">
+      <DropdownMenuContent className={width ? width : "w-[320px]"}>
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_PRINT_TYPE.DOUBLE_LONG);
+            setSelectedOrientation(MENU_PRINT_ORIENTATION.VERTICAL);
           }}
         >
-          {MENU_PRINT_TYPE.DOUBLE_LONG}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_PRINT_TYPE.DOUBLE_SHORT);
-          }}
-        >
-          {MENU_PRINT_TYPE.DOUBLE_SHORT}
+          {MENU_PRINT_ORIENTATION.VERTICAL}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_PRINT_TYPE.ONE);
+            setSelectedOrientation(MENU_PRINT_ORIENTATION.HORIZONTAL);
           }}
         >
-          {MENU_PRINT_TYPE.ONE}
+          {MENU_PRINT_ORIENTATION.HORIZONTAL}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu.Root>
   );
 };
 
-export default MenuPrintType;
+export default MenuOrientation;

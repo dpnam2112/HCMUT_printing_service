@@ -5,6 +5,7 @@ import {
   Printer,
   PrintingHistory,
   TransactionHistory,
+  UserInfo,
 } from "./types";
 
 class NetworkService {
@@ -144,6 +145,18 @@ class NetworkService {
     } catch (e) {
       console.error("Error: ", e);
       return [];
+    }
+  }
+
+  public async getUserInfo(): Promise<UserInfo | undefined> {
+    try {
+      const data: UserInfo = await fetch(`${BACKEND_API}/api/user-info/`)
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return undefined;
     }
   }
 }

@@ -5,22 +5,41 @@ import Link from "next/link";
 import { Dialog } from "@radix-ui/themes";
 import PricingDialogA4 from "../components/pricing/pricing-dialog-a4";
 import PricingDialogA3 from "../components/pricing/pricing-dialog-a3";
+import { UserInfo } from "../models/types";
+import { useEffect, useState } from "react";
+import networkService from "../models/network-service";
+import toast from "react-hot-toast";
+
+type Props = {
+  userInfo: UserInfo | undefined;
+};
 
 export default function Pricing() {
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
+
   return (
     <Layout preview={{}}>
       <Container>
         <PricingHeader2 />
         <div className="flex flex-col">
           <div className="pricingSectionWrapper">
-            <StandardLincenseComponent2 />
-            <PersonalLicenseComponent2 />
-            <TeamLicenseComponent2 />
+            <StandardLincenseComponent2 userInfo={userInfo} />
+            <PersonalLicenseComponent2 userInfo={userInfo} />
+            <TeamLicenseComponent2 userInfo={userInfo} />
           </div>
           <div className="pricingSectionWrapper">
-            <StandardLincenseComponent3 />
-            <PersonalLicenseComponent3 />
-            <TeamLicenseComponent3 />
+            <StandardLincenseComponent3 userInfo={userInfo} />
+            <PersonalLicenseComponent3 userInfo={userInfo} />
+            <TeamLicenseComponent3 userInfo={userInfo} />
           </div>
         </div>
 
@@ -56,7 +75,7 @@ const PricingHeader2 = () => {
   );
 };
 
-const StandardLincenseComponent2 = () => {
+const StandardLincenseComponent2 = ({ userInfo }: Props) => {
   return (
     <section className="pricingSection">
       <h3 className="mt-5 font-bold text-2xl">Mua giấy A4 theo số lượng</h3>
@@ -89,7 +108,14 @@ const StandardLincenseComponent2 = () => {
   );
 };
 
-const PersonalLicenseComponent2 = () => {
+const PersonalLicenseComponent2 = ({ userInfo }: Props) => {
+  const handleOnClick = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
+      return;
+    }
+  };
+
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">150 tờ A4</h3>
@@ -110,14 +136,24 @@ const PersonalLicenseComponent2 = () => {
           Phù hợp cho nhóm 2 người.
         </li>
       </ul>
-      <button className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold">
+      <button
+        onClick={handleOnClick}
+        className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
+      >
         Mua ngay
       </button>
     </section>
   );
 };
 
-const TeamLicenseComponent2 = () => {
+const TeamLicenseComponent2 = ({ userInfo }: Props) => {
+  const handleOnClick = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
+      return;
+    }
+  };
+
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">300 tờ A4</h3>
@@ -134,14 +170,17 @@ const TeamLicenseComponent2 = () => {
           Phù hợp nhóm 4 người.
         </li>
       </ul>
-      <button className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white">
+      <button
+        onClick={handleOnClick}
+        className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+      >
         Mua ngay
       </button>
     </section>
   );
 };
 
-const StandardLincenseComponent3 = () => {
+const StandardLincenseComponent3 = ({ userInfo }: Props) => {
   return (
     <section className="pricingSection">
       <h3 className="mt-5 font-bold text-2xl">Mua giấy A3 theo số lượng</h3>
@@ -174,7 +213,14 @@ const StandardLincenseComponent3 = () => {
   );
 };
 
-const PersonalLicenseComponent3 = () => {
+const PersonalLicenseComponent3 = ({ userInfo }: Props) => {
+  const handleOnClick = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
+      return;
+    }
+  };
+
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">150 tờ A3</h3>
@@ -195,14 +241,24 @@ const PersonalLicenseComponent3 = () => {
           Phù hợp cho nhóm 2 người.
         </li>
       </ul>
-      <button className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold">
+      <button
+        onClick={handleOnClick}
+        className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
+      >
         Mua ngay
       </button>
     </section>
   );
 };
 
-const TeamLicenseComponent3 = () => {
+const TeamLicenseComponent3 = ({ userInfo }: Props) => {
+  const handleOnClick = async () => {
+    if (!userInfo) {
+      toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
+      return;
+    }
+  };
+
   return (
     <section className="pricingFeaturedSection">
       <h3 className="mt-5 font-bold text-2xl">300 tờ A3</h3>
@@ -220,7 +276,10 @@ const TeamLicenseComponent3 = () => {
           Phù hợp nhóm 4 người.
         </li>
       </ul>
-      <button className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white">
+      <button
+        onClick={handleOnClick}
+        className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+      >
         Mua ngay
       </button>
     </section>
