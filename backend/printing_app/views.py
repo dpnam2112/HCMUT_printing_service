@@ -7,9 +7,11 @@ from rest_framework import status
 from . import models
 from .models import PrintingActivity
 from print_auth.models import CampusUser
+from django.contrib.auth.models import User
 from . import serializers
 from .serializers import PrintingActivitySerializer
 from django.conf import settings
+from print_auth.utils import is_admin
 
 # Create your views here
 
@@ -45,6 +47,9 @@ class PrintFile(View):
 
 class GetExtensions(APIView):
     def get(self, request):
+        if not (settings.FRONTEND_DEV or request.user.is_authenticated):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         extensions = models.Extension.objects.all()
         serializer = serializers.ExtensionSerializer(extensions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -61,6 +66,9 @@ class GetLocations(APIView):
     """
 
     def get(self, request):
+        if not (settings.FRONTEND_DEV or request.user.is_authenticated):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         locations = models.PrinterLocation.objects.all()
         serializer = serializers.PrinterLocationSerializer(locations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -73,22 +81,37 @@ class PrintActivity(APIView):
         for key, val in query_params.items():
             query_params[key] = val[0]
 
+        if not (settings.FRONTEND_DEV or request.user.is_authenticated):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        user_is_admin = is_admin(request.user)
+
         if "id" in query_params:
+            # Get printing history of a specific user
+            if not (settings.FRONTEND_DEV or request.user.id == int(query_params["id"]) or user_is_admin):
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+            user = None
+
             try:
-                user = CampusUser.objects.get(campus_id=id)
+                user = User.objects.get(pk=int(query_params["id"])) if (settings.FRONTEND_DEV or user_is_admin) else request.user
             except CampusUser.DoesNotExist:
                 return Response({"error": "No user"}, status=status.HTTP_400_BAD_REQUEST)
 
-            activities = PrintingActivity.objects.filter(campus_id=query_params["id"])
+
+            activities = PrintingActivity.objects.filter(user=user)
             serializer = PrintingActivitySerializer(activities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        print_activities = PrintingActivity.objects.all()
-        serializer = PrintingActivitySerializer(print_activities, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        elif settings.FRONTEND_DEV or user_is_admin:
+            # Get printing history of all users, only administrators are allowed to access
+            print_activities = PrintingActivity.objects.all()
+            serializer = PrintingActivitySerializer(print_activities, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 class MainPage(View):
     def get(self, request):
-        if settings.TESTING_LOGIN:
-            return render(request, "index_1.html")
         return render(request, 'index.html')

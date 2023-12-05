@@ -35,7 +35,7 @@ class Extension(models.Model):
 
 class PrintingActivity(models.Model):
     date = models.DateTimeField(auto_now_add=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     printer_name = models.CharField(max_length=200)
     file_name = models.CharField(max_length=200)
     file_ext = models.CharField(max_length=6)
