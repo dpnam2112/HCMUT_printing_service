@@ -119,6 +119,10 @@ class PrintActivity(APIView):
 
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+#base dir path to store files
+BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.join(BASE_DIR, 'data')
+
 def perform_print(request):
     if request.method == "POST" and request.FILES['filename']:
         #time
@@ -159,7 +163,7 @@ def perform_print(request):
         page_size = request.POST["page_size"]
         num_copies = request.POST["num_copies"]
         #pre_check
-        check_info = []
+        check_info = [] #if pre_check return false, it will store error, if true, it store page_count at index 0, and new pages print at index 1
 
         if pre_check(document_path, pages_print,check_info, request.user, 
                      datetime_VN, file.name, num_copies, side) == False:
@@ -194,7 +198,7 @@ def perform_print(request):
 
                 p = PrintingActivity(user = request.user, printer_name = 
                                      printer_name,date = datetime_VN, file_name = file.name,
-                                     file_ext = file_ext.replace(".",""), paper_count = check_info[0],
+                                     file_ext = file_ext.replace(".",""), pape_count = check_info[0],
                                      sheet_type = page_size, job_id = job_id, two_sided = two_sided)
                 p.save()
                 return render(request, "in thanh cong",content_type="text/plain")
@@ -202,7 +206,22 @@ def perform_print(request):
                 return render(request, "Khong thuc hien duoc tac vu in",content_type="text/plain")
     
 
-    
+def check_print_status_success(request):
+    if request.method == "POST":
+        url = 'http://localhost:631/jobs?which_jobs=all'
+        html = requests.get(url).content
+        df_list = pd.read_html(html)
+        df = df_list[-1]
+
+        for i in range(PrintingActivity.objects.all().count()):
+            row = PrintingActivity.objects.all()[i]
+            if row.status == False:
+                if str(df.iloc[[row.job_id]]["State"]).find("completed") != -1:
+                    row.status = True
+                    row.job_id = -1
+                    row.save()
+
+        return render(request, "kiem trang trang thai thanh cong",content_type="text/plain")
 
 class MainPage(View):
     def get(self, request):
