@@ -95,6 +95,9 @@ const PrinterManagementView: FC<PrinterManagementViewProps> = ({
   const handleUpdateNewPrinters = async () => {
     const newPrinters = await networkService.getPrinters();
     setPrinters(newPrinters);
+
+    setSelectedPrinters([]);
+    apiRef.current?.setRowSelectionModel([]);
   };
 
   const getFilteredPrinterList = (list: Printer[]) => {

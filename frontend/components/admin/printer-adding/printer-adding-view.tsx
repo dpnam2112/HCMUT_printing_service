@@ -1,4 +1,4 @@
-import { Button, Select } from "@radix-ui/themes";
+import { Button, Select, Separator } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import InputTextField from "../../input-text-field";
 import { Location, Printer } from "../../../models/types";
@@ -14,27 +14,29 @@ const PrinterAddingView = () => {
     undefined
   );
 
-  const [locationsCS1, setLocationsCS1] = useState<Location[]>([]);
-  const [locationsCS2, setLocationsCS2] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<
     Location | undefined
   >(undefined);
+  const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
     const fetchLocations = async () => {
-      const locations = await networkService.getLocations();
-      const locationsCS1: Location[] = locations.flatMap((location) =>
+      const newLocations = await networkService.getLocations();
+      const locationsCS1: Location[] = newLocations.flatMap((location) =>
         location.campus === "CS1" ? [location] : []
       );
-      const locationsCS2: Location[] = locations.flatMap((location) =>
+      const locationsCS2: Location[] = newLocations.flatMap((location) =>
         location.campus === "CS2" ? [location] : []
       );
+      const sortedLocations = [
+        ...sortLocations(locationsCS1),
+        ...sortLocations(locationsCS2),
+      ];
 
-      setLocationsCS1(sortLocations(locationsCS1));
-      setLocationsCS2(sortLocations(locationsCS2));
+      setLocations(sortedLocations);
 
-      if (locations.length > 0) {
-        setSelectedLocation(locations[0]);
+      if (sortedLocations.length > 0) {
+        setSelectedLocation(sortedLocations[0]);
       }
     };
 
@@ -81,6 +83,13 @@ const PrinterAddingView = () => {
     setErrorMessage("Vị trí đặt máy in không tồn tại!");
   };
 
+  const handleChange = (newValue) => {
+    const index = parseInt(newValue.split("_")[0]);
+    if (index >= 0 && index < locations.length) {
+      setSelectedLocation(locations[index]);
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
       <div className="flex flex-col gap-5">
@@ -101,37 +110,24 @@ const PrinterAddingView = () => {
             setValue={setManufacturer}
           />
 
-          <Select.Root
-            defaultValue={
-              locationsCS1.length > 0 ? "0_locationCS1" : "0_locationCS2"
-            }
-          >
+          <Select.Root onValueChange={handleChange} defaultValue={"0_location"}>
             <Select.Trigger />
             <Select.Content>
               <Select.Group>
-                {locationsCS1.map((location, index) => {
+                {locations.map((location, index) => {
+                  const isSeparator =
+                    index - 1 >= 0 &&
+                    locations[index - 1].campus !== location.campus;
                   return (
-                    <Select.Item
-                      key={`${index}_locationCS1`}
-                      value={`${index}_locationCS1`}
-                      onSelect={() => {
-                        setSelectedLocation(location);
-                      }}
-                    >{`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}</Select.Item>
-                  );
-                })}
-              </Select.Group>
-              <Select.Separator />
-              <Select.Group>
-                {locationsCS2.map((location, index) => {
-                  return (
-                    <Select.Item
-                      key={`${index}_locationCS2`}
-                      value={`${index}_locationCS2`}
-                      onSelect={() => {
-                        setSelectedLocation(location);
-                      }}
-                    >{`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}</Select.Item>
+                    <>
+                      {isSeparator && <Select.Separator />}
+                      <Select.Item
+                        key={`${index}_location`}
+                        value={`${index}_location`}
+                      >
+                        {`${location.campus}, Toà ${location.building_name}, phòng ${location.room_code} lầu ${location.floor}`}
+                      </Select.Item>
+                    </>
                   );
                 })}
               </Select.Group>
