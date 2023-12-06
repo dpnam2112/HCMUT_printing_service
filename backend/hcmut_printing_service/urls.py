@@ -21,13 +21,14 @@ from print_auth.views import FetchUserInfo
 from printing_app.views import GetLocations
 from printing_app.views import GetExtensions
 from printing_app.views import PrintActivity
-from printing_app.views import MainPage, OfficerPage, PricingPage, SupportPage, perform_print, TestPrinting
+from printing_app.views import MainPage, OfficerPage, PricingPage, SupportPage, perform_print, TestPrinting, view_report
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/perform-print/', perform_print),
+    path('api/view-report/', view_report),
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path("api/officer/", include('officer_app.urls')),
