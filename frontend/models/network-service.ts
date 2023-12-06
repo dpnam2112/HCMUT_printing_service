@@ -2,6 +2,7 @@ import { BACKEND_API } from "./constant";
 import {
   Extension,
   Location,
+  PayLoadPrinting,
   Printer,
   PrintingHistory,
   TransactionHistory,
@@ -10,6 +11,25 @@ import {
 
 class NetworkService {
   constructor() {}
+
+  public async fetchPrinting(payLoad: PayLoadPrinting) {
+    try {
+      let formData = new FormData();
+      for (const [key, value] of Object.entries(payLoad)) {
+        formData.append(key, value);
+      }
+
+      const data = await fetch(`${BACKEND_API}/api/perform-print/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      return data.status.toString().startsWith("2");
+    } catch (e) {
+      console.error("Error: ", e);
+      return false;
+    }
+  }
 
   public async addPrinter(printer: Omit<Printer, "id">): Promise<boolean> {
     try {
