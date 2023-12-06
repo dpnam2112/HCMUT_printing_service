@@ -60,3 +60,13 @@ export type UserInfo = {
   page_balance: number;
   is_admin: boolean;
 };
+
+export type PayLoadPrinting = {
+  filename: any;
+  pages_print: string;
+  printer_name: string;
+  page_size: string;
+  num_copies: number;
+  side: string;
+  orient: string;
+};

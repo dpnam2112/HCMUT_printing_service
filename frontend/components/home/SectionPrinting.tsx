@@ -19,6 +19,7 @@ import { sortLocations } from "../../models/utils";
 import MenuLocation from "../menus/menu-location";
 import MenuOrientation from "../menus/menu-orientation";
 import toast from "react-hot-toast";
+import { getPayLoadPrinting } from "./utils";
 
 const SectionPrinting = () => {
   const [selectedPaperSize, setSelectedPaperSize] = useState<"A3" | "A4">("A4");
@@ -37,6 +38,7 @@ const SectionPrinting = () => {
   >(undefined);
 
   const [selectedFilePath, setSelectedFilePath] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
 
   const [printingPage, setPrintingPage] = useState<string>("");
   const [printingCopyNumber, setPrintingCopyNumber] = useState<number>(10);
@@ -80,6 +82,39 @@ const SectionPrinting = () => {
       toast.error("Vui lòng đăng nhập để tiến hành in tài liệu!");
       return;
     }
+
+    if (!selectedFile) {
+      toast.error("Vui lòng chọn tài liệu!");
+      return;
+    }
+
+    if (!selectedLocation) {
+      toast.error("Vui lòng chọn vị trí máy in!");
+      return;
+    }
+
+    const payLoad = await getPayLoadPrinting(
+      selectedFile,
+      selectedPaperSize,
+      selectedPrintPage,
+      printingPage,
+      selectedCopyNumber,
+      printingCopyNumber,
+      selectedPrintType,
+      selectedLocation
+    );
+
+    if (!payLoad) {
+      toast.error("Có lỗi xảy ra khi in!");
+      return;
+    }
+
+    const data = networkService.fetchPrinting(payLoad);
+    if (!data) {
+      toast.error("Có lỗi xảy ra khi in!");
+    } else {
+      toast.success(`${data}`);
+    }
   };
 
   function handleFileSelect(event) {
@@ -87,19 +122,8 @@ const SectionPrinting = () => {
     const file = fileInput.files[0];
 
     if (file) {
-      const reader = new FileReader();
-
       setSelectedFilePath(fileInput.value);
-
-      reader.onload = function (e) {
-        // The content of the file will be available in e.target.result
-        const fileContent = e.target.result;
-        console.log(fileContent);
-
-        // You can do further processing with the file content here
-      };
-
-      reader.readAsText(file);
+      setSelectedFile(file);
     }
   }
 
