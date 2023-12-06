@@ -70,6 +70,7 @@ class CreateOrder(View):
             sheet_info[keymaps[key]] = val
 
         transaction = Transactions.objects.create(user=user, **sheet_info, transaction_id=trans_id, total_cost=total_cost, status="INCOMPLETED")
+        return transaction
 
 
     def post(self, request):
@@ -100,19 +101,6 @@ class CreateOrder(View):
         user = User.objects.get(pk=1) if settings.FRONTEND_DEV else request.user
         transaction = self.create_transaction(user=user, req_payload=sheet_quantity, trans_id=trans_id, total_cost=calc_price(sheet_quantity))
 
-        sheet_quantity = {
-            'A4': transaction.a4_sheets,
-            'A3': transaction.a3_sheets,
-            'A2': transaction.a2_sheets,
-            'A1': transaction.a1_sheets,
-            'A0': transaction.a0_sheets
-        }
-
-        total_a4 = convert_sheets(sheet_quantity)
-        campus_user = CampusUser.objects.get(base_user=user)
-        campus_user.page_balance -= total_a4
-        campus_user.save()
-
         return HttpResponse(response.text, content_type='application/json') 
 
 
@@ -122,11 +110,28 @@ class CaptureOrder(View):
         Request payload: A JSON-formatted text including the following fields:
             - order_id: Paypal order ID
     """
+    def update_page_balance(self, transaction):
+        sheet_quantity = {
+            'A4': transaction.a4_sheets,
+            'A3': transaction.a3_sheets,
+            'A2': transaction.a2_sheets,
+            'A1': transaction.a1_sheets,
+            'A0': transaction.a0_sheets
+        }
+
+        user = transaction.user
+
+        # Update user's page balances
+        total_a4 = convert_sheets(sheet_quantity)
+        campus_user = CampusUser.objects.get(base_user=user)
+        campus_user.page_balance += total_a4
+        campus_user.save()
+
 
     def post(self, request):
         # TODO: Authenticate the incoming request
         if not (settings.FRONTEND_DEV or request.user.is_authenticated):
-            return HttpResponse("Unauthenticated", status_code=401, content_type="text/plain")
+            return HttpResponse(status_code=401, content_type="text/plain")
 
         # Complete the user's order
         access_token = get_paypal_token(config.CLIENT_ID, config.CLIENT_SECRET)
@@ -152,13 +157,15 @@ class CaptureOrder(View):
             transaction.status = capture_payload["status"]
             transaction.save()
 
+            self.update_page_balance(transaction)
+
         return HttpResponse(capture_raw_resp, content_type="application/json")
 
 
 class GetTransactions(APIView):
     def get(self, request):
         """ Retrieve all transactions if user_id is not specified.
-            If user_id is specified, Retrieve all transactions if that user. """
+            If user_id is specified, Retrieve all transactions of that user. """
         query_params = dict(request.GET)
         for key, val in query_params.items():
             query_params[key] = val[0]

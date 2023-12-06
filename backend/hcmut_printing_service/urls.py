@@ -42,7 +42,6 @@ urlpatterns = [
     # Routes for rendering static pages
     path("", MainPage.as_view()),
     path("officer/", OfficerPage.as_view()),
-    path("test-print/", TestPrinting.as_view()),
     path("pricing/", PricingPage.as_view()),
     path("support/", SupportPage.as_view())
 ]
