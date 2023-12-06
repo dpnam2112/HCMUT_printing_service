@@ -22,12 +22,24 @@ class NetworkService {
       const data = await fetch(`${BACKEND_API}/api/perform-print/`, {
         method: "POST",
         body: formData,
-      });
+      })
+        .then((res) => res.json())
+        .then((data) => data);
 
-      return data.status.toString().startsWith("2");
+      return data;
     } catch (e) {
       console.error("Error: ", e);
       return false;
+    }
+  }
+
+  public async exportPrintData() {
+    try {
+      const data = await fetch(`${BACKEND_API}/api/view-report/`);
+      return data;
+    } catch (e) {
+      console.error("Error: ", e);
+      return undefined;
     }
   }
 
@@ -176,6 +188,28 @@ class NetworkService {
       return data;
     } catch (e) {
       console.error("Error: ", e);
+      return undefined;
+    }
+  }
+
+  public async fetchLogin() {
+    try {
+      const data = await fetch(`${BACKEND_API} /accounts/login/`)
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  public async fetchLogout() {
+    try {
+      const data = await fetch(`${BACKEND_API} /accounts/logout/`)
+        .then((res) => res.json())
+        .then((data) => data);
+      return data;
+    } catch (e) {
       return undefined;
     }
   }

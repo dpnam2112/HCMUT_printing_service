@@ -52,15 +52,27 @@ export default function NewNavigationBar() {
               Liên hệ
             </span>
           </Link>
-
-          <Link href={"/login"}>
+          {userInfo ? (
             <Button
+              onClick={() => {
+                networkService.fetchLogout();
+              }}
+              variant="classic"
+              className="text-lg font-semibold cursor-pointer"
+            >
+              Đăng xuất
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                networkService.fetchLogin();
+              }}
               variant="classic"
               className="text-lg font-semibold cursor-pointer"
             >
               Đăng nhập
             </Button>
-          </Link>
+          )}
         </div>
       </div>
     </Popover>
