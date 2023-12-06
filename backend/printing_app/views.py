@@ -26,6 +26,8 @@ import pandas as pd
 import requests
 import json
 from django.conf import settings
+import matplotlib.pyplot as plt
+from fpdf import FPDF
 # Create your views here
 
 class FileValidate(View):
@@ -238,6 +240,105 @@ def check_print_status_success(request):
                     row.save()
 
         return HttpResponse("kiem trang trang thai thanh cong",content_type="text/plain")
+
+def view_report(request):
+    data = pd.DataFrame(list(PrintingActivity.objects.all().values()))
+    total_pages_count = data['page_count'].sum()
+    avg_pages_count = data['page_count'].mean()
+    number_times_print = len(data.index)
+    
+    each_printer_paper_count = data.groupby('printer_name')['page_count'].sum()
+    each_printer_print_count = data.groupby('printer_name')['printer_name'].count()
+    
+    #Chart
+
+    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14, 10))
+    
+    #pie chart for each_printer_paper_count
+    plt.sca(axes[0,0])
+    plt.title("So sánh tổng số giấy đã in ở các máy in")
+    labels_for_each_printer_paper_count = list(each_printer_paper_count.index)
+    values_for_each_printer_paper_count = list(each_printer_paper_count.values)
+    plt.pie(values_for_each_printer_paper_count, 
+            labels = labels_for_each_printer_paper_count,autopct = '%1.1f%%',startangle = 90, )
+    
+
+    #pie chart for each_printer_print_count
+    plt.sca(axes[0,1]) 
+    plt.title("So sánh tổng số lần thực hiện tác vụ in ở mỗi máy in")
+    labels_for_each_printer_print_count = list(each_printer_print_count.index)
+    values_for_each_printer_print_count = list(each_printer_print_count.values)
+    plt.pie(values_for_each_printer_print_count, 
+            labels = labels_for_each_printer_print_count,autopct = '%1.1f%%',startangle = 90)
+    
+    plt.sca(axes[1,0]) 
+    plt.bar(labels_for_each_printer_paper_count, 
+            values_for_each_printer_paper_count, color = 'red')
+    
+    plt.sca(axes[1,1]) 
+    plt.bar(labels_for_each_printer_print_count, 
+            values_for_each_printer_print_count, color = 'green')
+    
+    plt.sca(axes[2,0])
+    plt.xlabel('Month') 
+    df1 = data.groupby([data.date.dt.hour])['page_count'].sum()
+    plt.bar(df1.index, df1.values)
+
+    plt.sca(axes[2,1])
+    plt.xlabel('Month') 
+    df2 = data.groupby([data.date.dt.hour])['date'].count()
+    plt.bar(df2.index, df2.values)
+    
+    tz_VN = pytz.timezone('Asia/Ho_Chi_Minh') 
+    datetime_VN = datetime.now(tz_VN) 
+    format_date = str(datetime_VN).replace(" ","")
+    format_date = format_date.replace(".","")
+    format_date = format_date.replace(":",'')
+    
+    png_path_0 = os.path.join(BASE_DIR, format_date + 'thong_ke_chinh.png')
+    plt.savefig(png_path_0, bbox_inches = 'tight', dpi = 300)
+    
+    #Other statistics
+    file_ext_count = data.groupby('file_ext')['file_ext'].count()
+
+    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(7, 5))
+    plt.sca(axes)
+    plt.title('Số lần các định dạng được dùng')
+    plt.bar(file_ext_count.index, file_ext_count.values, color = 'pink')
+    png_path_1 = os.path.join(BASE_DIR, format_date + 'thong_ke_dinh_dang.png')
+    plt.savefig(png_path_1, bbox_inches = 'tight', dpi = 300)
+
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_xy(80, 30)
+    pdf.set_font('arial', 'B', 16)
+    pdf.write(h = 5,txt="Bao cao tong hop")
+
+    pdf.set_xy(10,50)
+    pdf.set_font('arial', size = 13)
+    pdf.write(h = 5,txt="Tong so giay da in: {}".format(total_pages_count))
+
+    pdf.set_xy(10,60)
+    pdf.set_font('arial', size = 13)
+    pdf.write(h = 5,txt="Trung binh tong so giay 1 nguoi dung in: {}".format(avg_pages_count))
+
+    pdf.set_xy(10,70)
+    pdf.set_font('arial', size = 13)
+    pdf.write(h = 5,txt="Tong so lan thuc hien tac vu in: {}".format(number_times_print))
+
+    pdf.image(png_path_0, 5, 90, w = 100, h = 110)
+    pdf.image(png_path_1, 110, 100, w = 100, h = 100)
+    path = os.path.join(BASE_DIR, format_date + 'bao_cao_tong_hop.pdf')
+    pdf.output(path, 'F')
+
+    os.remove(png_path_0)
+    os.remove(png_path_1)
+    with open(path,"rb") as f:
+        file_data = f.read()
+    response = HttpResponse(file_data, content_type= 'application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="bao_cao_tong_hop.pdf"'
+    return response
 
 class MainPage(View):
     def get(self, request):
