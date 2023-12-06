@@ -1,6 +1,7 @@
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { FC, useEffect, useState } from "react";
 import PricingConfirmDialog from "./pricing-confirm-dialog";
+import toast from "react-hot-toast";
 
 const price = 480;
 
@@ -57,7 +58,7 @@ const PricingDialogA3: FC<PricingDialogA3Props> = ({ handleClose }) => {
 
       <Flex gap="3" mt="4" justify="end">
         <Dialog.Close>
-          <Button variant="soft" color="gray">
+          <Button variant="soft" color="gray" onClick={handleClose}>
             Huỷ bỏ
           </Button>
         </Dialog.Close>
@@ -74,7 +75,7 @@ const PricingDialogA3: FC<PricingDialogA3Props> = ({ handleClose }) => {
           <PricingConfirmDialog
             title={`Xác nhận mua ${quantity} tờ A3`}
             quantityA3={quantity}
-            quantityA4={1}
+            quantityA4={0}
             handleClose={() => {
               setOpen(false);
               handleClose();

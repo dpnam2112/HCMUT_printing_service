@@ -54,12 +54,14 @@ const PricingConfirmDialog: FC<PricingConfirmDialogProps> = ({
 
               setTimeout(() => {
                 toast.success(`Giao dịch thành công, xin cảm ơn!`, {
-                  duration: 2000,
+                  duration: 5000,
                 });
-              }, 4000);
+              }, 1000);
             })
             .catch((error) => {
-              toast.error(`Có lỗi xảy ra: ${error}`);
+              toast.error(`Có lỗi xảy ra: ${error}`, {
+                duration: 5000,
+              });
             });
         }}
       />

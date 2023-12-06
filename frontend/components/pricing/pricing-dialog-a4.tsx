@@ -57,7 +57,7 @@ const PricingDialogA4: FC<PricingDialogA4Props> = ({ handleClose }) => {
 
       <Flex gap="3" mt="4" justify="end">
         <Dialog.Close>
-          <Button variant="soft" color="gray">
+          <Button variant="soft" color="gray" onClick={handleClose}>
             Huỷ bỏ
           </Button>
         </Dialog.Close>
@@ -73,7 +73,7 @@ const PricingDialogA4: FC<PricingDialogA4Props> = ({ handleClose }) => {
           </Dialog.Trigger>
           <PricingConfirmDialog
             title={`Xác nhận mua ${quantity} tờ A4`}
-            quantityA3={1}
+            quantityA3={0}
             quantityA4={quantity}
             handleClose={() => {
               setOpen(false);
