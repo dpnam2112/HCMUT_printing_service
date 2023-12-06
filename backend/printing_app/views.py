@@ -243,6 +243,10 @@ def check_print_status_success(request):
 
 def view_report(request):
     data = pd.DataFrame(list(PrintingActivity.objects.all().values()))
+    
+    if (len(data.index) == 0):
+        return HttpResponse("khong co du lieu bao cao", content_type = "text/plain")
+    
     total_pages_count = data['page_count'].sum()
     avg_pages_count = data['page_count'].mean()
     number_times_print = len(data.index)
@@ -286,7 +290,7 @@ def view_report(request):
 
     plt.sca(axes[2,1])
     plt.xlabel('Month') 
-    df2 = data.groupby([data.date.dt.hour])['date'].count()
+    df2 = data.groupby([data.date.dt.month])['date'].count()
     plt.bar(df2.index, df2.values)
     
     tz_VN = pytz.timezone('Asia/Ho_Chi_Minh') 
