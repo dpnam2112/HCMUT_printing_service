@@ -1,10 +1,32 @@
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import PricingConfirmDialog from "./pricing-confirm-dialog";
+import toast from "react-hot-toast";
 
-const price = 1000;
+const price = 480;
 
-const PricingDialogA3 = () => {
+type PricingDialogA3Props = {
+  handleClose: () => void;
+};
+
+const getTotal = (totalCost: number): string => {
+  const total = totalCost.toString();
+  let str = "";
+  let cnt = 0;
+  for (let i = total.length - 1; i >= 0; i--) {
+    str = total[i] + str;
+    cnt++;
+    if (cnt === 3 && i !== 0) {
+      str = "." + str;
+      cnt = 0;
+    }
+  }
+  return str;
+};
+
+const PricingDialogA3: FC<PricingDialogA3Props> = ({ handleClose }) => {
   const [quantity, setQuantity] = useState<number>(1);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setQuantity(1);
@@ -45,19 +67,38 @@ const PricingDialogA3 = () => {
 
         <div className="flex items-center justify-between gap-3 w-full mt-3">
           <Text className="text-base font-medium">Tổng cộng:</Text>
-          <Text className="text-base font-bold">{price * quantity} VNĐ</Text>
+          <Text className="text-base font-bold">
+            {getTotal(price * quantity)} VNĐ
+          </Text>
         </div>
       </div>
 
       <Flex gap="3" mt="4" justify="end">
         <Dialog.Close>
-          <Button variant="soft" color="gray">
+          <Button variant="soft" color="gray" onClick={handleClose}>
             Huỷ bỏ
           </Button>
         </Dialog.Close>
-        <Dialog.Close>
-          <Button onClick={() => {}}>Xác nhận mua {quantity} tờ A3</Button>
-        </Dialog.Close>
+        <Dialog.Root open={open}>
+          <Dialog.Trigger>
+            <Button
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              Mua {quantity} tờ A3
+            </Button>
+          </Dialog.Trigger>
+          <PricingConfirmDialog
+            title={`Xác nhận mua ${quantity} tờ A3`}
+            quantityA3={quantity}
+            quantityA4={0}
+            handleClose={() => {
+              setOpen(false);
+              handleClose();
+            }}
+          />
+        </Dialog.Root>
       </Flex>
     </Dialog.Content>
   );
