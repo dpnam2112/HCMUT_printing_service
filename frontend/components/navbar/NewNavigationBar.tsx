@@ -53,12 +53,18 @@ export default function NewNavigationBar() {
             </span>
           </Link>
 
-          <Link href={"/login"}>
+          <Link
+            href={
+              userInfo
+                ? "http://localhost:9000/accounts/logout/"
+                : "http://localhost:9000/accounts/login/"
+            }
+          >
             <Button
               variant="classic"
               className="text-lg font-semibold cursor-pointer"
             >
-              Đăng nhập
+              {userInfo ? "Đăng xuất" : "Đăng nhập"}
             </Button>
           </Link>
         </div>

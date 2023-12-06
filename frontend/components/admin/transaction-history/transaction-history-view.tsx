@@ -241,7 +241,9 @@ const TransactionHistoryView = () => {
             <Tooltip content={"Xuất ra dữ liệu sang file excel."}>
               <Button
                 className={`cursor-pointer`}
-                onClick={() => {}}
+                onClick={async () => {
+                  await networkService.exportTransactionData();
+                }}
                 variant={"classic"}
               >
                 <div className="flex items-center gap-2">Xuất file Excel</div>
