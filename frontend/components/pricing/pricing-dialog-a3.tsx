@@ -1,10 +1,16 @@
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import PricingConfirmDialog from "./pricing-confirm-dialog";
 
-const price = 1000;
+const price = 480;
 
-const PricingDialogA3 = () => {
+type PricingDialogA3Props = {
+  handleClose: () => void;
+};
+
+const PricingDialogA3: FC<PricingDialogA3Props> = ({ handleClose }) => {
   const [quantity, setQuantity] = useState<number>(1);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setQuantity(1);
@@ -55,9 +61,26 @@ const PricingDialogA3 = () => {
             Huỷ bỏ
           </Button>
         </Dialog.Close>
-        <Dialog.Close>
-          <Button onClick={() => {}}>Xác nhận mua {quantity} tờ A3</Button>
-        </Dialog.Close>
+        <Dialog.Root open={open}>
+          <Dialog.Trigger>
+            <Button
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              Mua {quantity} tờ A3
+            </Button>
+          </Dialog.Trigger>
+          <PricingConfirmDialog
+            title={`Xác nhận mua ${quantity} tờ A3`}
+            quantityA3={quantity}
+            quantityA4={1}
+            handleClose={() => {
+              setOpen(false);
+              handleClose();
+            }}
+          />
+        </Dialog.Root>
       </Flex>
     </Dialog.Content>
   );

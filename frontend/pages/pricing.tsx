@@ -9,6 +9,7 @@ import { UserInfo } from "../models/types";
 import { useEffect, useState } from "react";
 import networkService from "../models/network-service";
 import toast from "react-hot-toast";
+import PricingConfirmDialog from "../components/pricing/pricing-confirm-dialog";
 
 type Props = {
   userInfo: UserInfo | undefined;
@@ -76,6 +77,8 @@ const PricingHeader2 = () => {
 };
 
 const StandardLincenseComponent2 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <section className="pricingSection">
       <h3 className="mt-5 font-bold text-2xl">Mua giấy A4 theo số lượng</h3>
@@ -84,7 +87,7 @@ const StandardLincenseComponent2 = ({ userInfo }: Props) => {
         với 1 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        500 VNĐ / 1 tờ
+        240 VNĐ / 1 tờ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -96,24 +99,37 @@ const StandardLincenseComponent2 = ({ userInfo }: Props) => {
           <div className="relative w-4/5 flex flex-col items-start group"></div>
         </li>
       </ul>
-      <Dialog.Root>
+
+      <Dialog.Root open={open}>
         <Dialog.Trigger>
-          <button className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white">
+          <button
+            onClick={() => {
+              setOpen(true);
+            }}
+            className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
             Mua ngay
           </button>
         </Dialog.Trigger>
-        <PricingDialogA4 />
+        <PricingDialogA4
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
       </Dialog.Root>
     </section>
   );
 };
 
 const PersonalLicenseComponent2 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   const handleOnClick = async () => {
     if (!userInfo) {
       toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
       return;
     }
+    setOpen(true);
   };
 
   return (
@@ -127,7 +143,7 @@ const PersonalLicenseComponent2 = ({ userInfo }: Props) => {
         với <span className="">nhóm 2 người.</span>
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        <span>75.000 VNĐ</span>
+        <span>36.000 VNĐ</span>
       </p>
 
       <ul className="mt-10 order-last flex flex-col gap-y-3 text-sm">
@@ -136,22 +152,38 @@ const PersonalLicenseComponent2 = ({ userInfo }: Props) => {
           Phù hợp cho nhóm 2 người.
         </li>
       </ul>
-      <button
-        onClick={handleOnClick}
-        className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
-      >
-        Mua ngay
-      </button>
+      <Dialog.Root open={open}>
+        <Dialog.Trigger>
+          <button
+            onClick={handleOnClick}
+            className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
+            Mua ngay
+          </button>
+        </Dialog.Trigger>
+        <PricingConfirmDialog
+          title="Xác nhận mua 150 tờ A4"
+          quantityA3={0}
+          quantityA4={150}
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
+      </Dialog.Root>
     </section>
   );
 };
 
 const TeamLicenseComponent2 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   const handleOnClick = async () => {
     if (!userInfo) {
       toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
       return;
     }
+
+    setOpen(true);
   };
 
   return (
@@ -162,7 +194,7 @@ const TeamLicenseComponent2 = ({ userInfo }: Props) => {
         với nhóm 2 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        150.000 VNĐ
+        72.000 VNĐ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -170,17 +202,31 @@ const TeamLicenseComponent2 = ({ userInfo }: Props) => {
           Phù hợp nhóm 4 người.
         </li>
       </ul>
-      <button
-        onClick={handleOnClick}
-        className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
-      >
-        Mua ngay
-      </button>
+      <Dialog.Root open={open}>
+        <Dialog.Trigger>
+          <button
+            onClick={handleOnClick}
+            className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
+            Mua ngay
+          </button>
+        </Dialog.Trigger>
+        <PricingConfirmDialog
+          title="Xác nhận mua 300 tờ A4"
+          quantityA3={0}
+          quantityA4={300}
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
+      </Dialog.Root>
     </section>
   );
 };
 
 const StandardLincenseComponent3 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <section className="pricingSection">
       <h3 className="mt-5 font-bold text-2xl">Mua giấy A3 theo số lượng</h3>
@@ -189,7 +235,7 @@ const StandardLincenseComponent3 = ({ userInfo }: Props) => {
         với 1 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        1000 VNĐ / 1 tờ
+        480 VNĐ / 1 tờ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -201,24 +247,36 @@ const StandardLincenseComponent3 = ({ userInfo }: Props) => {
           <div className="relative w-4/5 flex flex-col items-start group"></div>
         </li>
       </ul>
-      <Dialog.Root>
+      <Dialog.Root open={open}>
         <Dialog.Trigger>
-          <button className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white">
+          <button
+            onClick={() => {
+              setOpen(true);
+            }}
+            className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
             Mua ngay
           </button>
         </Dialog.Trigger>
-        <PricingDialogA3 />
+        <PricingDialogA3
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
       </Dialog.Root>
     </section>
   );
 };
 
 const PersonalLicenseComponent3 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   const handleOnClick = async () => {
     if (!userInfo) {
       toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
       return;
     }
+    setOpen(true);
   };
 
   return (
@@ -232,7 +290,7 @@ const PersonalLicenseComponent3 = ({ userInfo }: Props) => {
         với <span className="">nhóm 2 người.</span>
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        <span>150.000 VNĐ</span>
+        <span>72.000 VNĐ</span>
       </p>
 
       <ul className="mt-10 order-last flex flex-col gap-y-3 text-sm">
@@ -241,22 +299,37 @@ const PersonalLicenseComponent3 = ({ userInfo }: Props) => {
           Phù hợp cho nhóm 2 người.
         </li>
       </ul>
-      <button
-        onClick={handleOnClick}
-        className="group inline-flex items-center justify-center rounded-lg py-3 px-4 mt-8 bg-[#506FE0] text-white shadow-sm hover:bg-[#506FE0]/90 font-semibold"
-      >
-        Mua ngay
-      </button>
+      <Dialog.Root open={open}>
+        <Dialog.Trigger>
+          <button
+            onClick={handleOnClick}
+            className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
+            Mua ngay
+          </button>
+        </Dialog.Trigger>
+        <PricingConfirmDialog
+          title="Xác nhận mua 150 tờ A3"
+          quantityA3={150}
+          quantityA4={0}
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
+      </Dialog.Root>
     </section>
   );
 };
 
 const TeamLicenseComponent3 = ({ userInfo }: Props) => {
+  const [open, setOpen] = useState(false);
+
   const handleOnClick = async () => {
     if (!userInfo) {
       toast.error("Vui lòng đăng nhập để tiến hành mua giấy!");
       return;
     }
+    setOpen(true);
   };
 
   return (
@@ -268,7 +341,7 @@ const TeamLicenseComponent3 = ({ userInfo }: Props) => {
         với nhóm 2 người.
       </p>
       <p className="order-first font-display text-5xl font-semibold tracking-tight">
-        300.000 VNĐ
+        144.000 VNĐ
       </p>
       <ul className="pricingListWrapper">
         <li className="flex items-center gap-2">
@@ -276,12 +349,24 @@ const TeamLicenseComponent3 = ({ userInfo }: Props) => {
           Phù hợp nhóm 4 người.
         </li>
       </ul>
-      <button
-        onClick={handleOnClick}
-        className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
-      >
-        Mua ngay
-      </button>
+      <Dialog.Root open={open}>
+        <Dialog.Trigger>
+          <button
+            onClick={handleOnClick}
+            className="group inline-flex items-center justify-center rounded-lg bg-[#506FE0] text-white py-3 px-4 mt-8 ring-1 ring-inset ring-gray-200 font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:bg-[#506FE0]/90 hover:text-white"
+          >
+            Mua ngay
+          </button>
+        </Dialog.Trigger>
+        <PricingConfirmDialog
+          title="Xác nhận mua 300 tờ A3"
+          quantityA3={300}
+          quantityA4={0}
+          handleClose={() => {
+            setOpen(false);
+          }}
+        />
+      </Dialog.Root>
     </section>
   );
 };
