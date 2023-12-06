@@ -72,13 +72,21 @@ class CreateOrder(View):
         transaction = Transactions.objects.create(user=user, **sheet_info, transaction_id=trans_id, total_cost=total_cost, status="INCOMPLETED")
         return transaction
 
+    def process_sheet_quantity(self, _sheet_quantity: dict):
+        sheet_quantity = dict()
+        for key, val in _sheet_quantity.items():
+            if val > 0:
+                sheet_quantity[key] = val
+        return sheet_quantity
+
 
     def post(self, request):
         # TODO: Handle incoming payloads.
         if not (settings.FRONTEND_DEV or request.user.is_authenticated):
             return HttpResponse("Unauthenticated", status_code=401, content_type="text/plain")
 
-        sheet_quantity = json.loads(request.body)
+        _sheet_quantity = json.loads(request.body)
+        sheet_quantity = self.process_sheet_quantity(_sheet_quantity)
 
         create_order_url = f"{config.API_URL}/v2/checkout/orders"
 
@@ -97,6 +105,7 @@ class CreateOrder(View):
         parsed_res = json.loads(response.text)
 
         trans_id = parsed_res["id"]
+        print(trans_id)
 
         user = User.objects.get(pk=1) if settings.FRONTEND_DEV else request.user
         transaction = self.create_transaction(user=user, req_payload=sheet_quantity, trans_id=trans_id, total_cost=calc_price(sheet_quantity))
