@@ -13,3 +13,4 @@ fpdf2
 PyPDF2
 pandas
 request
+matplotlib
