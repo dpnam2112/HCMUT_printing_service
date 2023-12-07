@@ -244,6 +244,10 @@ class PrintReport(View):
             return HttpResponse(status=401)
 
         data = pd.DataFrame(list(PrintingActivity.objects.all().values()))
+
+        if len(data.index) == 0:
+            return HttpResponse(json.dumps({"status": 400, "message": "No data"}), content_type="application/json")
+
         total_pages_count = data['page_count'].sum()
         avg_pages_count = data['page_count'].mean()
         number_times_print = len(data.index)
