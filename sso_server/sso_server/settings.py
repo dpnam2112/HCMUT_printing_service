@@ -127,8 +127,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CAS server settings
 # CAS_AUTH_CLASS = "cas_models.auth_backend.ExtendedAuth"
 
-CAS_AUTH_CLASS = "cas_server.auth.TestAuthUser"
-
-CAS_TEST_ATTRIBUTES = {
-    "campus_id": "123456789",
-}
+# CAS_AUTH_CLASS = "cas_server.auth.TestAuthUser"
+# 
+# CAS_TEST_ATTRIBUTES = {
+#     "campus_id": "123456789",
+# }
