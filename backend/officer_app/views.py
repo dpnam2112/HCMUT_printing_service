@@ -116,7 +116,7 @@ class Printers(APIView):
         Endpoint returns:
             Return a JSON text representing the update result.
         """
-        printers = json.loads(request.body)
+        printers = request.data
         for printer in printers:
             location_data = printer['location']
             location = None
