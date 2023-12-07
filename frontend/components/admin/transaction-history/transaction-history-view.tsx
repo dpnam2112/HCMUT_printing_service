@@ -11,7 +11,7 @@ const columns: GridColDef[] = [
   {
     field: "date",
     headerName: "Ngày giao dịch",
-    width: 300,
+    width: 200,
   },
   {
     field: "user",
@@ -103,6 +103,17 @@ const columns: GridColDef[] = [
 const convertToRows = (transactionHistory: TransactionHistory[]) => {
   return transactionHistory.map((transactionHistory: TransactionHistory) => {
     const user = transactionHistory.user;
+    const timestamp: Date = new Date(transactionHistory.date);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    };
+
+    const formattedDate: string = timestamp.toLocaleDateString(
+      "en-US",
+      options
+    );
     return {
       id: transactionHistory.transaction_id,
       transaction_id: transactionHistory.transaction_id,
@@ -117,7 +128,7 @@ const convertToRows = (transactionHistory: TransactionHistory[]) => {
       a3_sheets: transactionHistory.a3_sheets,
       a4_sheets: transactionHistory.a4_sheets,
       status: transactionHistory.status,
-      date: transactionHistory.date,
+      date: formattedDate,
     };
   });
 };

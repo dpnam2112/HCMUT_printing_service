@@ -19,7 +19,7 @@ const MenuCopyNumber: FC<Props> = ({ selectedItem, setSelectedItem }) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
-        <Button className="w-2/4 px-0">
+        <Button className="w-3/5 px-0">
           <div className="flex items-center justify-between focus-within:outline-none w-full">
             <span>{selectedItem}</span>
             <CaretSortIcon width="22" height="22" />
@@ -27,6 +27,14 @@ const MenuCopyNumber: FC<Props> = ({ selectedItem, setSelectedItem }) => {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenuContent className="w-[320px]">
+        <DropdownMenuItem
+          onSelect={() => {
+            setSelectedItem(MENU_NUMBER_OF_COPY.ONE);
+          }}
+        >
+          {MENU_NUMBER_OF_COPY.ONE}
+        </DropdownMenuItem>
+
         <DropdownMenuItem
           onSelect={() => {
             setSelectedItem(MENU_NUMBER_OF_COPY.TWO);
@@ -51,15 +59,6 @@ const MenuCopyNumber: FC<Props> = ({ selectedItem, setSelectedItem }) => {
           {MENU_NUMBER_OF_COPY.FIVE}
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_NUMBER_OF_COPY.NONE);
-          }}
-        >
-          {MENU_NUMBER_OF_COPY.NONE}
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem

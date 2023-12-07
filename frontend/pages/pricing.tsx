@@ -30,7 +30,7 @@ export default function Pricing() {
   return (
     <Layout preview={{}}>
       <Container>
-        <PricingHeader2 />
+        <PricingHeader2 userInfo={userInfo} />
         <div className="flex flex-col">
           <div className="pricingSectionWrapper">
             <StandardLincenseComponent2 userInfo={userInfo} />
@@ -63,11 +63,13 @@ export default function Pricing() {
   );
 }
 
-const PricingHeader2 = () => {
+const PricingHeader2 = ({ userInfo }: { userInfo: UserInfo }) => {
   return (
     <div className="m-0 md:pt-16 md:pb-10 text-center">
       <h2 className="mb-6 text-4xl font-bold leading-relaxed md:heroTitle text-[#1a1523]">
-        Bạn đang cần giấy in?
+        {userInfo
+          ? `Bạn hiện đang có ${userInfo.page_balance} tờ giấy!`
+          : "Bạn đang cần giấy in?"}
       </h2>
       <p className="text-xl font-display leading-relaxed md:heroLead text-gray-500">
         Chúng tôi có rất nhiều combo giấy in phù hợp với nhu cầu của bạn.

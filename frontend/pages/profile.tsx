@@ -8,14 +8,13 @@ import PrintingUserHistoryView from "../components/admin/printing-history-view/p
 import TransactionUserHistoryView from "../components/admin/transaction-history/transaction-user-history-view";
 
 const views = [
-  PROFILE_MANAGEMENT.PROFILE,
   PROFILE_MANAGEMENT.PRINTING_HISTORY,
   PROFILE_MANAGEMENT.TRANSACTION_HISTORY,
 ];
 
 const Profile = () => {
   const [currentView, setCurrentView] = useState<PROFILE_MANAGEMENT>(
-    PROFILE_MANAGEMENT.PROFILE
+    PROFILE_MANAGEMENT.PRINTING_HISTORY
   );
 
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
@@ -81,8 +80,6 @@ const RenderView = (
   setCurrentView: (view: PROFILE_MANAGEMENT) => void
 ) => {
   switch (currentView) {
-    case PROFILE_MANAGEMENT.PROFILE:
-      return <></>;
     case PROFILE_MANAGEMENT.PRINTING_HISTORY:
       return <PrintingUserHistoryView />;
     case PROFILE_MANAGEMENT.TRANSACTION_HISTORY:

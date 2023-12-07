@@ -16,7 +16,7 @@ const columns: GridColDef[] = [
   {
     field: "date",
     headerName: "Ngày giao dịch",
-    width: 300,
+    width: 200,
   },
   {
     field: "file_name",
@@ -48,9 +48,20 @@ const columns: GridColDef[] = [
 const convertToRows = (printingsHistory: PrintingHistory[]): any[] => {
   return printingsHistory.map((printingHistory, index) => {
     const user = printingHistory.user;
+    const timestamp: Date = new Date(printingHistory.date);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    };
+
+    const formattedDate: string = timestamp.toLocaleDateString(
+      "en-US",
+      options
+    );
     return {
       id: index,
-      date: printingHistory.date,
+      date: formattedDate,
       file_name: printingHistory.file_name,
       file_ext: printingHistory.file_ext,
       two_sided: printingHistory.two_sided ? "Có" : "Không",

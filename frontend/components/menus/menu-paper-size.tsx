@@ -20,7 +20,7 @@ const MenuPaperSize: FC<Props> = ({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className="w-full">
-        <Button className="w-2/4 px-0">
+        <Button className="w-3/5 px-0">
           <div className="flex items-center justify-between focus-within:outline-none w-full">
             <span>{selectedPaperSize}</span>
             <CaretSortIcon width="22" height="22" />
