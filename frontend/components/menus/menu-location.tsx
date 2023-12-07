@@ -36,7 +36,7 @@ const MenuLocation: FC<MenuLocationProps> = ({
           </div>
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenuContent className={width ? width : "w-[320px]"}>
+      <DropdownMenuContent className={width ? width : "w-[340px]"}>
         {locations.map((location, index) => {
           const isSeparator =
             index - 1 >= 0 && locations[index - 1].campus !== location.campus;
