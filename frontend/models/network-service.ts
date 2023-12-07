@@ -10,7 +10,29 @@ import {
 } from "./types";
 
 class NetworkService {
-  constructor() {}
+  private csrf: string;
+
+  constructor() {
+    this.csrf = "HHvH7X026ldZCXw91yZcOY4XYUIGhY5e";
+  }
+
+  public findCSRF() {
+    if (!document.cookie) {
+      console.log("No CSRF cookie");
+      return;
+    }
+
+    const xsrfCookies = document.cookie
+      .split(";")
+      .map((c) => c.trim())
+      .filter((c) => c.startsWith("csrftoken" + "="));
+
+    if (xsrfCookies.length === 0) {
+      console.log("No CSRF cookie");
+      return;
+    }
+    this.csrf = decodeURIComponent(xsrfCookies[0].split("=")[1]);
+  }
 
   public async fetchPrinting(payLoad: PayLoadPrinting) {
     try {
@@ -45,10 +67,13 @@ class NetworkService {
 
   public async addPrinter(printer: Omit<Printer, "id">): Promise<boolean> {
     try {
+      console.log("huy: ", this.csrf);
+
       const data = await fetch(`${BACKEND_API}/api/officer/printers/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": this.csrf,
         },
         body: JSON.stringify([printer]),
       });
@@ -78,6 +103,7 @@ class NetworkService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": this.csrf,
         },
         body: JSON.stringify([printer]),
       });
@@ -95,6 +121,7 @@ class NetworkService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": this.csrf,
         },
         body: JSON.stringify({
           printer_ids: printer.map((p) => p.id),
@@ -141,6 +168,7 @@ class NetworkService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": this.csrf,
         },
         body: JSON.stringify(body),
       });
@@ -185,6 +213,9 @@ class NetworkService {
       const data: UserInfo = await fetch(`${BACKEND_API}/api/user-info/`)
         .then((res) => res.json())
         .then((data) => data);
+
+      this.findCSRF();
+
       return data;
     } catch (e) {
       console.error("Error: ", e);
