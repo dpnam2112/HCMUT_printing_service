@@ -42,7 +42,15 @@ export default function NewNavigationBar() {
           {userInfo && userInfo.is_admin && (
             <Link href={"/admin"}>
               <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
-                Admin
+                SPSO
+              </span>
+            </Link>
+          )}
+
+          {userInfo && !userInfo.is_admin && (
+            <Link href={"/profile"}>
+              <span className="text-lg font-semibold hover:text-blue-600 cursor-pointer">
+                Hồ sơ
               </span>
             </Link>
           )}

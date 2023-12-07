@@ -28,7 +28,7 @@ const SectionPrinting = () => {
     MENU_PRINT_PAGE.ALL
   );
   const [selectedCopyNumber, setSelectedCopyNumber] =
-    useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.NONE);
+    useState<MENU_NUMBER_OF_COPY>(MENU_NUMBER_OF_COPY.ONE);
   const [selectedLocation, setSelectedLocation] = useState<
     Location | undefined
   >(undefined);
@@ -89,6 +89,11 @@ const SectionPrinting = () => {
       return;
     }
 
+    if (selectedPrintPage === MENU_PRINT_PAGE.CUSTOM && !printingPage) {
+      toast.error("Vui lòng nhập trang cần in!");
+      return;
+    }
+
     const payLoad = await getPayLoadPrinting(
       selectedFile,
       selectedPaperSize,
@@ -144,7 +149,7 @@ const SectionPrinting = () => {
       <div className="flex flex-col w-3/6 h-full justify-between rounded border py-5">
         <div className="flex flex-col gap-4">
           <div className="flex items-center w-full px-5">
-            <span className="w-2/4 text-lg font-semibold select-none">
+            <span className="w-2/5 text-lg font-semibold select-none">
               Vị trí máy in:
             </span>
             <MenuLocation
@@ -155,7 +160,7 @@ const SectionPrinting = () => {
           </div>
 
           <div className="flex items-center w-full px-5 ">
-            <span className="w-2/4 text-lg font-semibold select-none">
+            <span className="w-2/5 text-lg font-semibold select-none">
               Kích thước giấy:
             </span>
             <MenuPaperSize
@@ -165,7 +170,7 @@ const SectionPrinting = () => {
           </div>
 
           <div className="flex items-center w-full px-5 ">
-            <span className="w-2/4 text-lg font-semibold select-none">
+            <span className="w-2/5 text-lg font-semibold select-none">
               Kiểu in:
             </span>
             <MenuPrintType
@@ -175,7 +180,7 @@ const SectionPrinting = () => {
           </div>
 
           <div className="flex items-center w-full px-5 ">
-            <span className="w-2/4 text-lg font-semibold select-none">
+            <span className="w-2/5 text-lg font-semibold select-none">
               Số lượng bản sao:
             </span>
             <MenuCopyNumber
@@ -185,22 +190,25 @@ const SectionPrinting = () => {
           </div>
           {selectedCopyNumber === MENU_NUMBER_OF_COPY.CUSTOM && (
             <div className="flex items-center w-full px-5 fade-in">
-              <span className="w-2/4 text-lg font-semibold select-none">
-                Nhập số lượng bản sao:
-              </span>
+              <span className="w-2/5 text-lg font-semibold select-none"></span>
               <input
-                className="w-2/4 h-full border rounded px-2 "
+                className="w-3/5 h-full border rounded px-2 "
                 type="number"
                 value={printingCopyNumber}
                 onChange={(e) => {
-                  setPrintingCopyNumber(Number(e.target.value));
+                  const newNum = Number(e.target.value);
+                  if (newNum < 1) {
+                    return;
+                  }
+
+                  setPrintingCopyNumber(newNum);
                 }}
               />
             </div>
           )}
 
           <div className="flex items-center w-full px-5 ">
-            <span className="w-2/4 text-lg font-semibold select-none">
+            <span className="w-2/5 text-lg font-semibold select-none">
               Chọn trang in:
             </span>
             <MenuPrintPage
@@ -209,12 +217,10 @@ const SectionPrinting = () => {
             />
           </div>
           {selectedPrintPage === MENU_PRINT_PAGE.CUSTOM && (
-            <div className="flex items-center w-full px-5 fade-in">
-              <span className="w-2/4 text-lg font-semibold select-none">
-                Nhập trang bạn cần in:
-              </span>
+            <div className="flex items-center w-full px-5 h-10 fade-in">
+              <span className="w-2/5 text-lg font-semibold select-none"></span>
               <input
-                className="w-2/4 h-full border rounded px-2"
+                className="w-3/5 h-full border rounded px-2"
                 placeholder="Ví dụ: 5-7"
                 value={printingPage}
                 onChange={(e) => {

@@ -3,7 +3,7 @@ import { Button, TextField, Tooltip } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import { HISTORY_TIME } from "../../../models/constant";
 import MenuHistoryTime from "../../menus/menu-history-time";
-import { TransactionHistory } from "../../../models/types";
+import { TransactionHistory, UserInfo } from "../../../models/types";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import networkService from "../../../models/network-service";
 
@@ -12,11 +12,6 @@ const columns: GridColDef[] = [
     field: "date",
     headerName: "Ngày giao dịch",
     width: 200,
-  },
-  {
-    field: "user",
-    headerName: "Người dùng",
-    width: 300,
   },
   {
     field: "total_cost",
@@ -100,9 +95,14 @@ const columns: GridColDef[] = [
   },
 ];
 
+const getName = (userInfo: UserInfo) => {
+  const name =
+    userInfo.base_user.last_name + " " + userInfo.base_user.first_name;
+  return name.length > 1 ? name : userInfo.base_user.username;
+};
+
 const convertToRows = (transactionHistory: TransactionHistory[]) => {
   return transactionHistory.map((transactionHistory: TransactionHistory) => {
-    const user = transactionHistory.user;
     const timestamp: Date = new Date(transactionHistory.date);
     const options: Intl.DateTimeFormatOptions = {
       day: "2-digit",
@@ -115,12 +115,10 @@ const convertToRows = (transactionHistory: TransactionHistory[]) => {
       options
     );
     return {
+      date: formattedDate,
       id: transactionHistory.transaction_id,
       transaction_id: transactionHistory.transaction_id,
-      user:
-        user.first_name || user.last_name
-          ? `${user.first_name} ${user.last_name}`
-          : user.username,
+
       total_cost: transactionHistory.total_cost,
       a0_sheets: transactionHistory.a0_sheets,
       a1_sheets: transactionHistory.a1_sheets,
@@ -128,12 +126,11 @@ const convertToRows = (transactionHistory: TransactionHistory[]) => {
       a3_sheets: transactionHistory.a3_sheets,
       a4_sheets: transactionHistory.a4_sheets,
       status: transactionHistory.status,
-      date: formattedDate,
     };
   });
 };
 
-const TransactionHistoryView = () => {
+const TransactionUserHistoryView = () => {
   const [historyTime, setHistoryTime] = useState<HISTORY_TIME>(
     HISTORY_TIME.A_WEEK_AGO
   );
@@ -142,9 +139,17 @@ const TransactionHistoryView = () => {
     TransactionHistory[]
   >([]);
 
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+
   useEffect(() => {
+    fetchUserInfo();
     handleGetNewTransactionsHistory();
   }, []);
+
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
 
   const handleGetNewTransactionsHistory = async () => {
     const newTransactionsHistory =
@@ -213,15 +218,33 @@ const TransactionHistoryView = () => {
     });
   };
 
+  const getUserTransactionHistory = (list: TransactionHistory[]) => {
+    if (!userInfo) {
+      return list;
+    }
+
+    return list.flatMap((obj: TransactionHistory) => {
+      return obj.user.id === userInfo.base_user.id ? [obj] : [];
+    });
+  };
+
   const rows = convertToRows(
-    getFilteredList(getFilteredTimeList(transactionsHistory))
+    getFilteredList(
+      getFilteredTimeList(getUserTransactionHistory(transactionsHistory))
+    )
   );
+
+  if (!userInfo) {
+    return <div className="w-full h-full">Có lỗi xảy ra</div>;
+  }
 
   return (
     <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col">
-          <span className="font-bold text-2xl">Xin chào SPSO!</span>
+          <span className="font-bold text-2xl">
+            Xin chào {getName(userInfo)}!
+          </span>
           <span className="font-semibold text-base text-[#71717A]">
             Đây là giao diện lịch sử giao dịch.
           </span>
@@ -281,4 +304,4 @@ const TransactionHistoryView = () => {
   );
 };
 
-export default TransactionHistoryView;
+export default TransactionUserHistoryView;

@@ -60,8 +60,8 @@ const getNumCopies = (
   printingCopyNumber: number
 ) => {
   switch (copyNumber) {
-    case MENU_NUMBER_OF_COPY.NONE:
-      return 0;
+    case MENU_NUMBER_OF_COPY.ONE:
+      return 1;
     case MENU_NUMBER_OF_COPY.TWO:
       return 2;
     case MENU_NUMBER_OF_COPY.FOUR:

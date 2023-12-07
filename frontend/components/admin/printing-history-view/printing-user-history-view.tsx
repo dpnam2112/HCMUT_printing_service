@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import { PrintingHistory } from "../../../models/types";
+import { PrintingHistory, UserInfo } from "../../../models/types";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import networkService from "../../../models/network-service";
 
@@ -16,11 +16,6 @@ const columns: GridColDef[] = [
   {
     field: "date",
     headerName: "Ngày giao dịch",
-    width: 200,
-  },
-  {
-    field: "user",
-    headerName: "Người dùng",
     width: 200,
   },
   {
@@ -67,10 +62,6 @@ const convertToRows = (printingsHistory: PrintingHistory[]): any[] => {
     return {
       id: index,
       date: formattedDate,
-      user:
-        user.first_name || user.last_name
-          ? `${user.first_name} ${user.last_name}`
-          : user.username,
       file_name: printingHistory.file_name,
       file_ext: printingHistory.file_ext,
       two_sided: printingHistory.two_sided ? "Có" : "Không",
@@ -80,16 +71,30 @@ const convertToRows = (printingsHistory: PrintingHistory[]): any[] => {
   });
 };
 
-const PrintingTableView = () => {
+const getName = (userInfo: UserInfo) => {
+  const name =
+    userInfo.base_user.last_name + " " + userInfo.base_user.first_name;
+  return name.length > 1 ? name : userInfo.base_user.username;
+};
+
+const PrintingUserHistoryView = () => {
   const [printingsHistory, setPrintingsHistory] = useState<PrintingHistory[]>(
     []
   );
   const [textFilter, setTextFilter] = useState<string>("");
   const [filterTime, setFilterTime] = useState<string>("Tất cả lịch sử");
 
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
+
   useEffect(() => {
+    fetchUserInfo();
     handleGetNewPrintingsHistory();
   }, []);
+
+  const fetchUserInfo = async () => {
+    const newUserInfo = await networkService.getUserInfo();
+    setUserInfo(newUserInfo);
+  };
 
   const handleGetNewPrintingsHistory = async () => {
     const newPrintingsHistory = await networkService.getPrintingsHistory();
@@ -170,14 +175,32 @@ const PrintingTableView = () => {
     });
   };
 
+  const getUserPrintingHistory = (list: PrintingHistory[]) => {
+    if (!userInfo) {
+      return list;
+    }
+
+    return list.flatMap((obj: PrintingHistory) => {
+      return obj.user.id === userInfo.base_user.id ? [obj] : [];
+    });
+  };
+
   const rows = convertToRows(
-    getFilteredTimeList(getFilteredList(printingsHistory))
+    getFilteredTimeList(
+      getFilteredList(getUserPrintingHistory(printingsHistory))
+    )
   );
 
+  if (!userInfo) {
+    return <div className="w-full h-full">Có lỗi xảy ra</div>;
+  }
+
   return (
-    <div className=" w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
+    <div className="w-full h-full flex flex-col gap-5 p-5 overflow-x-auto">
       <div className="flex flex-col">
-        <span className="font-bold text-2xl">Xin chào SPSO!</span>
+        <span className="font-bold text-2xl">
+          Xin chào {getName(userInfo)}!
+        </span>
         <span className="font-semibold text-base text-[#71717A]">
           Đây là lịch sử in.
         </span>
@@ -286,4 +309,4 @@ const PrintingTableView = () => {
   );
 };
 
-export default PrintingTableView;
+export default PrintingUserHistoryView;

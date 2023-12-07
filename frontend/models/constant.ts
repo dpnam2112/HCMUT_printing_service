@@ -10,7 +10,7 @@ enum MENU_PRINT_TYPE {
 }
 
 enum MENU_NUMBER_OF_COPY {
-  NONE = "Không in bản sao",
+  ONE = "1 bản",
   TWO = "2 bản",
   FOUR = "4 bản",
   FIVE = "5 bản",
@@ -39,6 +39,11 @@ enum HISTORY_TIME {
   ALL = "Tất cả",
 }
 
+enum PROFILE_MANAGEMENT {
+  PRINTING_HISTORY = "Lịch sử in",
+  TRANSACTION_HISTORY = "Lịch sử giao dịch",
+}
+
 const BACKEND_API = "http://localhost:8000";
 
 export {
@@ -48,5 +53,6 @@ export {
   MENU_PRINT_PAGE,
   ADMIN_MANAGEMENT_VIEW,
   HISTORY_TIME,
+  PROFILE_MANAGEMENT,
   BACKEND_API,
 };
