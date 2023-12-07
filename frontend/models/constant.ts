@@ -3,11 +3,6 @@ enum MENU_PAPER_SIZE {
   SIZE_A3 = "A3",
 }
 
-enum MENU_PRINT_ORIENTATION {
-  HORIZONTAL = "In ngang",
-  VERTICAL = "In dọc",
-}
-
 enum MENU_PRINT_TYPE {
   DOUBLE_LONG = "In hai mặt cạnh dài",
   DOUBLE_SHORT = "In hai mặt cạnh ngắn",
@@ -24,8 +19,6 @@ enum MENU_NUMBER_OF_COPY {
 
 enum MENU_PRINT_PAGE {
   ALL = "Tất cả",
-  ONLY_OLD = "Chỉ in các trang lẻ",
-  ONLY_EVEN = "Chỉ in các trang chẵn",
   CUSTOM = "Tùy chỉnh",
 }
 
@@ -55,6 +48,5 @@ export {
   MENU_PRINT_PAGE,
   ADMIN_MANAGEMENT_VIEW,
   HISTORY_TIME,
-  MENU_PRINT_ORIENTATION,
   BACKEND_API,
 };

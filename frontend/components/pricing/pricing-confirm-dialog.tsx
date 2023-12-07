@@ -24,6 +24,10 @@ const PricingConfirmDialog: FC<PricingConfirmDialogProps> = ({
         Giao dịch được thực hiện thông qua Paypal.
       </Dialog.Description>
       <PayPalButton
+        options={{
+          clientId:
+            "AUFNEiTg7SOYu9Op4J7DPrinYJe2D44E50oP5040j8WOdFyJjUxYck3Xka2Pfyvzp-9IzFinTOYSAv41",
+        }}
         createOrder={(data, actions) => {
           return fetch(`${BACKEND_API}/api/payment/create-order/`, {
             method: "post",

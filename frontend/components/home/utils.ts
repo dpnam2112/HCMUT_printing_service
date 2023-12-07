@@ -47,9 +47,9 @@ const getPayLoadPrinting = async (
 const getSide = (side: MENU_PRINT_TYPE) => {
   switch (side) {
     case MENU_PRINT_TYPE.DOUBLE_LONG:
-      return "long-double-sided";
+      return "two-sided-long-edge";
     case MENU_PRINT_TYPE.DOUBLE_SHORT:
-      return "short-double-sided";
+      return "two-sided-short-edge";
     case MENU_PRINT_TYPE.ONE:
       return "one-sided";
   }
@@ -77,10 +77,6 @@ const getPagePrint = (pagePrint: MENU_PRINT_PAGE, printingPage: string) => {
   switch (pagePrint) {
     case MENU_PRINT_PAGE.ALL:
       return "all";
-    case MENU_PRINT_PAGE.ONLY_EVEN:
-      return "even";
-    case MENU_PRINT_PAGE.ONLY_OLD:
-      return "odd";
     case MENU_PRINT_PAGE.CUSTOM:
       return printingPage;
   }
