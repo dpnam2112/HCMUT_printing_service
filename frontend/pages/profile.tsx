@@ -1,26 +1,21 @@
-import { FC, useEffect, useState } from "react";
 import Container from "../components/container";
 import Layout from "../components/layout";
-import { ADMIN_MANAGEMENT_VIEW } from "../models/constant";
-import PrintingHistoryView from "../components/admin/printing-history-view/printing-history-view";
-import PrinterManagementView from "../components/admin/printer-management-view/printer-management-view";
-import PrinterAddingView from "../components/admin/printer-adding/printer-adding-view";
-import ExtensionView from "../components/admin/extension-view/extension-view";
-import TransactionHistoryView from "../components/admin/transaction-history/transaction-history-view";
 import { UserInfo } from "../models/types";
+import { FC, useEffect, useState } from "react";
 import networkService from "../models/network-service";
+import { PROFILE_MANAGEMENT } from "../models/constant";
+import PrintingUserHistoryView from "../components/admin/printing-history-view/printing-user-history-view";
+import TransactionUserHistoryView from "../components/admin/transaction-history/transaction-user-history-view";
 
 const views = [
-  ADMIN_MANAGEMENT_VIEW.PRINTER_MANAGEMENT,
-  ADMIN_MANAGEMENT_VIEW.EXTENSION_MANAGEMENT,
-  ADMIN_MANAGEMENT_VIEW.ADD_PRINTER,
-  ADMIN_MANAGEMENT_VIEW.PRINTING_HISTORY,
-  ADMIN_MANAGEMENT_VIEW.TRANSACTION_HISTORY,
+  PROFILE_MANAGEMENT.PROFILE,
+  PROFILE_MANAGEMENT.PRINTING_HISTORY,
+  PROFILE_MANAGEMENT.TRANSACTION_HISTORY,
 ];
 
-const AdminManagement = () => {
-  const [currentView, setCurrentView] = useState<ADMIN_MANAGEMENT_VIEW>(
-    ADMIN_MANAGEMENT_VIEW.PRINTER_MANAGEMENT
+const Profile = () => {
+  const [currentView, setCurrentView] = useState<PROFILE_MANAGEMENT>(
+    PROFILE_MANAGEMENT.PROFILE
   );
 
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
@@ -34,14 +29,14 @@ const AdminManagement = () => {
     setUserInfo(newUserInfo);
   };
 
-  if (userInfo && userInfo.is_admin) {
+  if (userInfo && !userInfo.is_admin) {
     return (
       <>
         <Layout preview={{}}>
           <Container>
             <div className="flex items-center rounded border h-[1000px] w-full mb-4 overflow-auto">
               <div className="flex flex-col w-1/5 h-full border-r-[1px]">
-                {views.map((view: ADMIN_MANAGEMENT_VIEW, index: number) => {
+                {views.map((view: PROFILE_MANAGEMENT, index: number) => {
                   return (
                     <ButtonSelect
                       isFirst={index === 0}
@@ -82,22 +77,16 @@ const AdminManagement = () => {
 };
 
 const RenderView = (
-  currentView: ADMIN_MANAGEMENT_VIEW,
-  setCurrentView: (view: ADMIN_MANAGEMENT_VIEW) => void
+  currentView: PROFILE_MANAGEMENT,
+  setCurrentView: (view: PROFILE_MANAGEMENT) => void
 ) => {
   switch (currentView) {
-    case ADMIN_MANAGEMENT_VIEW.PRINTER_MANAGEMENT:
-      return <PrinterManagementView setCurrentView={setCurrentView} />;
-    case ADMIN_MANAGEMENT_VIEW.EXTENSION_MANAGEMENT:
-      return <ExtensionView />;
-    case ADMIN_MANAGEMENT_VIEW.ADD_PRINTER:
-      return <PrinterAddingView />;
-    case ADMIN_MANAGEMENT_VIEW.PRINTING_HISTORY:
-      return <PrintingHistoryView />;
-    case ADMIN_MANAGEMENT_VIEW.TRANSACTION_HISTORY:
-      return <TransactionHistoryView />;
-    default:
+    case PROFILE_MANAGEMENT.PROFILE:
       return <></>;
+    case PROFILE_MANAGEMENT.PRINTING_HISTORY:
+      return <PrintingUserHistoryView />;
+    case PROFILE_MANAGEMENT.TRANSACTION_HISTORY:
+      return <TransactionUserHistoryView />;
   }
 };
 
@@ -118,7 +107,7 @@ const ButtonSelect: FC<ButtonSelectProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-center pl-4 w-full h-10 ${
+      className={`flex items-center gap-2 pl-4 w-full h-10 ${
         isFirst ? "" : "border-t"
       } ${isLast && "border-b"} text-center  ${
         isActive ? "bg-blue-400" : "hover:bg-blue-200"
@@ -130,4 +119,4 @@ const ButtonSelect: FC<ButtonSelectProps> = ({
   );
 };
 
-export default AdminManagement;
+export default Profile;
