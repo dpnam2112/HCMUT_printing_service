@@ -185,18 +185,27 @@ class PrintClient(APIView):
                 return HttpResponse(json.dumps({"status":400, "message": "{}".format(check_info[0])}), 
                                             status=400, content_type="application/json")
             else:
-                new_pages = check_info[1]
+                new_pages = "all"
+                if pages_print != 'all':
+                    new_pages = check_info[0]
             #Linux path covert:
                 linux_document_path = document_path.replace("\\","//")
                 linux_document_path = linux_document_path.replace("C:","c")
 
-
-                proc= subprocess.Popen(['wsl','-u','root','-d','Ubuntu','cd','/mnt',
-                                            ';','lp','-d','{}'.format(printer_name),'-o','media={}'.format(page_size),
-                                            '-n','{}'.format(num_copies),'-o',
-                                            'sides={}'.format(side),'-o','page-ranges={}'.format(new_pages),
-                                            '{}'.format(linux_document_path)], 
-                                            stdout= subprocess.PIPE, stderr=subprocess.PIPE, shell = True)
+                if (new_pages != "all"):
+                    proc= subprocess.Popen(['wsl','-u','root','-d','Ubuntu','cd','/mnt',
+                                                ';','lp','-d','{}'.format(printer_name),'-o','media={}'.format(page_size),
+                                                '-n','{}'.format(num_copies),'-o',
+                                                'sides={}'.format(side),'-o','page-ranges={}'.format(new_pages),
+                                                '{}'.format(linux_document_path)], 
+                                                stdout= subprocess.PIPE, stderr=subprocess.PIPE, shell = True)
+                else :
+                    proc= subprocess.Popen(['wsl','-u','root','-d','Ubuntu','cd','/mnt',
+                                                ';','lp','-d','{}'.format(printer_name),'-o','media={}'.format(page_size),
+                                                '-n','{}'.format(num_copies),'-o',
+                                                'sides={}'.format(side),
+                                                '{}'.format(linux_document_path)], 
+                                                stdout= subprocess.PIPE, stderr=subprocess.PIPE, shell = True)
                 
 
                 (result, error) = proc.communicate()
@@ -217,7 +226,7 @@ class PrintClient(APIView):
 
                     p = PrintingActivity(user = request.user, printer_name = 
                                             printer_name,date = datetime_VN, file_name = file.name,
-                                            file_ext = file_ext.replace(".",""), pape_count = check_info[0],
+                                            file_ext = file_ext.replace(".",""), pape_count = check_info[1],
                                             sheet_type = page_size, job_id = job_id, two_sided = two_sided)
                     p.save()
                     return HttpResponse(json.dumps({"status":200, "message": "in thành công"}), 
