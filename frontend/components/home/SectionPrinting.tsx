@@ -56,10 +56,10 @@ const SectionPrinting = () => {
   const fetchLocations = async () => {
     const newLocations = await networkService.getLocations();
     const locationsCS1: Location[] = newLocations.flatMap((location) =>
-      location.campus === "CS1" ? [location] : []
+      location.campus.toLowerCase().includes("cs1") ? [location] : []
     );
     const locationsCS2: Location[] = newLocations.flatMap((location) =>
-      location.campus === "CS2" ? [location] : []
+      location.campus.toLowerCase().includes("cs2") ? [location] : []
     );
     const sortedLocations = [
       ...sortLocations(locationsCS1),
