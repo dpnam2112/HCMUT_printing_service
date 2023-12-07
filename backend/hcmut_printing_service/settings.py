@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'hcmut_printing_service.urls'
@@ -174,4 +175,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # React development configuration
-FRONTEND_DEV = True
+FRONTEND_DEV = False
+
+# PayPal configuration
+PAYPAL_SCRIPT_SRC = "https://www.paypal.com/"
+PAYPAL_ASSETS_SRC = "https://www.paypalobjects.com/"
+
+CSP_DEFAULT_SRC = ("'self'", "http://localhost:8000", "http://127.0.0.1:8000", PAYPAL_ASSETS_SRC, "https://www.sandbox.paypal.com/")
+CSP_STYLE_SRC = ("'unsafe-inline'", "http://localhost:8000", "http://127.0.0.1:8000")
+CSP_SCRIPT_SRC = ("'unsafe-inline'", "'unsafe-eval'", "http://localhost:8000", "http://127.0.0.1:8000", PAYPAL_SCRIPT_SRC)

@@ -92,29 +92,14 @@ class PrintActivity(APIView):
     """ Retrieve print activities. """
 
     def get(self, request):
-        query_params = dict(request.GET)
-        for key, val in query_params.items():
-            query_params[key] = val[0]
-
         if not (settings.FRONTEND_DEV or request.user.is_authenticated):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         user_is_admin = is_admin(request.user)
 
-        if "id" in query_params:
+        if not user_is_admin:
             # Get printing history of a specific user
-            if not (settings.FRONTEND_DEV or request.user.id == int(query_params["id"]) or user_is_admin):
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-            user = None
-
-            try:
-                user = User.objects.get(pk=int(query_params["id"])) if (settings.FRONTEND_DEV or user_is_admin) else request.user
-            except CampusUser.DoesNotExist:
-                return Response({"error": "No user"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-            activities = PrintingActivity.objects.filter(user=user)
+            activities = PrintingActivity.objects.filter(user=request.user)
             serializer = PrintingActivitySerializer(activities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
