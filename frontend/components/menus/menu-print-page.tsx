@@ -38,24 +38,6 @@ const MenuPrintPage: FC<Props> = ({ selectedItem, setSelectedItem }) => {
 
         <DropdownMenuItem
           onSelect={() => {
-            setSelectedItem(MENU_PRINT_PAGE.ONLY_OLD);
-          }}
-        >
-          {MENU_PRINT_PAGE.ONLY_OLD}
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onSelect={() => {
-            setSelectedItem(MENU_PRINT_PAGE.ONLY_EVEN);
-          }}
-        >
-          {MENU_PRINT_PAGE.ONLY_EVEN}
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          onSelect={() => {
             setSelectedItem(MENU_PRINT_PAGE.CUSTOM);
           }}
         >

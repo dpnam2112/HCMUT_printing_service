@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   MENU_NUMBER_OF_COPY,
-  MENU_PRINT_ORIENTATION,
   MENU_PRINT_PAGE,
   MENU_PRINT_TYPE,
 } from "../../models/constant";
@@ -17,7 +16,6 @@ import { Location, UserInfo } from "../../models/types";
 import networkService from "../../models/network-service";
 import { sortLocations } from "../../models/utils";
 import MenuLocation from "../menus/menu-location";
-import MenuOrientation from "../menus/menu-orientation";
 import toast from "react-hot-toast";
 import { getPayLoadPrinting } from "./utils";
 
@@ -26,8 +24,6 @@ const SectionPrinting = () => {
   const [selectedPrintType, setSelectedPrintType] = useState<MENU_PRINT_TYPE>(
     MENU_PRINT_TYPE.DOUBLE_LONG
   );
-  const [selectedPrintOrientation, setSelectedPrintOrientation] =
-    useState<MENU_PRINT_ORIENTATION>(MENU_PRINT_ORIENTATION.VERTICAL);
   const [selectedPrintPage, setSelectedPrintPage] = useState<MENU_PRINT_PAGE>(
     MENU_PRINT_PAGE.ALL
   );
@@ -165,16 +161,6 @@ const SectionPrinting = () => {
             <MenuPaperSize
               selectedPaperSize={selectedPaperSize}
               setSelectedPaperSize={setSelectedPaperSize}
-            />
-          </div>
-
-          <div className="flex items-center w-full px-5">
-            <span className="w-2/4 text-lg font-semibold select-none">
-              Hướng trang in:
-            </span>
-            <MenuOrientation
-              selectedOrientation={selectedPrintOrientation}
-              setSelectedOrientation={setSelectedPrintOrientation}
             />
           </div>
 
