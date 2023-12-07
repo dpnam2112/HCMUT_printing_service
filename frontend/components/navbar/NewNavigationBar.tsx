@@ -56,8 +56,8 @@ export default function NewNavigationBar() {
           <Link
             href={
               userInfo
-                ? "http://localhost:9000/accounts/logout/"
-                : "http://localhost:9000/accounts/login/"
+                ? "http://localhost:8000/accounts/logout/"
+                : "http://localhost:8000/accounts/login/"
             }
           >
             <Button
