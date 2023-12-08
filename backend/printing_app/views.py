@@ -351,7 +351,7 @@ class MainPage(View):
 
 class OfficerPage(View):
     def get(self, request):
-        return render(request, 'officer.html')
+        return render(request, 'admin.html')
 
 class PricingPage(View):
     def get(self, request):

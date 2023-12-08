@@ -27,7 +27,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('django-admin/', admin.site.urls),
     path('api/perform-print/', PrintClient.as_view()),
     path('api/view-report/', PrintReport.as_view()),
     path('api/check-print-status/', PrintStatus.as_view()),
@@ -44,7 +44,7 @@ urlpatterns = [
 
     # Routes for rendering static pages
     path("", MainPage.as_view()),
-    path("officer/", OfficerPage.as_view()),
+    path("admin/", OfficerPage.as_view()),
     path("pricing/", PricingPage.as_view()),
     path("support/", SupportPage.as_view())
 ]
