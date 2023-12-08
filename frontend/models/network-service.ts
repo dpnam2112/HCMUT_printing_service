@@ -44,6 +44,9 @@ class NetworkService {
       const data = await fetch(`${BACKEND_API}/api/perform-print/`, {
         method: "POST",
         body: formData,
+        headers: {
+          "X-CSRFToken": this.csrf,
+        },
       })
         .then((res) => res.json())
         .then((data) => data);
@@ -67,8 +70,6 @@ class NetworkService {
 
   public async addPrinter(printer: Omit<Printer, "id">): Promise<boolean> {
     try {
-      console.log("huy: ", this.csrf);
-
       const data = await fetch(`${BACKEND_API}/api/officer/printers/`, {
         method: "PUT",
         headers: {
