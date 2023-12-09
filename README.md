@@ -29,7 +29,7 @@ Please read at: `sso_server/README.md`
 
 - Cd to `backend`
 
-- Install venv: `python3 -m pip install venv`
+- Install venv: `python3 -m pip install virtualenv`
 
 - Create virtual environment: `python3 -m venv .venv`
 
