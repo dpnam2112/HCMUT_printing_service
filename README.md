@@ -1,4 +1,6 @@
 # HCMUT_printing_service
+   
+An application for the smart printing service inside campus of HCMUT
 
 # Requirements:
  - NodeJS version 18.16
@@ -7,10 +9,6 @@
  - SQLite3
  - Python packages (listed in requirements.txt)
  - Windows Subsystem for Linux (Used to run CAS server)
-   
-### How to build Front end
-
-An application for the printing service inside HCMUT campus
 
 ### How to build Front end
 
