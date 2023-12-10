@@ -43,7 +43,7 @@ Please read at: `sso_server/README.md`
 
 - Activate virtual environment: `.venv/Scripts/activate`
 
-- Go to project folder by typing `cd ..` and type: `pip3 install requirements.txt`
+- Go to project folder by typing `cd ..` and type: `pip3 install -r requirements.txt`
 
 - cd to `backend`
 
